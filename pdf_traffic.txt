@@ -1,0 +1,538 @@
+﻿=== PAGE 47 ===
+transverse bending moment per metre may be taken as one half of the longitudinal moment per 
+metre	due	to	the	vertical	traffic	load	(see	also	4.4).
+Figure 10 — Transverse load dispersion
+30 ˚ 30 ˚ 
+L1
+Wheel
+W
+30 ˚ 30 ˚ 
+L2
+Wheel
+W
+a) b)
+NOTE  In a), the load is dispersed transversely and longitudinally over a length L1. In b), the transverse dispersal 
+length is L2 (curtailed by the wing wall). The longitudinal dispersal length equals L1 unless curtailed by a 
+transverse wall or similar.
+Figure 11 — Transverse load/metre where two dispersion zones overlap
+30 ° 30 ° 30 ° 30 ° 
+L2
+L1
+a
+bPQ
+W1 L1Load per metre width =       / W2 L2Load per metre width =       /
+Wheel
+W1
+Wheel
+W2
+NOTE 1 PQ in the figure is the most heavily loaded strip of width b. For a two-wheel overlap, the load on the 
+strip can be taken as: bW1/L1 + aW2/L2 where W1 is the larger wheel load and a is the length overlap. For a 
+metre-width design, b is to be taken as 1 m. For narrow segmental units b may be taken as the segment width  
+(Lj ).
+NOTE 2 When the dispersal zones of more than two wheels overlap, the local pressure may be based on the 
+most heavily loaded segment or metre-strip, as appropriate.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 39
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 48 ===
+ 10.2.8 Longitudinal road traffic actions
+ 10.2.8.1 Traffic surcharge
+The	areas	of	carriageway	on	the	backfill	beyond	the	ends	of	the	structure	should	be	loaded	with	the	
+traffic	surcharge	load	specified	in	the	UK	National	Annex	to	BS	EN	1991‑2.	The	resulting	horizontal	
+pressures on the abutments can be calculated in accordance with 7.6 and Table 6, Note 5.
+ 10.2.8.2 Braking and acceleration forces
+For buried structures with less than 0,6 m depth of earth cover (Hc), the full value of the braking or 
+acceleration action described in BS EN 1991-2:2003, 4.4.1, should be applied. Where the structure is 
+skew	to	the	direction	of	traffic,	the	combined	effect	of	the	longitudinal	and	transverse	components	of	
+the horizontal actions should be assessed.
+For buried structures where the depth of earth cover (Hc) is greater than 0,6 m and less than the 
+overall length of the structure (LL), the horizontal force may be assumed to reduce linearly to zero, 
+as Hc increases from 0,6 m to LL. The reduction factor, η, to be applied to the horizontal force in this 
+range is therefore given by η	=	(LL	−	Hc)/(LL	−	0,6).
+For a buried structure with Hc > LL, the effects of braking and acceleration on the structure 
+may be ignored.
+The braking or acceleration force should be applied directly to the top of the roof of the structure over 
+a notional lane width without lateral dispersion. However, the in-plane rigidity of the roof and walls 
+of in-situ box and portal structures provides a robust resistance to distortional warping, and provided 
+account is taken of the tendency for plan rotation, the effects of the braking and acceleration forces 
+may be assumed to be distributed structurally over a length of Lj.
+The total braking or acceleration force applied to the top of the roof of a buried structure need not be 
+taken as greater than the friction force that can be generated between the earth and the roof, taking 
+the weight of the vehicle into account.
+ 10.2.9 Centrifugal and other transverse forces
+Precautions should be taken to prevent the separation of narrow precast units at the edge of a 
+segmental structure under the effects of centrifugal force, skew braking and skidding, unless the 
+structure is provided with an independently supported headwall that can resist the transverse load.
+ 10.2.10 Parapet impact
+Where a vehicle restraint system is attached to or seated on a precast segment, the design should 
+prevent the unit supporting the restraint system separating from the rest of the structure in the event 
+of a parapet collision.
+ 10.2.11 Thermal expansion and contraction
+The	effects	of	thermal	expansion	and	contraction	in	buried	concrete	structures	should	be	identified	
+in accordance with BS EN 1991-1-5, unless the overall length of the structure LL is less than 3 m, in 
+which case such effects may be ignored.
+The effect of the thermal expansion and contraction of the roof slab, ignoring any thermal movements 
+of the base of the structure, should be accounted for in the analysis of the structure. Interaction 
+between	the	backfill	and	structure	due	to	thermal	effects	may	be	ignored	if	the	directly	determined	
+earth	pressure	coefficients	in	Annex B of this document are used, because any increase in earth 
+pressure	due	to	expansion	is	deemed	to	be	covered	by	the	specified	Kmax	pressure	coefficient.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+40 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 49 ===
+ 10.2.12 Temperature difference
+The	effects	of	the	temperature	difference	specified	in	BS	EN	1991‑1‑5	should	be	assessed.	
+Temperature gradients within the walls and base slabs of buried structures may be ignored, but the 
+effect	on	these	members	of	roof	flexure	induced	by	temperature	difference	should	be	accounted	for	
+in the design.
+ 10.3 Design of foundations
+ 10.3.1 Rotational stiffness of foundations
+The bearing capacity of buried structures (particularly buried box structures) is not usually critical 
+and	site	investigation	is	therefore	often	limited.	In	the	absence	of	detailed	testing	and	a	rigorous	soil–
+structure interaction analysis, the following procedures may be used.
+a) Where a box or portal structure is founded on hard material (3.1.5), the footings may be 
+assumed to be rotationally rigid.
+b) Where a box structure is founded on softer material, it may be assumed that the pressure across 
+the base slab is trapezoidal.
+c) Where a portal frame is founded on material other than hard material, it may be assumed that 
+the	base	slab	is	rotationally	flexible	and	the	portal	frame	can	therefore	be	considered	to	be	
+pinned at the base of the legs.
+d) For portal frames, where the properties of the foundations are not known, or where the 
+structures or elements of the structure are particularly sensitive to the rotational stiffness of the 
+base,	an	analysis	of	both	the	rigid	and	flexible	(fixed	and	pinned)	conditions	should	be	carried	
+out and the more onerous effects used in the design.
+ 10.3.2 Bearing pressure
+For verifying the bearing pressure under the base slab of a buried structure which is subject to 
+braking	or	acceleration	forces	and	traffic	surcharge,	it	may	initially	be	assumed	that	the	pressure	on	
+the passive wall is the Kmax pressure as shown in Table B.4. If this loading results in excessive bearing 
+pressure, the assumed pressure on the passive wall may be increased, provided that the component 
+members of the structures are designed for this increased pressure and the rotations required to 
+mobilize this pressure are acceptable at the relevant limit states.
+Rotations required to mobilize a proportion of passive pressure can be found in 
+BS EN 1997-1:2004+A1:2013, Table C.2 (case a), see also 7.5.
+ 10.3.3 Sliding and overturning
+Where sliding or overturning of a box or portal structure is initiated by braking or acceleration as 
+shown in Table B.6, the earth pressure on the passive face may initially be based on the pressure 
+coefficient	Kmax.	If,	however ,	this	pressure	is	insufficient	to	prevent	sliding	or	overturning	the	earth	
+pressure on the passive face may be increased until equilibrium is achieved, provided that the 
+component members of the structures are designed for this increased pressure and the movements 
+required to mobilize this pressure are acceptable at the relevant limit states.
+Sliding displacements required to mobilize a proportion of passive pressure can be found in 
+BS EN 1997-1:2004+A1:2013, Table C.2 (case b), see also 7.5.
+ 10.3.4 Sliding of portal legs
+Under symmetrical earth pressure loading, both legs of a portal structure tend to slide inwards. If 
+this tendency can be fully resisted by friction under the base slabs, then the portal can be considered 
+to be restrained against horizontal movement at the base of the legs. If, however, the tendency to 
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 41
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 50 ===
+slide	cannot	be	fully	resisted	by	base	friction,	the	legs	flex	inwards	until	equilibrium	is	achieved,	
+producing	additional	flexural	moments	and	shears	in	the	structure	which	should	be	assessed	in	
+the structural design. If this leg displacement is likely to be irreversible, the consequences of the 
+legs	being	permanently	displaced	inwards	should	be	identified	and	accounted	for	in	all	relevant	
+design situations.
+ 10.4 Skew
+ 10.4.1 Analysis methods
+Skewed in-situ structures which are long (transversely) relative to their span may be designed on the 
+basis of either the square or the skew span. For structures designed on the basis of the square span, 
+however, structural elements within a width of Xclearsinθ from the edge of the structure should be 
+designed on the basis of the skew span.
+Alternatively, skewed in-situ structures may be analysed by more rigorous methods such as a 3-D 
+computer analysis.
+ 10.4.2 Effect of offset pressures
+With skewed in-situ structures, the line of thrust of the horizontal earth pressure forces on one 
+abutment is offset laterally from the line of thrust of the earth pressure forces on the opposite 
+abutment. This results in a plan torque which for box structures is resisted by torsional friction on the 
+base,	and,	if	this	is	insufficient	(and	the	skew	is	not	too	great),	by	a	build	up	of	passive	resistance	on	
+the abutment walls towards the obtuse corners of the structure. For portal structures, see also 9.8.
+If the line of thrust of the earth pressure forces on one wall passes within the middle third of the 
+other wall (that is, if LLtanθ < Lj/6), this plan twisting effect may be ignored.
+If LLtanθ	≥	Lj/6 and the applied torque is greater than the rotational frictional resistance of the 
+base, the unbalanced torque may be resisted by increasing the horizontal earth pressure on the 
+walls towards the obtuse corner provided the structural elements are designed to resist the 
+increased pressure.
+The value of passive pressure that can be mobilized near the obtuse corners should be limited by 
+the value of movement and plan rotation that is acceptable at the relevant limit state (see 7.5), but it 
+should not exceed the lower-bound value of passive pressure based on zero wall friction.
+On skewed structures where the line of thrust from one abutment passes close to, or outside, the 
+obtuse corner of the opposite abutment, passive pressure might tend to increase, rather than to resist 
+the tendency of the structure to rotate in plan, and the danger of failure due to rotational sliding 
+should be carefully examined.
+ 10.4.3 Skewed precast units
+Skewed precast units should generally be avoided because they can be very sensitive to 
+plan rotations.
+ 10.5 Longitudinal joints
+Segmental structures should be designed to accommodate the movements that might result from 
+differential	settlement	of	the	foundation	and	differential	deflection	between	units	due	to	traffic.
+To prevent the occurrence of excessive movements at longitudinal joints in structures with low earth 
+cover ,	the	net	vertical	midspan	deflection	of	a	segmental	unit	under	traffic	loading	at	SLS	under	the	
+characteristic combination of actions should be limited to 0,015Hc.	This	deflection	should	
+include	the	short‑term	elastic	settlement	of	the	foundation	due	to	traffic	loading.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+42 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 51 ===
+These recommendations also apply to longitudinal joints in in-situ structures unless these joints are 
+designed	to	transmit	the	effects	of	the	permanent	loads	and	traffic	actions.
+ 10.6 Stages to be analysed
+Three stages should be analysed in the design:
+a)	 the	completed	structure	backfilled	up	to	the	top	of	the	roof;
+b)	 the	structure	backfilled	to	an	intermediate	level	between	roof	level	and	finished	surface	level,	at	
+which	it	is	proposed	to	use	the	structure	for	construction	traffic;	and
+c)	 the	structure,	fully	backfilled,	in	service.
+Each element of the structure should be designed for stages a) and b) accounting for the following:
+1) permanent loads with maximum or minimum superimposed dead loads (see 10.2.2) (excluding 
+differential settlement);
+2)	 relevant	traffic	or	construction	loads	(see	 10.2.6);
+3) maximum or minimum horizontal earth pressures (see for example Figure B.1 and Table B.1 to 
+Figure B.6 and Table B.6); and
+4) thermal actions.
+For the in-service stage c), the structure should be designed for the load cases illustrated 
+diagrammatically in Figure B.1 and Table B.1 to Figure B.6 and Table B.6, in conjunction with 
+the requirements in the relevant parts of BS EN 1991 and BS EN 1990.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 43
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 52 ===
+Annex A (informative) 
+Method for determining the earth pressures on integral 
+abutments using a soil‑structure interaction analysis
+ A.1 General
+This annex gives a method for determining the earth pressures on integral abutments using 
+a	soil–structure	interaction	analysis.	It	has	been	calibrated	against	a	number	of	experimental	results,	
+given in England, et al. [13], Hambly, et al. [14], Springman, et al. [15], Tapper, et al. [16] and Tan, et 
+al. [17],	and	satisfies	the	recommendations	of	9.4.5.
+The method provides a way of determining the pressures behind embedded wall abutments 
+where the depth of soil affected by the repeated deck expansion and contraction cannot readily 
+be determined.
+It may also be used for frame abutments founded on a single row of piles provided that the spacing 
+between discrete piles is close enough for horizontal soil arching to occur such that plane strain 
+conditions can be assumed. 
+It may also be used as an alternative to the limit equilibrium methods for frame abutments on spread 
+footings described in 9.4.3.
+NOTE The phrase “needs to” is used in this annex to express recommendations applicable to the method presented 
+in this annex. Other soil–structure interaction analysis methods can be used provided they satisfy the 
+requirements of 9.2.2 and 9.4.5.
+The	soil–structure	interaction	analysis	needs	to	be	carried	out	using	a	numerical	model	with	
+structure and soil properties satisfying the recommendations of A.2 and A.3. The calculation 
+model needs to be capable of:
+• generating limiting earth pressure values;
+• modelling the variation of soil stiffness as a function of the soil strain and with depth 
+(see A.3); and
+• accounting for the staged and repeated application of deck expansion and contraction 
+(see A.4). 
+ A.2 Structural properties used in model
+The	soil–structure	interaction	model	needs	to	include	all	vertical	elements	of	the	abutments	and	piles	
+explicitly. The rotational and lateral restraint provided by the deck needs to be modelled. This may be 
+done explicitly or by using elastic horizontal and rotational springs.
+For	a	symmetric	structure	with	full	fixity	at	the	deck	ends,	the	stiffness	of	the	horizontal	and	
+rotational spring may be taken as AE/Lx and EI/Lx respectively, where A, E and I are the area, 
+elastic modulus and second moment of area of the deck respectively and Lx is the expansion length 
+defined	in	9.4.2.
+Where the model uses springs (Winkler medium) to represent the soil response, the elastic modulus 
+calculated in A.3 needs to be converted to an equivalent spring stiffness.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+44 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 53 ===
+An approximate expression has been developed [20] which relates the elastic modulus of the soil to 
+the horizontal spring stiffness per square metre of the back which may be used:
+d
+horz,d 0.6
+T
+4 'E
+k
+L HH
+π/g124
+/g167/g183
+/g168/g184/g169/g185
+where:
+khorz,d    is the design horizontal spring stiffness per square metre;
+E’d  is the design elastic modulus of the soil;
+H  is the height of wall or end screen; and
+LT  is the width of the abutment.
+ A.3 Soil properties used in model
+ A.3.1 General
+The soil needs to be modelled as an elastic medium (see A.3.2) with earth pressures 
+restricted to lie between active pressure and the quasi-passive limit (see A.3.3). Sub-grade 
+reaction models and continuum models may both be used to model the soil medium. 
+The variation in soil properties with depth needs to be modelled over the depth H’ (see A.4). The 
+depth	of	soil	behind	and	in	front	of	the	abutment,	with	properties	inﬂuenced	by	the	abutment	
+movement,	needs	to	be	modelled	as	a	series	of	layers	to	which	design	values	of	the	backfill	material	
+[e.g. weight density (γd), angle of shearing resistance (φ’d) and elastic modulus (Ed)] are assigned.
+The number of soil layers used in the model needs to be selected to allow the variation in stiffness to 
+be closely approximated. Where the rate of change in stiffness is higher, a greater number of layers 
+will be needed. Where the rate of change in stiffness is smaller, fewer layers or a single layer modelled 
+with a linear increase in stiffness may be used. 
+ A.3.2 The elastic modulus of the soil
+The relationship between the soil stiffness, which varies with depth, and the soil strain needs to 
+either be derived:
+a) directly from triaxial testing of the soils; or
+b) using published data on small strain stiffness and variation with soil strain.
+For granular soils, account needs to be taken of the repeated thermal cycling. In the absence of a more 
+detailed	analysis,	this	may	be	addressed	by	assuming	densification	to	at	least	90%	(see	Figure A.1) 
+and	by	multiplying	the	soil	stiffness	values	by	a	factor	of	1,5	in	line	with	the	findings	of	Clayton,	Xu	
+and Bloodworth [21]. In this case, the design value of E (Ed) is given by:
+Ed	=	1,5E
+For cohesive soils, the effects of strain ratcheting may be assumed to be negligible. Further 
+information on the effects of strain ratcheting of cohesive soils can be obtained from published data 
+(for	example	Koutsoftas	and	Fischer	[22]) or through testing of the soils
+A	method	of	deriving	suitable	short‑term	stiffness	values	for	granular	soils	based	on	the	ﬁndings	of	
+Seed and Idriss [23] is as follows.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 45
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 54 ===
+The value of E for granular soils is derived as a function of the applied soil strain (d’d/H’) and the 
+mean effective stress of the soil (σ'm). The value of E at a depth, z, below ground level is 
+calculated as follows:
+v'z -uσγ /g32
+
+0
+mv
+12'' 3
+Kσσ /g14/g32
+
+ 
+ 
+ 
+RF,G
+ 
+is taken from Figure A.1 for the value of d’d/H’ given in A.4;
+ G 220 mF,GRσ '/g32   (where G and m'σ  are both in kPa);
+ E’ =+ ()21G v' 
+where:
+ σ'v is the effective vertical stress;
+ σ'm is the effective mean stress;
+ u is the pore pressure;
+ G is the shear modulus of the soil;
+ ν' is Poisson’s ratio (which may be taken as 0,3);
+ RF,G depends on the average rotational strain d’d/H’ (see Figure A.1);
+ H’ is	the	depth	of	soil	influenced	by	the	abutment	movement	(see	A.4);
+ d’d is the movement of the structure at a depth H’/2 due to an expansion or contraction of the end of 
+the deck (see A.4).
+The variation in shear modulus factor shown in Figure A.1, which has been derived from Seed and 
+Idriss [23], may be approximated by the following expression:
+F,G
+F,G0
+r
+1
+1
+a
+R
+R γ
+γ
+/g32
+/g167/g183/g14/g168/g184
+/g169/g185
+where:
+ RF,G is the shear modulus factor;
+ RF,G0 is the value of RF,G at the very small strain (which may be taken as 70);
+ γ is the average rotational strain d’d/H;
+ γr is the reference strain (which may be taken as 0.000 2); and
+ a is a constant (which may be taken as 0.80).
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+46 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 55 ===
+Figure A.1 — Variation in soil shear modulus factor (RF,G) with d’d/H’ assuming densification to 90%
+NOTE These variations have been derived from Seed and Idriss [23].
+ A.3.3 The quasi‑passive limit
+For granular soils, the earth	pressure	coefficient	where	the	abutment	is	moving	into	the	backfill	
+material	needs	to	be	limited	to	the	quasi‑passive	limiting	pressure	coefficient	K d
+* .
+The	quasi‑passive	limiting	pressure	coefﬁcient	K d
+*  on the back and front of the abutments may be 
+derived from the equation in 9.4.3, taking H = H’ and with d’d and H’ for the front and back of the 
+abutments derived in accordance with A.4.
+ A.4 Soil strain
+ A.4.1 General
+The	properties	of	the	soil	used	in	the	soil–structure	interaction	model	depend	on	the	average	
+rotational strain in the soil d’d/H’. The values of d’d/H’, and therefore the soil properties, differ 
+for the soil behind and in front of the abutment. Typically, an iterative approach is required to 
+determine H’ and d’d.
+The soil behaviour under cyclic expansion and contraction exhibits hysteresis and therefore the 
+results	of	the	soil–structure	interaction	analysis	can be affected by the sequence of expansion 
+and contraction. This hysteresis needs to be accounted for in the analysis and may be done 
+by applying an initial contraction giving a movement of dd/2 at the end of the deck followed by an 
+expansion and a contraction giving movements of dd at the end of the deck as described in A.4.3.
+ A.4.2 Definition of H’ and d’d for back and front of abutment
+H’ and d’d	for	the	back	and	front	of	abutment	are	defined	as	follows.
+a) For the back of the abutment [see Figure A.2a)]:
+• H’ is the depth of soil behind the abutment affected by the repeated deck expansion, which 
+may be taken as the depth from ground level to the level at which the earth pressure 
+reduces to its at rest value when the deck is at its maximum expansion for the combination 
+of actions under consideration; and
+• d’d	is	the	corresponding	horizontal	deflection	of	the	abutment	wall	at	a	depth	H’/2 below 
+ground level.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 47
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 56 ===
+b) For the front of the abutment [see Figure A.2b)]:
+• H’ is the depth of soil in front of the abutment affected by the repeated deck contraction, 
+which may be taken as the depth from excavation level to the depth at which the earth 
+pressure on the front of the wall or piles reduces to its at rest value when the deck is at its 
+maximum contraction for the combination of actions under consideration; and
+• d’d	is	the	corresponding	horizontal	deflection	of	the	abutment	wall	at	a	depth	H’/2 below 
+excavation level.
+Figure A.2 — Values of H’ and d’d and illustration of earth pressures
+a) Earth pressures applied to the back of abutment (expansion case)
+b) Earth pressures applied to the front of abutment (contraction case)
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+48 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 57 ===
+ A.4.3 Iterative procedure for deriving d’d and H’
+The following iterative procedure may be used to determine H’ and d’d for the back and front 
+of abutment.
+• Step 1: Determine the design value of the thermal movement of the end of the bridge deck, dd, for 
+the combination of actions under consideration (see 9.4.2).
+• Step 2: Assume initial values of H’ and d’d for the back and front of the abutment. In the absence 
+of previous experience of the behaviour of the type of bridge being analysed, suggested initial 
+values of d’d and H’ are:
+a) for the back of abutment:
+• H’	=	H (i.e. the depth from ground level to excavation level);
+• d’d	=	0,5dd for walls that are rotationally rigid at H;
+• d’d	=	0,7dd	for	walls	that	are	rotationally	flexible	at	H; and
+b) for the front of the abutment or piles:
+• H’	=	H (as above);
+• d’d	=	0,1dd.
+• Step 3: Derive soil properties for the back and front of the abutment (see A.3) using the assumed 
+or calculated values of d’d and H’, and input into model.
+• Step 4: Apply contraction giving a movement of dd/2 at the end of the deck.
+• Step 5: Apply expansion giving a movement of dd at the end of the deck and determine earth 
+pressures applied to the abutment for this expansion case.
+• Step 6: Apply contraction giving a movement of dd to the end of the deck and determine 
+earth pressures applied to the abutment for this contraction case.
+• Step 7: Identify the depths below ground and excavation level at which the earth pressures 
+behind and in front of the abutment respectively reduce to at rest pressure (H’) and the resulting 
+deﬂections	d’d at H’/2.
+• Step 8: Compare the values of H’ and d’d for the back and front of the abutment with those used 
+in	Step	3.	If	these	are	signiﬁcantly	different,	repeat	Steps	4	to	7	using	updated	values	of	H’ and d’d.
+NOTE Alternatively, the values of H’ and d’d for the back and front of the abutment can be determined 
+sequentially rather than in parallel.
+ A.5 Loading
+ A.5.1 Thermal action
+The application of the thermal action to the model may be done either by applying the relevant 
+deck expansion or contraction explicitly in the model or by applying an equivalent horizontal force. 
+The equivalent horizontal force may be taken as the product of the deck stiffness, SH (see A.2), and the 
+relevant movement of the end of the deck (see A.4).
+If the restraint provided by the deck is modelled using springs (see A.2), applying the equivalent 
+horizontal force through the horizontal spring enables account to be taken directly of elastic 
+shortening of the deck, as permitted in 9.4.2.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 49
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 58 ===
+ A.5.2 Other variable actions
+In the evaluation of earth pressures, the effect of variable actions except for thermal 
+actions	and	groups	of	traffic	loads	that	include	braking	and	acceleration	forces,	may	be	neglected	
+(but see A.5.3).
+ A.5.3 Subsequent frame analysis
+The earth pressures determined using the analysis in this annex are the earth pressures that occur 
+with various combinations of actions after many thermal cycles.
+The earth pressures which need to be subsequently applied to the structural model of the whole 
+bridge are either those calculated:
+• directly in the soil-structure interaction model; or
+• in accordance with 9.4.3 using the values of H’ and d’d determined from the soil-structure 
+interaction model.
+These earth pressures need to be combined with an imposed simultaneous expansion or contraction 
+of each end of the bridge of  /g11/g12e;max0 ;min QxαL TT ψγ/g16  or  /g11/g120;maxe ;min QxαL TT ψγ/g16   
+respectively,	and	the	most	unfavourable	combination	of	trafﬁc	and	other	variable	actions,	where	
+T0;min  and T0;max  are the upper-bound and lower-bound values of T0  given 
+in the National Annex to BS EN 1991-1-5 (see 9.6).
+ A.5.4 Minimum expansion pressures with maximum contraction pressures
+When the bridge stops expanding and starts contracting, the pressures behind the abutment are 
+likely to reduce rapidly with very small associated contraction movements. Similarly, when the bridge 
+stops contracting and starts expanding, the pressures behind the abutment are likely to increase 
+rapidly with very small expansion movements.
+Such	behaviour	needs	to	be	taken	into	account	in	the	soil–structure	interaction	analysis,	particularly	
+for the design of members which are critical for maximum expansion and minimum earth pressures, 
+and maximum contraction with maximum earth pressures. Alternatively, in these situations, at rest 
+pressure (K0;min and K0;max respectively) may conservatively be assumed to be applied behind 
+the abutments (see 9.4.8 and Figure 6).
+Annex B (informative) 
+Cases to be considered for buried concrete 
+structures design
+ B.1 Cases to be considered
+Tables B.1 to B.6 and Figures B.1 to B.6 show cases to be considered and the directly 
+determined	values	of	earth	pressure	coefficients	that	may	be	used	with	various	loading	combinations.	
+These	values	only	apply	to	backfill	classes	6N	and	6P ,	specified,	installed	and	compacted	in	
+accordance with the MCHW [7], and to structures where there is uniformity of ground conditions.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+50 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+

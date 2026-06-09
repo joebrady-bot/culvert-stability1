@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(pip install *)",
+      "PowerShell(Stop-Process *)",
+      "PowerShell(Start-Process -FilePath \"python\" -ArgumentList \"-m streamlit run app.py --server.headless true\" -WorkingDirectory \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\" -WindowStyle Hidden)"
+    ]
+  }
+}

@@ -1,0 +1,527 @@
+﻿Total pages: 72
+=== PAGE 4 ===
+ 9.3 Types of abutment for integral construction 23
+ Figure 4 — Types of abutment for integral bridge construction 24
+ 9.4 Earth pressures behind integral abutments and end screen walls 25
+ Table 7 — Maximum (unfavourable) vaues of Kp;t 26
+ Figure 5 — Earth pressure distributions for abutments which accommodate thermal expansion 
+by rotation and/or flexure 27
+ Figure 6 — Pressure coefficient envelope 31
+ 9.5 Longitudinal loads 32
+ 9.6 Thermal distortions 32
+ 9.7 Foundations 32
+ 9.8 Skew effects 33
+ Figure 7 — Twisting of skewed structure 34
+ 9.9 Wing walls 34
+ Figure 8 — Equilibrium of horizontal earth wedge behind skew abutment 35
+	 9.10	 Backfill	 35
+ 10 Buried concrete structures 36
+ 10.1 General 36
+ Figure 9 — Symbols for typical buried box structure 37
+ 10.2 Actions applied to buried concrete structures 37
+ Figure 10 — Transverse load dispersion 39
+ Figure 11 — Transverse load/metre where two dispersion zones overlap 39
+ 10.3 Design of foundations 41
+ 10.4 Skew 42
+ 10.5 Longitudinal joints 42
+ 10.6 Stages to be analysed 43
+ Annex A (informative)   
+Method for determining the earth pressures on integral abutments using a 
+soil‑structure interaction analysis 44
+ Figure A.1 — Variation in soil shear modulus factor (RF,G) with d’d/H’ assuming 
+densification to 90% 47
+ Figure A.2 — Values of H’ and d’d and illustration of earth pressures 48
+ Annex B (informative)  Cases to be considered for buried concrete structures design 50
+ Figure B.1 — Maximum vertical load with maximum horizontal load 52
+ Table B.1 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various limit states (Figure B.1) 52
+ Figure B.2 — Minimum vertical load with maximum horizontal load 53
+ Table B.2 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various limit states (Figure B.2) 53
+ Figure B.3 — Maximum vertical load with minimum horizontal load 54
+ Table B.3 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various limit states (Figure B.3) 54
+ Figure B.4 — Braking and acceleration with maximum vertical load and active pressure 55
+ Table B.4 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various limit states (Figure B.4) 56
+ Figure B.5 — Braking and acceleration with minimum vertical load and active pressures 57
+ Table B.5 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various states (Figure B.5) 58
+ Figure B.6 — Sliding 59
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+II © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 5 ===
+ Table B.6 — Directly determined design values of the earth pressure coefficient K that may be 
+applied at various limit states (Figure B.6) 60
+ Bibliography 61
+Summary of pages
+This document comprises a front cover, an inside front cover, pages I to VI, pages 1 to 62, an inside back cover and 
+a back cover.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED III
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 26 ===
+Figure 2 — Horizontal surcharge model for abutments
+h
+F
+F
+Weff
+Effective lane 
+(normally the
+3 m lane width)
+hUDL of        kN/m    applied
+over the effective lane width.
+2
+1 m
+1 m
+Two horizontal line loads each of F kN applied at
+ground level over a width of 1 m, adjacent to the 
+edge of the lane as shown
+NOTE 1 The figure shows the surcharge model for one lane of effective width Weff. The models for adjacent 
+lanes are similar. For most situations, Weff will be equal to 3,0 m. However, for carriageways between 5,4 m 
+and 6,0 m in width subject solely to normal traffic (see National Annex to BS EN 1991-2:2003, NA.2.34.3), the 
+effective lane width, Weff , will be equal to the notional lane width, see BS EN 1991-2:2003, 4.2.3.
+NOTE 2 For carriageways subject to SV or SOV (LM3) loading (see National Annex to 
+BS EN 1991-2:2003, NA.2.16) which encroaches on the adjacent notional lane, the effective width of that lane 
+available for carrying normal traffic should be taken as the distance from the edge of the LM3 vehicle to the 
+far edge of the notional lane (see UK National Annex to BS EN 1991-2:2003, NA.2.16.4), except that if that 
+width is less than 2,5 m, no normal traffic need be applied adjacent to the LM3 vehicle in that lane.
+NOTE 3 The effective width of a lane carrying LM3 loading used in applying the surcharge model is 
+always 3,0 m.
+ 7.6.3 Detailed analysis of horizontal pressures from traffic loads
+ 7.6.3.1 General
+The	horizontal	pressures	resulting	from	the	traffic	loads	may	be	analysed	based	on	either	of	the	
+following approaches:
+a)	 a	rigorous	analysis	of	the	 horizontal	effects	of	the	applied	actions	in	the	backfill,	taking	into	
+account	the	strength	of	the	backfill,	the	movement	of	the	wall,	the	proximity	of	the	wheel	loads	to	
+the wall and the high pressure concentrations that develop just below the surface when a heavy 
+wheel load is applied immediately behind the wall; or
+b) the general model presented in 7.6.3.2 for vertically spanning earth 
+retaining structures.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+18 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 49 ===
+ 10.2.12 Temperature difference
+The	effects	of	the	temperature	difference	specified	in	BS	EN	1991‑1‑5	should	be	assessed.	
+Temperature gradients within the walls and base slabs of buried structures may be ignored, but the 
+effect	on	these	members	of	roof	flexure	induced	by	temperature	difference	should	be	accounted	for	
+in the design.
+ 10.3 Design of foundations
+ 10.3.1 Rotational stiffness of foundations
+The bearing capacity of buried structures (particularly buried box structures) is not usually critical 
+and	site	investigation	is	therefore	often	limited.	In	the	absence	of	detailed	testing	and	a	rigorous	soil–
+structure interaction analysis, the following procedures may be used.
+a) Where a box or portal structure is founded on hard material (3.1.5), the footings may be 
+assumed to be rotationally rigid.
+b) Where a box structure is founded on softer material, it may be assumed that the pressure across 
+the base slab is trapezoidal.
+c) Where a portal frame is founded on material other than hard material, it may be assumed that 
+the	base	slab	is	rotationally	flexible	and	the	portal	frame	can	therefore	be	considered	to	be	
+pinned at the base of the legs.
+d) For portal frames, where the properties of the foundations are not known, or where the 
+structures or elements of the structure are particularly sensitive to the rotational stiffness of the 
+base,	an	analysis	of	both	the	rigid	and	flexible	(fixed	and	pinned)	conditions	should	be	carried	
+out and the more onerous effects used in the design.
+ 10.3.2 Bearing pressure
+For verifying the bearing pressure under the base slab of a buried structure which is subject to 
+braking	or	acceleration	forces	and	traffic	surcharge,	it	may	initially	be	assumed	that	the	pressure	on	
+the passive wall is the Kmax pressure as shown in Table B.4. If this loading results in excessive bearing 
+pressure, the assumed pressure on the passive wall may be increased, provided that the component 
+members of the structures are designed for this increased pressure and the rotations required to 
+mobilize this pressure are acceptable at the relevant limit states.
+Rotations required to mobilize a proportion of passive pressure can be found in 
+BS EN 1997-1:2004+A1:2013, Table C.2 (case a), see also 7.5.
+ 10.3.3 Sliding and overturning
+Where sliding or overturning of a box or portal structure is initiated by braking or acceleration as 
+shown in Table B.6, the earth pressure on the passive face may initially be based on the pressure 
+coefficient	Kmax.	If,	however ,	this	pressure	is	insufficient	to	prevent	sliding	or	overturning	the	earth	
+pressure on the passive face may be increased until equilibrium is achieved, provided that the 
+component members of the structures are designed for this increased pressure and the movements 
+required to mobilize this pressure are acceptable at the relevant limit states.
+Sliding displacements required to mobilize a proportion of passive pressure can be found in 
+BS EN 1997-1:2004+A1:2013, Table C.2 (case b), see also 7.5.
+ 10.3.4 Sliding of portal legs
+Under symmetrical earth pressure loading, both legs of a portal structure tend to slide inwards. If 
+this tendency can be fully resisted by friction under the base slabs, then the portal can be considered 
+to be restrained against horizontal movement at the base of the legs. If, however, the tendency to 
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 41
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 51 ===
+These recommendations also apply to longitudinal joints in in-situ structures unless these joints are 
+designed	to	transmit	the	effects	of	the	permanent	loads	and	traffic	actions.
+ 10.6 Stages to be analysed
+Three stages should be analysed in the design:
+a)	 the	completed	structure	backfilled	up	to	the	top	of	the	roof;
+b)	 the	structure	backfilled	to	an	intermediate	level	between	roof	level	and	finished	surface	level,	at	
+which	it	is	proposed	to	use	the	structure	for	construction	traffic;	and
+c)	 the	structure,	fully	backfilled,	in	service.
+Each element of the structure should be designed for stages a) and b) accounting for the following:
+1) permanent loads with maximum or minimum superimposed dead loads (see 10.2.2) (excluding 
+differential settlement);
+2)	 relevant	traffic	or	construction	loads	(see	 10.2.6);
+3) maximum or minimum horizontal earth pressures (see for example Figure B.1 and Table B.1 to 
+Figure B.6 and Table B.6); and
+4) thermal actions.
+For the in-service stage c), the structure should be designed for the load cases illustrated 
+diagrammatically in Figure B.1 and Table B.1 to Figure B.6 and Table B.6, in conjunction with 
+the requirements in the relevant parts of BS EN 1991 and BS EN 1990.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 43
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 58 ===
+ A.5.2 Other variable actions
+In the evaluation of earth pressures, the effect of variable actions except for thermal 
+actions	and	groups	of	traffic	loads	that	include	braking	and	acceleration	forces,	may	be	neglected	
+(but see A.5.3).
+ A.5.3 Subsequent frame analysis
+The earth pressures determined using the analysis in this annex are the earth pressures that occur 
+with various combinations of actions after many thermal cycles.
+The earth pressures which need to be subsequently applied to the structural model of the whole 
+bridge are either those calculated:
+• directly in the soil-structure interaction model; or
+• in accordance with 9.4.3 using the values of H’ and d’d determined from the soil-structure 
+interaction model.
+These earth pressures need to be combined with an imposed simultaneous expansion or contraction 
+of each end of the bridge of  /g11/g12e;max0 ;min QxαL TT ψγ/g16  or  /g11/g120;maxe ;min QxαL TT ψγ/g16   
+respectively,	and	the	most	unfavourable	combination	of	trafﬁc	and	other	variable	actions,	where	
+T0;min  and T0;max  are the upper-bound and lower-bound values of T0  given 
+in the National Annex to BS EN 1991-1-5 (see 9.6).
+ A.5.4 Minimum expansion pressures with maximum contraction pressures
+When the bridge stops expanding and starts contracting, the pressures behind the abutment are 
+likely to reduce rapidly with very small associated contraction movements. Similarly, when the bridge 
+stops contracting and starts expanding, the pressures behind the abutment are likely to increase 
+rapidly with very small expansion movements.
+Such	behaviour	needs	to	be	taken	into	account	in	the	soil–structure	interaction	analysis,	particularly	
+for the design of members which are critical for maximum expansion and minimum earth pressures, 
+and maximum contraction with maximum earth pressures. Alternatively, in these situations, at rest 
+pressure (K0;min and K0;max respectively) may conservatively be assumed to be applied behind 
+the abutments (see 9.4.8 and Figure 6).
+Annex B (informative) 
+Cases to be considered for buried concrete 
+structures design
+ B.1 Cases to be considered
+Tables B.1 to B.6 and Figures B.1 to B.6 show cases to be considered and the directly 
+determined	values	of	earth	pressure	coefficients	that	may	be	used	with	various	loading	combinations.	
+These	values	only	apply	to	backfill	classes	6N	and	6P ,	specified,	installed	and	compacted	in	
+accordance with the MCHW [7], and to structures where there is uniformity of ground conditions.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+50 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 59 ===
+ B.2 Maximum pressure
+The value of Kmax	represents	the	maximum	pressure	coefficients	to	be	applied.	It	includes	the	effects	
+of	strain	ratcheting	and	may	be	considered	to	be	independent	of	the	strength	of	the	backfill.
+ B.3 Minimum pressure
+The value of Kmin	represents	the	minimum	pressure	coefficient	to	be	applied.	It	includes	the	effect	of	
+wall friction and thermal contraction and may be considered to be independent of the strength of 
+the	backfill.
+ B.4 Active pressure
+The value of Ka given in Table B.4, Table B.5 and Table B.6 is a default value that may be used on the 
+active face when braking or acceleration forces are applied to the structure.
+ B.5 At rest pressure
+The value of K0	given	in	the	tables	is	the	at	rest	pressure	coefficient	applied	to	the	vertical	traffic	
+surcharge in conjunction with Kmax.
+ B.6 Sliding/overturning resistance
+Where Kmax	pressure	on	the	passive	face	is	sufficient	to	resist	sliding,	overturning	or	excessive	
+bearing pressures in conjunction with active pressure on the active face, the structure needs to be 
+analysed for the moments and shears caused by these pressures. Where, however, Kmax pressure 
+is	insufficient	to	prevent	sliding	or	overturning,	the	assumed	pressure	on	the	passive	face	may	be	
+increased provided the structure is designed for the increased pressure and the movements required 
+to mobilize these pressures are acceptable at the relevant limit state (see 10.3.2 and 10.3.3).
+ B.7 Portal legs
+Inwards and outwards sliding of portal legs need to be accounted for (see 10.3.4).
+ B.8 Earth pressure coefficients
+The	values	of	the	earth	pressure	coefficients	(K) given in the tables include the partial factor γM in 
+accordance	with	the	UK	National	Annex	to	BS	EN	1997‑1	and	a	supplementary	model	factor	γSd;K 
+of 1,2 applied to permanent earth pressures at ULS.
+ B.9 Resistances R1 and R2
+The resistances R1 and R2 shown underneath the bases of the portal structures are either the 
+horizontal reactions required to prevent the bases sliding, or the sliding resistance of the bases, 
+whichever is smaller.
+ B.10 Combinations of actions
+Combinations of actions should be formed in accordance with the requirements of 
+BS EN 1990 and relevant parts of BS EN 1991.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 51
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 63 ===
+Figure B.4 — Braking and acceleration with maximum vertical load and active pressure
+  
+Ka
+Self weight of
+structure using
+    unfavourable /g74F    
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load including /g74F and /g74Sd;ec
+Ka Kmax
+Kmax
+Vertical traffic surcharge
+Braking and acceleration
+Friction
+(See Note 3)
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load including /g74F and /g74Sd;ec
+Ka Ka Kmax
+Kmax
+Vertical traffic surcharge
+Self weight of
+structure using
+unfavourable /g74F
+Braking and acceleration
+R1 R2
+(See Note 3)
+  
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 55
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 64 ===
+Table B.4 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.4)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kmax
+0,33 0,33 SLS (characteristic) 0,6
+0,37 0,44 EQU 0,6
+0,33 0,40 STR/GEO (Comb 1) 0,72
+0,41 0,49 STR/GEO (Comb 2) 0,84
+NOTE 1 The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+NOTE 2 If the structure sways towards the active side, this load case may be ignored.
+NOTE 3 The earth pressure coefficient for the passive wall may be taken as greater than Kmax for bearing, 
+sliding and overturning (see 10.3.2 and 10.3.3) provided the associated displacements are acceptable at the 
+relevant limit state.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+56 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 65 ===
+Figure B.5 — Braking and acceleration with minimum vertical load and active pressures
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Minimum superimposed permanent load including      (favourable)
+=
+F
+F
+Ka Ka Kr Kmax
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+Friction
+(See Note 3)
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Minimum superimposed permanent load including      (favourable)
+=
+F
+F
+Ka Ka Kr Kmax
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+R1 R2
+(See Note 3)
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 57
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 66 ===
+Table B.5 — Directly determined design values of the earth pressure coefficient K that may be applied at various 
+states (Figure B.5)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kmax
+0,33 0,33 SLS (characteristic) 0,6
+0,37 0,44 EQU 0,6
+0,33 0,40 STR/GEO (Comb 1) 0,72
+0,41 0,49 STR/GEO (Comb 2) 0,84
+NOTE 1 The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+NOTE 2 If the structure sways towards the active side, this load case may be ignored.
+NOTE 3 The earth pressure coefficient for the passive wall may be taken as greater than Kmax for bearing, 
+sliding and overturning (see 10.3.2 and 10.3.3) provided the associated displacements are acceptable at the 
+relevant limit state.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+58 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 67 ===
+Figure B.6 — Sliding
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Minimum superimposed permanent load including      (favourable)
+F
+F
+Ka Ka
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+Friction
+Buoyancy
+Kr , sufficient to 
+resist sliding and
+overturning
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Minimum superimposed permanent load including      (favourable)
+F
+F
+Ka Ka
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+R1 R2
+Kr , sufficient to 
+resist sliding and
+overturning
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 59
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 68 ===
+Table B.6 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.6)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kr
+0,33 0,33 SLS (characteristic) Kr
+0,37 0,44 EQU Kr
+0,33 0,40 STR/GEO (Comb 1) Kr
+0,41 0,49 STR/GEO (Comb 2) Kr
+NOTE  The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+60 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+

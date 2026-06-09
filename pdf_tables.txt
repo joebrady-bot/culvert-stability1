@@ -1,0 +1,607 @@
+﻿=== PAGE 60 ===
+ B.11 Superimposed permanent load
+Where the maximum vertical load is being considered, the superimposed permanent load needs 
+to include the model factor γSd;ec	defined	in	10.2.2 where applicable. Where the minimum vertical 
+loading is being considered, γSd;ec is taken as 1,0.
+Figure B.1 — Maximum vertical load with maximum horizontal load
+Horizontal
+traffic
+surcharge
+Horizontal
+traffic
+surchargeBox structuresBox structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load
+including      andF
+F
+Sd;ec
+K0 K0Kmax Kmax
+Kmax Kmax
+Vertical traffic surcharge Vertical traffic surcharge
+Self weight of
+structure using
+unfavourable    
+Horizontal
+traffic
+surcharge
+Horizontal
+traffic
+surchargePortal structuresPortal structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load
+including      andF
+F
+Sd;ec
+K0
+R1 R2
+K0Kmax Kmax
+Kmax Kmax
+Vertical traffic surcharge Vertical traffic surcharge
+Self weight of
+structure using
+unfavourable    
+Table B.1 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.1)
+Horizontal traffic 
+surcharge K0
+Earth pressure 
+Kmax
+Limit state Earth pressure 
+Kmax
+Horizontal traffic 
+surcharge K0
+0,5 0,60 SLS (characteristic) 0,60 0,5
+0,54 0,77 EQU 0,77 0,54
+0,50 0,72 STR/GEO (Comb 1) 0,72 0,50
+0,58 0,84 STR/GEO (Comb 2) 0,84 0,58
+NOTE The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+52 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 61 ===
+Figure B.2 — Minimum vertical load with maximum horizontal load
+Horizontal
+traffic
+surcharge
+Horizontal
+traffic
+surchargeBox structuresBox structures
+No traffic
+Minimum superimposed permanent load
+using favourable    F
+F
+K0 K0Kmax Kmax
+Kmax Kmax
+Vertical traffic surcharge Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Horizontal
+traffic
+surcharge
+Horizontal
+traffic
+surchargePortal structuresPortal structures
+No traffic
+F
+K0
+R1 R2
+K0Kmax Kmax
+Kmax Kmax
+Vertical traffic surcharge Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Minimum superimposed permanent load
+using favourable    F
+Table B.2 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.2)
+Horizontal 
+traffic surcharge 
+K0
+Earth pressure 
+Kmax
+Limit state Earth pressure 
+Kmax
+Horizontal traffic 
+surcharge K0
+0,5 0,60 SLS (characteristic) 0,60 0,5
+0,54 0,77 EQU 0,77 0,54
+0,50 0,72 STR/GEO (Comb 1) 0,72 0,50
+0,58 0,84 STR/GEO (Comb 2) 0,84 0,58
+NOTE  The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 53
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 62 ===
+Figure B.3 — Maximum vertical load with minimum horizontal load
+Box structuresBox structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load
+including      andF
+F
+Sd;ec
+Kmin Kmin
+Kmin Kmin
+Self weight of
+structure using
+unfavourable    
+Portal structuresPortal structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load
+including      andF
+F
+Sd;ec
+R1 R2
+Kmin Kmin
+Kmin Kmin
+Self weight of
+structure using
+unfavourable    
+Table B.3 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.3)
+Earth pressure Kmin Limit state Earth pressure Kmin
+0,20 SLS (characteristic) 0,20
+0,18 EQU 0,18
+0,20 STR/GEO (Comb 1) 0,20
+0,16 STR/GEO (Comb 2) 0,16
+NOTE  The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+54 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 63 ===
+Figure B.4 — Braking and acceleration with maximum vertical load and active pressure
+  
+Ka
+Self weight of
+structure using
+    unfavourable /g74F    
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load including /g74F and /g74Sd;ec
+Ka Kmax
+Kmax
+Vertical traffic surcharge
+Braking and acceleration
+Friction
+(See Note 3)
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Vertical traffic in most onerous position
+Maximum superimposed permanent load including /g74F and /g74Sd;ec
+Ka Ka Kmax
+Kmax
+Vertical traffic surcharge
+Self weight of
+structure using
+unfavourable /g74F
+Braking and acceleration
+R1 R2
+(See Note 3)
+  
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 55
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 64 ===
+Table B.4 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.4)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kmax
+0,33 0,33 SLS (characteristic) 0,6
+0,37 0,44 EQU 0,6
+0,33 0,40 STR/GEO (Comb 1) 0,72
+0,41 0,49 STR/GEO (Comb 2) 0,84
+NOTE 1 The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+NOTE 2 If the structure sways towards the active side, this load case may be ignored.
+NOTE 3 The earth pressure coefficient for the passive wall may be taken as greater than Kmax for bearing, 
+sliding and overturning (see 10.3.2 and 10.3.3) provided the associated displacements are acceptable at the 
+relevant limit state.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+56 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 65 ===
+Figure B.5 — Braking and acceleration with minimum vertical load and active pressures
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Minimum superimposed permanent load including      (favourable)
+=
+F
+F
+Ka Ka Kr Kmax
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+Friction
+(See Note 3)
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Minimum superimposed permanent load including      (favourable)
+=
+F
+F
+Ka Ka Kr Kmax
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+R1 R2
+(See Note 3)
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 57
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 66 ===
+Table B.5 — Directly determined design values of the earth pressure coefficient K that may be applied at various 
+states (Figure B.5)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kmax
+0,33 0,33 SLS (characteristic) 0,6
+0,37 0,44 EQU 0,6
+0,33 0,40 STR/GEO (Comb 1) 0,72
+0,41 0,49 STR/GEO (Comb 2) 0,84
+NOTE 1 The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+NOTE 2 If the structure sways towards the active side, this load case may be ignored.
+NOTE 3 The earth pressure coefficient for the passive wall may be taken as greater than Kmax for bearing, 
+sliding and overturning (see 10.3.2 and 10.3.3) provided the associated displacements are acceptable at the 
+relevant limit state.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+58 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 67 ===
+Figure B.6 — Sliding
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Box structuresBox structures
+Minimum superimposed permanent load including      (favourable)
+F
+F
+Ka Ka
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+Friction
+Buoyancy
+Kr , sufficient to 
+resist sliding and
+overturning
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+Horizontal
+traffic
+surcharge
+Active
+pressure
+Portal structuresPortal structures
+Minimum superimposed permanent load including      (favourable)
+F
+F
+Ka Ka
+Kr
+Vertical traffic surcharge
+Self weight of
+structure using
+favourable    
+Braking and acceleration
+R1 R2
+Kr , sufficient to 
+resist sliding and
+overturning
+Minimum traffic
+causing braking and
+acceleration located in
+most onerous position
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 59
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 68 ===
+Table B.6 — Directly determined design values of the earth pressure coefficient K that may be applied at various limit 
+states (Figure B.6)
+Horizontal traffic 
+surcharge Ka
+Earth pressure Ka Limit state Earth pressure Kr
+0,33 0,33 SLS (characteristic) Kr
+0,37 0,44 EQU Kr
+0,33 0,40 STR/GEO (Comb 1) Kr
+0,41 0,49 STR/GEO (Comb 2) Kr
+NOTE  The values of K include the partial factor γM, and (for permanent earth pressure at ULS) the model 
+factor γSd;K.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+60 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 69 ===
+Bibliography
+For dated references, only the edition cited applies. For undated references, the latest edition of the 
+referenced document (including any amendments) applies.
+BS 5400 (all parts), Steel, concrete and composite bridges5)
+BS 8002:2015, Code of practice for Earth retaining structures
+BS 8004:2015, Code of practice for foundations
+Text deleted
+BS EN 1992-1-1:2004, Eurocode 2: Design of concrete structures – Part 1-1: General rules and rules 
+for buildings
+BS EN ISO 22476 (all parts), Geotechnical investigation and testing – Field testing
+NA to BS EN 1991-2:2003, UK National Annex to Eurocode 1 – Actions on structures – Part 2: Traffic 
+loads on bridges
+CP2:1951, Code of practice for earth retaining structures
+Other publications
+[1] POULOS, H.G. and DAVIS, E.H. Elastic Solutions for Soil and Rock Mechanics. New York: 
+Wiley, 1980.
+[2] DEPARTMENT FOR TRANSPORT . Design Manual for Roads and Bridges (DMRB). London: 
+The	Stationery	Office.
+[3]	 DENTON.	S.R.,	CHRISTIE,	T .J.C.,	SHAVE,	J.	and	KIDD,	A.	 Conference	paper	on	“PD 6694-1, 
+Recommendations for the design of structures subject to traffic loading to BS EN 1997-1”,  
+presented at “Proceedings of Bridge Design to Eurocodes – UK Implementation Conference”.  
+Edited by S. Denton. London: Institution of Civil Engineers, 22-23 November 2010.
+[4]	 ELSON.	W .K.	 Design of Laterally-loaded Piles (CIRIA Report R103). London: CIRIA, 1984. 
+ISBN 978 0 86017 216 1.
+[5] SEAMAN, J.W. A guide to accommodating or avoiding soil-induced lateral loading of piled 
+foundations for highway bridges (TRL Project Report 71). TRL, 1994. ISBN 1 84608 070 3.
+[6]	 CLAYTON,	C.	R.	I.,	MILITITSKY ,	J.	and	WOODS,	R.I . Earth pressure and earth-retaining 
+structures, 2nd edition. Glasgow: Blackie Academic & Professional, 1993.
+[7] HIGHWAYS AGENCY. Manual of Contract Documents for Highway Works (MCHW). London: 
+The	Stationery	Office.
+[8] HAMBLY, E.C. Bridge Deck Behaviour. 2nd edition. London: E & FN Spon, 1991. 
+ISBN 0 419 17260 2.
+[9] BOLTON. M.D. The strength and dilatency of sands. Geotechnique. 1986, 36	(1)	pp.	65–78.
+[10]	 SHAVE.	J.D.,	CHRISTIE,	T .J.C.C.,	DENTON,	S.R.	and	KIDD,	A.,	Conference	paper	on	“ Development 
+of traffic surcharge models for highway structures” , presented at “Proceedings of Bridge Design 
+to Eurocodes – UK Implementation Conference” . Edited by S. Denton. London: Institution of Civil 
+Engineers, 22-23 November 2010.
+[11]	 DENTON.	S.R.,	KIDD,	A.,	 SIMPSON,	B.	and	BOND,	A.	Conference	paper	on	“Overview of 
+Geotechnical Design of Bridges and the provisions of the UK NA for EN 1997-1” , presented at 
+5) Withdrawn.
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+© THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED 61
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 70 ===
+“Proceedings of Bridge Design to Eurocodes – UK Implementation Conference” . Edited by S. 
+Denton. London: Institution of Civil Engineers, 22-23 November 2010.
+[12] GABA. A., HARDY, S., DOUGHTY, L., POWRIE, W. and SELEMETAS, D. Guidance on embedded 
+retaining wall design (CIRIA Report C760). London: CIRIA, 2017.
+[13] ENGLAND, G.L., TSANG, C.M. and BUSH, D. Integral Bridges – a fundamental approach to the 
+time temperature loading problem. London: Thomas Telford Ltd, 2000.
+[14] HAMBLY, E.G. and BURLAND, J.B. Bridge Foundations and Substructures. London: The Stationery 
+Office,	1979.
+[15] SPRINGMAN, S.M., NORRISH, A. and NG, C.W.W. Cyclic loading of sand behind integral bridge 
+abutments, Transport Research Laboratory Project Report 146. Crowthorne: Transport 
+Research Laboratory, 1996.
+[16] TAPPER. L. and LEHANE, B.M. Lateral stress development on integral bridge abutments. 
+In Proceedings of the 18th Australasian Conference on the Mechanics of Structures and 
+Materials, Perth, Australia. London. Vol. 2, PP . 1069-1075. London, 2004.
+[17] TAN, E.L. and LEHANE, B.L. Lateral Stress Development on Integral Bridge Abutments. 
+The University of Western Australia, 2008.
+[18]	 DENTON.	S.R.,	RICHES,	O.,	CHRISTIE,	T .J.C.	and	KIDD,	A.	Conference	paper	on	“ Developments 
+in integral bridge design” , presented at “Proceedings of Bridge Design to Eurocodes 
+– UK Implementation Conference” . Edited by S. Denton. London: Institution of Civil 
+Engineers, 22-23 November 2010.
+[19] PUCHER, A. Influence surfaces of elastic plates. New York: Springer-Verlag, 1977.
+[20]	 O’BRIEN,	E.J.,	KEOGH,	D.L.,	O’CONNOR,	A.J.	and	LEHANE,	B.M,	Bridge	Deck	Analysis,	2 nd Edition, 
+CRC Press, 2015. ISBN 13 978 1 4822 2724 6.
+[21]	 CLAYTON.	C.R.I.,	XU,	M.	and	BLOODWORTH,	A.G.	 A laboratory study of the development of earth 
+pressure behind integral bridge abutments. Geotechnique. 2006, 56	(8)	pp.	561–571.
+[22]	 KOUTSOFTAS.	D.C.	and	FISCHER,	J.A.	Dynamic	Properties	of	Two	Marine	Clays.	 Journal of the 
+Geotechnical Engineering Division.	June	1980,	106	(6)	pp.	145–157.
+[23] SEED, H. and IDRISS, I.N. Soil Moduli and Damping Factors for Dynamic Response Analyses. 
+Report no. EERC 70-10. University of California: California, 1970.
+PD 6694-1:2011+A1:2020 PUBLISHED DOCUMENT
+62 © THE BRITISH ST ANDARDS INSTITUTION 2023 – ALL RIGHTS RESERVED
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 71 ===
+THIS	PAGE	DELIBERATEL Y	LEFT	BLANK
+PUBLISHED DOCUMENT PD 6694-1:2011+A1:2020
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
+=== PAGE 72 ===
+B SI is the national body responsible for preparing British Stan dards and other
+standards-related publicati ons, information and services.
+B SI is incorporated by Royal Charter. British Stan dards and oth er standardization
+p roducts are published by BSI Stan dards Limited.
+British Stand ards Institution (BSI)
+About us
+We bring tog eth er busin ess, ind ust ry, governm ent, consumers, innovators
+and others to shape their combined experience and expertise i nto standards
+-based solut ions.
+The knowle dge embodied in our standards has b een carefully a ssembled in
+a dependable form at and r eﬁn ed t hrough our open con sultation proce ss.
+Organizat ions of all sizes and across a ll secto rs choose s tan dards to help
+them achieve their g oals.
+Information on standards
+We can provide you with the knowledge that your organizat ion needs
+to succeed. Find out more about British Standards by visiting our website at 
+bsigroup.com/ standards or con tacting our Customer Services team or
+Knowledge Cen tre.
+Buying standards
+You can buy and downl oad PDF versio ns of B SI pub lications, including British
+and adopt ed European and inte rnational sta ndards, through our website at 
+bsigroup.com/shop, where hard copies can also be purchased. 
+If you need international and forei gn standards from other Stand ards Development
+Organ izations , hard copies can be ordered from our Custo mer Services team.
+Copyright in BSI publications
+All the conte nt in BSI publicati ons, includ ing Brit ish S tandards, is the property
+of  and copyr ighted by BSI or s ome p erson or entity that owns copyright in the
+information used ( such as the inter nation al standar dizat ion bodies) and has 
+formally licen sed such informati on to BSI for commercial publication and use.
+Save for the pro visions below, you may not transfer, share or dissem ina te any
+portion of t he standard to any other person. You may not adapt, distr ibute, 
+commer cially exploit or publicly d isplay the standard or any portion thereof in any 
+manner whatsoever without BSI’s pri or written consent.
+Storing and using standards
+Standar ds pur chased in soft copy format:
+• A British Standard purc hased in soft copy format is licensed to a sole named
+user for p ersonal or i nter nal company use only.
+• The standard may be s tor ed on more t han one device pro vided that it is a cce ssible
+by the sole named user only and that only one copy is a ccessed at any one t ime.
+• A single p aper c opy may be printed f or per son al or internal company use only.
+Standar ds pur chased in hard copy format:
+• A British Standard purc hased in hard copy format is for person al or internal
+company use only.
+• It may n ot be further r epr oduc ed – in any format – to create an additional copy.
+This includes sca nning of the document.
+If you need more than one copy of the document, or if you wish to share the
+docume nt on an i ntern al net work, y ou can save mon ey by choo sing a subscription
+product (see ‘Subscriptions’).
+Reproducing extracts
+For permission  to r epr oduce conte nt from BSI publica tions contact the BSI
+C opyright  and Licensing team.
+Subscriptions
+Our range of sub scrip tion services are designed to make using standards
+easier for you. For further information on our subscrip tion products go to
+b sigroup.co m/subscrip tions.
+With B ritish S tandards Online (BSOL)  y ou’ll have instant acce ss to over 55,000
+B rit ish and adopted European and intern ation al standards from your desktop.
+It’s a vailable 24/7 and is refreshed daily so you ’ll a lwa ys be up to date. 
+You can keep in touch with standards develop men ts and receive substantial
+d iscounts on t he purch ase p rice of standards, both in sin gle copy and s ubscrip tion
+format, by b eco ming a BSI Subscribing Member. 
+PLUS  is an u pdating s ervice e xclu sive to BSI Subscrib ing Members. You will
+automatica lly receive t he l atest hard copy of your stand ards when t hey’re
+revised or replaced. 
+To ﬁnd out more about becoming a BSI Subscribing Member and the beneﬁts
+of membership, please visit b sigroup.com/shop.
+With a Multi-User Network Licence (MUNL)  y ou are able to h ost standards
+publica tions on your intranet. Lice nces can cover as few or as many users as you
+wish. With updates supplied as s oon as they’re availa ble, you can be sure your 
+d ocu mentation is current. For further informa tio n, email 
+Revisions
+Our British Standards and other publica tions are upda ted by amend ment or revision. 
+We c ontinually improve the quality of our products and services to  b eneﬁt your
+busine ss. If you ﬁnd an inaccuracy or ambiguity within a British Stand ard or other 
+BSI publica tion please inform the Knowledge C ent re.
+Useful Contacts
+Knowledge Centre
+Tel: +44 20 8996 7004
+Email: knowledgecentre@bsigroup.com
+Copyright and Licensing
+Tel: +44 20 8996 7070
+Email: copyright@bsigroup.com
+NO COPYING WIT HOUT BSI PERMIS SION EXCEPT AS PERMITTED BY COPYRIGHT LAW
+BSI Group Headquarters
+389 Chiswick High Road London W4 4AL UK
+cservices@bsigroup.com.
+Customer Relations
+Tel: +44 345 086 9001
+Email: cservices@bsigroup.com
+Subscription Support
+Tel: +44 345 086 9001
+Email: subscription.support@bsigroup.com
+Copyright British Standards Institution 
+Provided by Accuris under license with BSI - Uncontrolled Copy 
+Licensee=Stantec (UK) Ltd - Ashford, Oxford (Loc 1, 9)/5987154001, User=Brady, Joseph
+Not for Resale, 06/08/2026 21:08:38 UTC
+No reproduction or networking permitted without license from Accuris
+--`,,,`,,,,```````,,,,`,``````,-``,,`,,,,-``,,`,,,,---
+
