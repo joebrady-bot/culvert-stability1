@@ -3,7 +3,12 @@
     "allow": [
       "PowerShell(pip install *)",
       "PowerShell(Stop-Process *)",
-      "PowerShell(Start-Process -FilePath \"python\" -ArgumentList \"-m streamlit run app.py --server.headless true\" -WorkingDirectory \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\" -WindowStyle Hidden)"
+      "PowerShell(Start-Process -FilePath \"python\" -ArgumentList \"-m streamlit run app.py --server.headless true\" -WorkingDirectory \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\" -WindowStyle Hidden)",
+      "PowerShell(Get-Command pdftotext -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
+      "PowerShell(python -c \"import pypdf; r=pypdf.PdfReader\\(r'C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\worked example.pdf'\\); pages=len\\(r.pages\\); print\\(f'Pages: {pages}'\\); [print\\(f'--- PAGE {i+1} ---\\\\n{r.pages[i].extract_text\\(\\)[:3000]}'\\) for i in range\\(min\\(5,pages\\)\\)]\" 2>&1)",
+      "PowerShell(cd \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; $env:PYTHONIOENCODING=\"utf-8\"; python -c \"import ast; ast.parse\\(open\\('app.py', encoding='utf-8'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")",
+      "PowerShell(cd \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; $env:PYTHONIOENCODING=\"utf-8\"; python verify_sliding.py)"
     ]
   }
 }

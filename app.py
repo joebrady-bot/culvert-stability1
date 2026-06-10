@@ -20,33 +20,33 @@ st.caption("Metre-strip · PD6694-1 Annex B Tables B.4/B.5/B.6 · BS EN 1991-2 L
 #   gG_u / gG_f: unfavourable / favourable on permanent actions
 #   g_phi / g_c: on shear strength parameters (resistance side)
 LS = {
-    "SLS":        {"Ka": 0.33, "Kmax": 0.60, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.00},
-    "EQU":        {"Ka": 0.44, "Kmax": 0.60, "gG_u": 1.10, "gG_f": 0.90, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
-    "STR/GEO C1": {"Ka": 0.40, "Kmax": 0.72, "gG_u": 1.35, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.35},
-    "STR/GEO C2": {"Ka": 0.49, "Kmax": 0.84, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
+    "SLS":        {"Ka": 0.33, "Ka_tr": 0.33, "Kmax": 0.60, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.00},
+    "EQU":        {"Ka": 0.44, "Ka_tr": 0.37, "Kmax": 0.60, "gG_u": 1.10, "gG_f": 0.90, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
+    "STR/GEO C1": {"Ka": 0.40, "Ka_tr": 0.33, "Kmax": 0.72, "gG_u": 1.35, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.35},
+    "STR/GEO C2": {"Ka": 0.49, "Ka_tr": 0.41, "Kmax": 0.84, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
 }
 LS_NAMES = list(LS.keys())
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("Geometry")
-    B   = st.number_input("Internal Width, B (m)",    0.1, 20.0, 2.0,  0.1,  "%.2f")
-    H   = st.number_input("Internal Height, H (m)",   0.1, 10.0, 1.5,  0.1,  "%.2f")
-    LL  = st.number_input("Overall Length, LL (m)",   0.5, 50.0, 6.0,  0.5,  "%.1f",
+    B   = st.number_input("Internal Width, B (m)",    0.1, 20.0, 2.5,  0.1,  "%.2f")
+    H   = st.number_input("Internal Height, H (m)",   0.1, 10.0, 2.0,  0.1,  "%.2f")
+    LL  = st.number_input("Overall Length, LL (m)",   0.5, 50.0, 20.6, 0.5,  "%.1f",
                            help="Longitudinal barrel length — used for load dispersion and braking reduction factor η.")
-    t_w = st.number_input("Wall Thickness, t_w (m)",  0.05, 2.0, 0.25, 0.05, "%.2f")
+    t_w = st.number_input("Wall Thickness, t_w (m)",  0.05, 2.0, 0.30, 0.05, "%.2f")
     t_s = st.number_input("Slab Thickness, t_s (m)",  0.05, 2.0, 0.30, 0.05, "%.2f")
 
     st.header("Cover Layers (top to bottom)")
     st.markdown("**Road construction**")
-    t_road  = st.number_input("Thickness (m)",       0.0, 2.0,  0.10, 0.01, "%.3f", key="t_road")
+    t_road  = st.number_input("Thickness (m)",       0.0, 2.0,  0.20, 0.01, "%.3f", key="t_road")
     γ_road  = st.number_input("Unit Weight (kN/m³)", 10.0, 30.0, 24.0, 0.5,         key="g_road")
     st.markdown("**Subbase**")
-    t_sub   = st.number_input("Thickness (m)",       0.0, 2.0,  0.25, 0.05, "%.3f", key="t_sub")
+    t_sub   = st.number_input("Thickness (m)",       0.0, 2.0,  0.30, 0.05, "%.3f", key="t_sub")
     γ_sub   = st.number_input("Unit Weight (kN/m³)", 10.0, 25.0, 20.0, 0.5,         key="g_sub")
     st.markdown("**Fill**")
-    t_fill  = st.number_input("Thickness (m)",       0.0, 20.0, 0.65, 0.05, "%.3f", key="t_fill")
-    γ_fill  = st.number_input("Unit Weight (kN/m³)", 10.0, 25.0, 18.0, 0.5,         key="g_fill")
+    t_fill  = st.number_input("Thickness (m)",       0.0, 20.0, 0.50, 0.05, "%.3f", key="t_fill")
+    γ_fill  = st.number_input("Unit Weight (kN/m³)", 10.0, 25.0, 19.0, 0.5,         key="g_fill")
 
     st.header("Backfill Properties")
     st.caption("Used for passive (Kr) resistance on culvert walls")
@@ -55,7 +55,7 @@ with st.sidebar:
 
     st.header("Founding Layer Properties")
     st.caption("Used for base sliding resistance and bearing")
-    φ_fnd_deg = st.number_input("Friction Angle φ'_fnd (°)", 0.0, 45.0, 28.0, 1.0, key="phi_fnd")
+    φ_fnd_deg = st.number_input("Friction Angle φ'_fnd (°)", 0.0, 45.0, 32.0, 1.0, key="phi_fnd")
     c_fnd     = st.number_input("Cohesion c'_fnd (kPa)",     0.0, 200.0,  0.0, 1.0, key="c_fnd")
     q_Rd      = st.number_input(
         "Bearing Resistance q_Rd (kPa)", 50.0, 5000.0, 300.0, 10.0,
@@ -65,19 +65,19 @@ with st.sidebar:
     st.caption("Road runs transversely across the culvert (vehicles travel in B_ext direction)")
     cw_width   = st.number_input("Carriageway Width (m)", 1.0, 30.0, 7.30, 0.05, "%.2f", key="cw_width",
                                   help="Total width between kerbs, centred on barrel length LL")
-    lane_width = st.number_input("Lane Width (m)",        1.0, 5.0,  3.65, 0.05, "%.2f", key="lane_width",
+    lane_width = st.number_input("Lane Width (m)",        1.0, 5.0,  3.00, 0.05, "%.2f", key="lane_width",
                                   help="Individual lane width")
 
     st.header("LM3 Special Vehicle")
     st.caption("!! Verify SV data against UK NA Table NA.5 !!")
-    lm3_vehicle = st.selectbox("SV Vehicle", list(lm3_loading.SV_VEHICLES.keys()))
+    lm3_vehicle = st.selectbox("SV Vehicle", list(lm3_loading.SV_VEHICLES.keys()), index=3)
 
     st.header("Water Table")
-    h_wt = st.number_input("Depth below GL (m)", 0.0, 30.0, 5.0, 0.1, key="h_wt",
+    h_wt = st.number_input("Depth below GL (m)", 0.0, 30.0, 2.6, 0.1, key="h_wt",
                             help="Shown on diagram. Affects effective stresses and uplift in B.6 checks.")
 
     st.header("Material")
-    γ_c = st.number_input("Concrete Unit Weight γ_c (kN/m³)", 20.0, 26.0, 24.0, 0.5)
+    γ_c = st.number_input("Concrete Unit Weight γ_c (kN/m³)", 20.0, 26.0, 25.0, 0.5)
 
 # ── Derived geometry ───────────────────────────────────────────────────────────
 B_ext  = B + 2 * t_w
@@ -95,7 +95,14 @@ W_road = γ_road * t_road * B_ext
 W_sub  = γ_sub  * t_sub  * B_ext
 W_fill = γ_fill * t_fill * B_ext
 W_soil = W_road + W_sub + W_fill
-N_G_k  = W_conc + W_soil   # characteristic permanent vertical load (per metre strip)
+N_G_k  = W_conc + W_soil   # nominal permanent vertical load (for display / reference)
+# UK NA to EN 1991-1-1 Table NA.1 Cl.5.2.3(3): road construction thickness deviation
+W_road_max = W_road * 1.55   # +55% — unfavourable for max-vertical (B.4 bearing)
+W_road_min = W_road * 0.60   # −40% — unfavourable for min-vertical (B.5 / OT / sliding)
+# PD6694-1 Cl.10.2.2: model factor for superimposed permanent loads
+g_Sd_ec    = 1.15   # applied to road + subbase + fill for max case; 1.0 for min case
+N_G_k_max  = W_conc + g_Sd_ec * (W_road_max + W_sub + W_fill)
+N_G_k_min  = W_conc +           (W_road_min + W_sub + W_fill)   # g_Sd_ec = 1.0 (favourable)
 
 φ_fill_k = math.radians(φ_fill_deg)   # backfill — governs Kr passive resistance
 φ_fnd_k  = math.radians(φ_fnd_deg)   # founding layer — governs base sliding resistance
@@ -103,7 +110,9 @@ N_G_k  = W_conc + W_soil   # characteristic permanent vertical load (per metre s
 γ_w = 9.81  # kN/m³
 
 # Total vertical stresses at crown and invert
-σ_top = γ_road * t_road + γ_sub * t_sub + γ_fill * t_fill
+# PD6694-1 Cl.10.2.2: road construction deviation +55% is unfavourable for horizontal earth pressure.
+# W_road_max / B_ext gives the +55% road layer stress; sub-base and fill use nominal thickness.
+σ_top = W_road_max / B_ext + (W_sub + W_fill) / B_ext   # = 1.55·γ_road·t_road + γ_sub·t_sub + γ_fill·t_fill
 σ_bot = σ_top + γ_fill * H_ext
 
 # Pore water pressures at crown and invert (zero above water table)
@@ -128,7 +137,7 @@ lm1 = lm1_loading.compute(
     B_ext=B_ext, LL=LL, H_c=H_c,
     lane_width=lane_width, n_lanes=n_lanes,
 )
-Q_vk = lm1.max_V_per_m   # characteristic LM1 vertical load (all lanes, per metre strip)
+Q_vk_lm1 = lm1.max_V_per_m   # characteristic LM1 vertical load (all lanes, per metre strip)
 
 # ── LM3 special vehicle loading ───────────────────────────────────────────────
 lm3 = lm3_loading.compute(
@@ -138,22 +147,18 @@ lm3 = lm3_loading.compute(
 )
 
 # ── PD6694-1 Table 6 — horizontal traffic loads on active wall ────────────────
-# Kd = Ka (characteristic, without γM/γSd;K) per Table 6 Note 4, active side only
-Ka_char   = math.tan(math.pi/4 - φ_fill_k/2) ** 2
+# Kd per Table 6 Note 4 = design Ka from Table B.4/B.5/B.6 "Horizontal traffic surcharge Ka" column
+# (pre-calibrated for 6N/6P backfill; stored per limit state as Ka_tr in LS dict)
+Ka_char = math.tan(math.pi/4 - φ_fill_k/2) ** 2  # Rankine formula reference value
 
 # Note 5 reduction factor for F line loads (buried structure, Hc in metres)
-_rF       = (1.0 - H_c / 2.0) ** 2  if H_c < 2.0  else 0.0
+_rF = (1.0 - H_c / 2.0) ** 2  if H_c < 2.0  else 0.0
 
-# Characteristic horizontal forces per metre strip (LL direction)
-Q_h_udl_k = 20.0  * Ka_char * H_ext                        # σh UDL resultant (kN/m)
-Q_h_F_k   = 2.0 * 300.0 * Ka_char * _rF / lane_width      # two F line loads (kN/m)
-# Moment arms about the base (invert level):
-#   σh uniform over H_ext  → arm = H_ext/2
-#   F applied at crown     → arm = H_ext
-Q_h_M_k   = Q_h_udl_k * (H_ext / 2.0) + Q_h_F_k * H_ext  # driving moment (kNm/m)
+# Per-limit-state F line load for LM1: 2 × 330Kd × r_F / lane_width (Table 6, F = 330Kd)
+Q_h_F_k_lm1 = {n: 2.0 * 330.0 * LS[n]["Ka_tr"] * _rF / lane_width for n in LS_NAMES}
 
 # ── Per-limit-state calculations ───────────────────────────────────────────────
-def run(p):
+def run(p, Q_vk, Q_h_F_k_arg, q_udl_coeff=20.0):
     Ka, Kmax   = p["Ka"],   p["Kmax"]
     gG_u, gG_f = p["gG_u"], p["gG_f"]
     gQ         = p["gQ"]
@@ -169,37 +174,46 @@ def run(p):
     # ── B.4 / B.5 — total stresses, no water table effect ───────────────────
     # Traffic is unfavourable for B.4 bearing (max vertical); excluded from
     # B.5/overturning resistance where minimum vertical governs.
-    V_u = gG_u * N_G_k + gQ * Q_vk   # B.4 bearing: max vertical (Gk + Qk)
-    V_f = gG_f * N_G_k                # B.4/B.5 OT/sliding resistance: min vertical (Gk only)
+    V_u = gG_u * N_G_k_max + gQ * Q_vk   # B.4 bearing: max vertical (+55% road construction)
+    V_f = gG_f * N_G_k_min               # B.4/B.5 OT/sliding resistance: min vertical (−40% road)
 
     F_Ka,   arm_Ka   = trapz_resultant(Ka,   σ_top, σ_bot, H_ext)
     F_Kmax, arm_Kmax = trapz_resultant(Kmax, σ_top, σ_bot, H_ext)
-    F_net    = F_Kmax - F_Ka
-    M_net_B4 = F_Kmax * arm_Kmax - F_Ka * arm_Ka   # earth pressure only (for display)
-    R_fric   = math.tan(φ_fnd_d) * V_f + c_fnd_d * B_ext
-    M_stb    = V_f * B_ext / 2
+    F_net    = F_Kmax - F_Ka          # net passive-minus-active earth (for display)
+    M_net_B4 = F_Kmax * arm_Kmax - F_Ka * arm_Ka   # net Kmax-minus-Ka moment (for display)
+
+    # B.4 uses max V (with traffic) for friction/OT stability; B.5 uses min V (permanent only)
+    R_fric_B4 = math.tan(φ_fnd_d) * V_u + c_fnd_d * B_ext   # B.4 — max vertical
+    R_fric    = math.tan(φ_fnd_d) * V_f + c_fnd_d * B_ext   # B.5 — min vertical
+    M_stb_B4  = V_u * B_ext / 2   # B.4 — max vertical
+    M_stb     = V_f * B_ext / 2   # B.5 — min vertical
 
     # Table 6 horizontal traffic loads — active side, factored by γQ
-    F_h_tr   = gQ * (Q_h_udl_k + Q_h_F_k)   # factored horizontal force (kN/m)
-    M_h_tr   = gQ * Q_h_M_k                   # factored driving moment (kNm/m)
+    # q_udl_coeff: 20 for LM1, 30 for LM3 (PD6694-1 Table 6)
+    # Q_h_F_k_arg: LM1 → Table 6 F line loads; LM3 → SV braking (0.25×basic GVW÷LL)
+    Q_h_udl_k_r  = q_udl_coeff * p["Ka_tr"] * H_ext
+    F_h_tr       = gQ * (Q_h_udl_k_r + Q_h_F_k_arg)
+    Q_h_M_k_char = Q_h_udl_k_r * (H_ext / 2.0) + Q_h_F_k_arg * H_ext
+    M_h_tr       = gQ * Q_h_M_k_char
 
-    # B.4/B.5 OT and sliding include Table 6 traffic horizontal on active side
-    F_drv_B45  = F_net    + F_h_tr
-    M_drv_B45  = M_net_B4 + M_h_tr
+    # Driving forces: active Ka + traffic on active side, MINUS passive Kmax resistance.
+    # F_net = F_Kmax − F_Ka (passive > active, resists); friction covers the remainder.
+    F_drv_B45 = max(0.0, F_Ka + F_h_tr - F_Kmax)           # friction needed (≥ 0)
+    M_drv_B45 = max(0.0, F_Ka * arm_Ka + M_h_tr - F_Kmax * arm_Kmax)  # net OT moment
 
     q_B4       = V_u / B_ext
     UR_B4_bear = q_B4 / q_Rd if q_Rd > 0 else float("inf")
-    UR_B4_ov   = M_drv_B45 / M_stb  if M_stb  > 0 else float("inf")
-    UR_B4_sl   = F_drv_B45 / R_fric if R_fric > 0 else float("inf")
+    UR_B4_ov   = M_drv_B45 / M_stb_B4 if M_stb_B4 > 0 else float("inf")
+    UR_B4_sl   = F_drv_B45 / R_fric_B4 if R_fric_B4 > 0 else float("inf")
 
     q_B5       = V_f / B_ext
     UR_B5_bear = q_B5 / q_Rd if q_Rd > 0 else float("inf")
-    UR_B5_ov   = UR_B4_ov
-    UR_B5_sl   = UR_B4_sl
+    UR_B5_ov   = M_drv_B45 / M_stb   if M_stb   > 0 else float("inf")
+    UR_B5_sl   = F_drv_B45 / R_fric  if R_fric  > 0 else float("inf")
 
     # ── B.6 — effective stresses + uplift + traffic ──────────────────────────
-    V_u_B6 = max(gG_u * N_G_k + gQ * Q_vk - gG_f * U_k, 0.0)
-    V_f_B6 = max(gG_f * N_G_k              - gG_u * U_k, 0.0)
+    V_u_B6 = max(gG_u * N_G_k_max + gQ * Q_vk - gG_f * U_k, 0.0)
+    V_f_B6 = max(gG_f * N_G_k_min             - gG_u * U_k, 0.0)
 
     F_Ka_B6,   arm_Ka_B6 = trapz_resultant(Ka, σ_eff_top, σ_eff_bot, H_ext)
     F_Kr,      arm_Kr     = trapz_resultant(Kp, σ_eff_top, σ_eff_bot, H_ext)
@@ -218,25 +232,30 @@ def run(p):
     UR_B6_sl   = F_drv_B6 / R_B6     if R_B6     > 0 else float("inf")
 
     return dict(
-        Ka=Ka, Kmax=Kmax, gG_u=gG_u, gG_f=gG_f, gQ=gQ, g_phi=g_phi, g_c=g_c,
+        Ka=Ka, Ka_tr=p["Ka_tr"], Kmax=Kmax, gG_u=gG_u, gG_f=gG_f, gQ=gQ, g_phi=g_phi, g_c=g_c,
+        Q_h_udl_k=Q_h_udl_k_r, Q_h_F_k_char=Q_h_F_k_arg,
         V_u=V_u, V_f=V_f, V_u_B6=V_u_B6, V_f_B6=V_f_B6, U_k=U_k,
         u_top=u_top, u_bot=u_bot, σ_eff_top=σ_eff_top, σ_eff_bot=σ_eff_bot,
         φ_fill_d_deg=math.degrees(φ_fill_d), c_fill_d=c_fill_d,
         φ_fnd_d_deg=math.degrees(φ_fnd_d),   c_fnd_d=c_fnd_d,
         F_Ka=F_Ka, F_Ka_B6=F_Ka_B6, F_Kmax=F_Kmax, F_net=F_net,
         arm_Ka=arm_Ka, arm_Ka_B6=arm_Ka_B6, arm_Kmax=arm_Kmax, arm_Kr=arm_Kr,
-        Kp=Kp, F_Kr=F_Kr, R_fric=R_fric, R_fric_B6=R_fric_B6, R_B6=R_B6,
-        F_h_tr=F_h_tr, M_h_tr=M_h_tr,
+        Kp=Kp, F_Kr=F_Kr, R_fric_B4=R_fric_B4, R_fric=R_fric, R_fric_B6=R_fric_B6, R_B6=R_B6,
+        F_h_tr=F_h_tr, M_h_tr=M_h_tr, Q_h_M_k_char=Q_h_M_k_char,
         F_drv_B45=F_drv_B45, M_drv_B45=M_drv_B45,
         F_drv_B6=F_drv_B6, M_Ka_B6=M_Ka_B6,
         q_B4=q_B4, q_B5=q_B5, q_B6=q_B6,
-        M_stb=M_stb, M_stb_B6=M_stb_B6, M_net_B4=M_net_B4, M_net_B6=M_net_B6,
+        M_stb_B4=M_stb_B4, M_stb=M_stb, M_stb_B6=M_stb_B6, M_net_B4=M_net_B4, M_net_B6=M_net_B6,
         UR_B4_bear=UR_B4_bear, UR_B4_ov=UR_B4_ov, UR_B4_sl=UR_B4_sl,
         UR_B5_bear=UR_B5_bear, UR_B5_ov=UR_B5_ov, UR_B5_sl=UR_B5_sl,
         UR_B6_bear=UR_B6_bear, UR_B6_ov=UR_B6_ov, UR_B6_sl=UR_B6_sl,
     )
 
-res = {n: run(LS[n]) for n in LS_NAMES}
+Q_vk_lm3 = lm3.max_V_per_m
+
+res_lm1 = {n: run(LS[n], Q_vk_lm1, Q_h_F_k_lm1[n])                                          for n in LS_NAMES}
+# LM3: Table 6 SV row has σh=30Kd AND F=330Kd (same as LM1), PLUS SV braking force separately.
+res_lm3 = {n: run(LS[n], Q_vk_lm3, Q_h_F_k_lm1[n] + lm3.braking.Q_brk_per_m, 30.0) for n in LS_NAMES}
 
 # ── Shared drawing helper ──────────────────────────────────────────────────────
 def dim_arrow(ax, x, y0, y1, label, side="r", fontsize=6.5):
@@ -461,7 +480,7 @@ with st.expander("LM1 Vehicle Loading", expanded=True):
         st.dataframe(pd.DataFrame(lm1_rows), hide_index=True, use_container_width=True)
 
         st.markdown(f"""
-**Dispersion through {H_c:.3f} m cover (1:1):**
+**Dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
 - LL direction: {dg.disp_LL:.3f} m &nbsp;·&nbsp; B_ext direction: {dg.disp_Bext:.3f} m ({'merged' if dg.axles_merged else 'separate'})
 - Effective loaded length: min({dg.disp_Bext:.3f}, {B_ext:.3f}) = {dg.Bext_loaded:.3f} m
 
@@ -518,15 +537,16 @@ with st.expander("LM1 Vehicle Loading", expanded=True):
         cl   = lm1_loading.CONTACT_L                 # contact patch length
         wh   = 0.08                                   # wheel drawing height (visual)
 
+        _spread_bext = lm1_loading.DISP * H_c
         for ax_x in [ax1, ax2]:
             # Wheel contact patch
             ax_v.add_patch(patches.Rectangle((ax_x - cl/2, 0), cl, wh,
                                               fc="#222222", ec="#111111", lw=0.8, zorder=6))
-            # Dispersion lines at 1:1 through H_c
+            # Dispersion lines at 30° through H_c
             left_edge  = ax_x - cl/2
             right_edge = ax_x + cl/2
-            ax_v.plot([left_edge,  left_edge  - H_c], [0, -H_c], "r--", lw=0.8, zorder=4)
-            ax_v.plot([right_edge, right_edge + H_c], [0, -H_c], "r--", lw=0.8, zorder=4)
+            ax_v.plot([left_edge,  left_edge  - _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
+            ax_v.plot([right_edge, right_edge + _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
 
         # Dispersed footprint at crown level
         left_disp  = ctr - dg.disp_Bext / 2
@@ -626,14 +646,15 @@ with st.expander("LM1 Vehicle Loading", expanded=True):
         # Wheel patches and dispersion for this lane
         _w_l = _lctr - lm1_loading.WHEEL_SPACING / 2
         _w_r = _lctr + lm1_loading.WHEEL_SPACING / 2
+        _spread_ll = lm1_loading.DISP * H_c
         for _wx in [_w_l, _w_r]:
             _wx0 = _wx - lm1_loading.CONTACT_T / 2
             _wx1 = _wx + lm1_loading.CONTACT_T / 2
             ax_ll.add_patch(patches.Rectangle((_wx0, 0), lm1_loading.CONTACT_T, _wh_ll,
                                               fc="#222222", ec="#111111", lw=0.6, zorder=6))
-            ax_ll.plot([_wx0, _wx0 - H_c], [0, -H_c], color=_lc, lw=0.9, ls="--",
+            ax_ll.plot([_wx0, _wx0 - _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
                        alpha=0.80, zorder=5)
-            ax_ll.plot([_wx1, _wx1 + H_c], [0, -H_c], color=_lc, lw=0.9, ls="--",
+            ax_ll.plot([_wx1, _wx1 + _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
                        alpha=0.80, zorder=5)
 
         # Staggered dispersion arrow at crown level
@@ -706,9 +727,9 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
         st.markdown(f"""
 **{lm3.vehicle_name}** — {lm3.gvw:.0f} kN GVW · {len(sv.axle_loads)} axles · {len(sv.axle_loads)} × {sv.axle_loads[0]:.0f} kN/axle
 
-**Per-axle dispersion through {H_c:.3f} m cover (1:1):**
-- LL direction:   {lm3.dispersion.disp_LL:.3f} m &nbsp;=&nbsp; {lm1_loading.WHEEL_SPACING:.1f} + {lm1_loading.CONTACT_T:.1f} + 2×{H_c:.3f}
-- B_ext per axle: {lm3.dispersion.disp_B:.3f} m &nbsp;=&nbsp; {lm1_loading.CONTACT_L:.1f} + 2×{H_c:.3f}
+**Per-axle dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
+- LL direction:   {lm3.dispersion.disp_LL:.3f} m &nbsp;=&nbsp; {lm1_loading.WHEEL_SPACING:.1f} + {lm1_loading.CONTACT_T:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
+- B_ext per axle: {lm3.dispersion.disp_B:.3f} m &nbsp;=&nbsp; {lm1_loading.CONTACT_L:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
 
 **Worst-case position scan (0.05 m step):**
 - Front-axle offset from culvert edge: **{lm3.sv_worst_offset:+.3f} m**
@@ -732,7 +753,13 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
         else:
             st.markdown("*No secondary lanes (only 1 notional lane).*")
 
+        brk = lm3.braking
         st.markdown(f"""
+**Braking force — BS EN 1991-2 Cl. 4.4.4 / PD6694-1 Cl. 10.2.8.2:**
+- Q_brk = 0.25 × {lm3.gvw:.0f} kN (basic GVW) = **{brk.Q_brk_raw:.1f} kN**
+- Distributed over barrel length LL = {LL:.2f} m (in-plane rigidity, Lj = LL)
+- Per metre strip: **{brk.Q_brk_per_m:.2f} kN/m** (applied at crown, arm = H_ext)
+
 ---
 - LM1 secondary lanes total: &nbsp;**{lm3.secondary_per_m:.2f} kN/m**
 - **Max vertical (SV + secondary): {lm3.max_V_per_m:.2f} kN/m**
@@ -867,6 +894,7 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
                 fontweight="bold", zorder=7)
     ax_ll3.axvline(_lm3_cw_x0, color="#999999", lw=0.5, ls=":", zorder=3)
 
+    _spread_ll3 = lm1_loading.DISP * H_c
     for _wx3 in [_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2,
                  _ln1_ctr3 + lm1_loading.WHEEL_SPACING/2]:
         _wx0_3 = _wx3 - lm1_loading.CONTACT_T / 2
@@ -874,9 +902,9 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
         ax_ll3.add_patch(patches.Rectangle(
             (_wx0_3, 0), lm1_loading.CONTACT_T, _wh_ll3,
             fc="#222222", ec="#111111", lw=0.6, zorder=6))
-        ax_ll3.plot([_wx0_3, _wx0_3 - H_c], [0, -H_c],
+        ax_ll3.plot([_wx0_3, _wx0_3 - _spread_ll3], [0, -H_c],
                     color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
-        ax_ll3.plot([_wx1_3, _wx1_3 + H_c], [0, -H_c],
+        ax_ll3.plot([_wx1_3, _wx1_3 + _spread_ll3], [0, -H_c],
                     color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
 
     # Lane 1 dispersion arrow (i = 0, no stagger offset)
@@ -912,9 +940,9 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
             ax_ll3.add_patch(patches.Rectangle(
                 (_wx0_s, 0), lm1_loading.CONTACT_T, _wh_ll3,
                 fc="#222222", ec="#111111", lw=0.6, zorder=6))
-            ax_ll3.plot([_wx0_s, _wx0_s - H_c], [0, -H_c],
+            ax_ll3.plot([_wx0_s, _wx0_s - _spread_ll3], [0, -H_c],
                         color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
-            ax_ll3.plot([_wx1_s, _wx1_s + H_c], [0, -H_c],
+            ax_ll3.plot([_wx1_s, _wx1_s + _spread_ll3], [0, -H_c],
                         color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
 
         _y_arr3_s = -H_c - 0.09 - _i3 * 0.10
@@ -1009,117 +1037,145 @@ with col_tbl_r:
         ("Overturning",         "B.6 (Gk)",      "UR_B6_ov"),
         ("Sliding (fric+Kr)",   "B.6 (Gk)",      "UR_B6_sl"),
     ]
-    summary_data = {
-        "Check":     [r[0] for r in rows],
-        "Case":      [r[1] for r in rows],
-        **{n: [fmt(res[n][r[2]]) for r in rows] for n in LS_NAMES},
-    }
-    st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
+    _ur_tabs = st.tabs([
+        f"LM1  ({Q_vk_lm1:.1f} kN/m)",
+        f"LM3 {lm3.vehicle_name}  ({Q_vk_lm3:.1f} kN/m)",
+    ])
+    for _ur_tab, _ur_res in zip(_ur_tabs, [res_lm1, res_lm3]):
+        with _ur_tab:
+            summary_data = {
+                "Check": [row[0] for row in rows],
+                "Case":  [row[1] for row in rows],
+                **{n: [fmt(_ur_res[n][row[2]]) for row in rows] for n in LS_NAMES},
+            }
+            st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
 
-    # Overall verdict
+    # Overall verdict — worst of LM1 and LM3 across all limit states
     all_keys = ("UR_B4_bear", "UR_B4_ov", "UR_B4_sl",
                 "UR_B5_bear", "UR_B6_bear", "UR_B6_ov", "UR_B6_sl")
-    all_urs = [res[n][k] for n in LS_NAMES for k in all_keys]
+    all_urs = [_r[n][k] for _r in [res_lm1, res_lm3] for n in LS_NAMES for k in all_keys]
     if all(u <= 1.0 for u in all_urs if u < 1e6):
-        st.success("**PASS** — All checks satisfied across all four limit states.")
+        st.success("**PASS** — All checks satisfied (LM1 and LM3) across all four limit states.")
     else:
         fails = []
         check_map = [("Bearing B.4",    "UR_B4_bear"), ("Overturning B.4/B.5", "UR_B4_ov"),
                      ("Sliding B.4/B.5","UR_B4_sl"),   ("Bearing B.5",         "UR_B5_bear"),
                      ("Bearing B.6",    "UR_B6_bear"), ("Overturning B.6",     "UR_B6_ov"),
-                     ("Sliding B.6",   "UR_B6_sl")]
-        for n in LS_NAMES:
-            for label, key in check_map:
-                if res[n][key] > 1.0:
-                    fails.append(f"{label} [{n}]")
+                     ("Sliding B.6",    "UR_B6_sl")]
+        for _lm_label, _r in [("LM1", res_lm1), (f"LM3 {lm3.vehicle_name}", res_lm3)]:
+            for n in LS_NAMES:
+                for label, key in check_map:
+                    if _r[n][key] > 1.0:
+                        fails.append(f"{label} [{n}] ({_lm_label})")
         st.error("**FAIL** — " + " · ".join(fails))
 
 # ══ Section 4: Detailed calculations ══════════════════════════════════════════
 with st.expander("Detailed Calculations", expanded=False):
     tabs = st.tabs(LS_NAMES)
 for tab, name in zip(tabs, LS_NAMES):
-    r = res[name]
     with tab:
-        st.markdown(f"""
+        _dc_subtabs = st.tabs([
+            f"LM1  ({Q_vk_lm1:.1f} kN/m)",
+            f"LM3 {lm3.vehicle_name}  ({Q_vk_lm3:.1f} kN/m)",
+        ])
+        for _dc_tab, (_dc_Qvk, _dc_res, _dc_label, _dc_F_k) in zip(
+            _dc_subtabs,
+            [(Q_vk_lm1, res_lm1, "LM1 — all lanes",                            Q_h_F_k_lm1[name]),
+             (Q_vk_lm3, res_lm3, f"LM3 {lm3.vehicle_name} + secondary lanes", Q_h_F_k_lm1[name] + lm3.braking.Q_brk_per_m)],
+        ):
+            r = _dc_res[name]
+            _dc_is_lm1    = _dc_label.startswith("LM1")
+            _dc_udl_coeff = 20.0 if _dc_is_lm1 else 30.0
+            _dc_F_formula = (
+                f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
+                if _dc_is_lm1
+                else (f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
+                      f" + 0.25×{lm3.gvw:.0f}/{LL:.2f}m")
+            )
+            _dc_F_desc = "F_line (Table 6)" if _dc_is_lm1 else "F_line (Table 6) + SV braking"
+            with _dc_tab:
+                st.markdown(f"""
 **Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG_u = {r['gG_u']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
 
 **Characteristic vertical loads**
-- N_G,k (permanent) = {N_G_k:.2f} kN/m &nbsp;·&nbsp; Q_v,k (LM1 traffic, all lanes) = {Q_vk:.2f} kN/m
+- N_G,k max (+55% road, γSd;ec=1.15) = **{N_G_k_max:.2f} kN/m** &nbsp;·&nbsp; N_G,k min (−40% road) = **{N_G_k_min:.2f} kN/m**
+- Q_v,k ({_dc_label}) = {_dc_Qvk:.2f} kN/m
 
 **Factored vertical loads**
-- V_u (B.4 bearing, max) = {r['gG_u']:.2f}×{N_G_k:.2f} + {r['gQ']:.2f}×{Q_vk:.2f} = **{r['V_u']:.2f} kN/m**
-- V_f (B.5 resist., min) = {r['gG_f']:.2f}×{N_G_k:.2f} + 0×{Q_vk:.2f} &nbsp;= **{r['V_f']:.2f} kN/m** *(traffic excluded — variable action not favourable)*
+- V_u (B.4 bearing, max) = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
+- V_f (B.5 resist., min) = {r['gG_f']:.2f}×{N_G_k_min:.2f} + 0×{_dc_Qvk:.2f} &nbsp;= **{r['V_f']:.2f} kN/m** *(traffic excluded — variable action not favourable)*
 
 **Horizontal earth pressure** (σ_top = {σ_top:.2f} kPa · σ_bot = {σ_bot:.2f} kPa)
 - F_Ka   = ½ × {r['Ka']} × ({σ_top:.2f}+{σ_bot:.2f}) × {H_ext:.3f} = **{r['F_Ka']:.2f} kN/m** (active)
 - F_Kmax = ½ × {r['Kmax']} × ({σ_top:.2f}+{σ_bot:.2f}) × {H_ext:.3f} = **{r['F_Kmax']:.2f} kN/m** (restrained)
 - F_net (earth only) = {r['F_Kmax']:.2f} − {r['F_Ka']:.2f} = **{r['F_net']:.2f} kN/m**
 
-**Table 6 horizontal traffic — active side (PD6694-1)**
-- Ka_char = tan²(45−{φ_fill_deg:.1f}°/2) = **{Ka_char:.4f}**
-- σh = 20 × {Ka_char:.4f} × {H_ext:.3f} m = **{Q_h_udl_k:.2f} kN/m** (arm {H_ext/2:.3f} m)
-- F reduction (Note 5, Hc={H_c:.3f} m): r_F = **{_rF:.4f}** {"(Hc≥2m — F=0)" if H_c >= 2.0 else ""}
-- F_line = 2×300×{Ka_char:.4f}×{_rF:.4f}/{lane_width:.2f} = **{Q_h_F_k:.2f} kN/m** (arm {H_ext:.3f} m)
-- γQ × (σh + F_line) = {r['gQ']:.2f} × ({Q_h_udl_k:.2f}+{Q_h_F_k:.2f}) = **{r['F_h_tr']:.2f} kN/m** (factored)
-- γQ × M_h = {r['gQ']:.2f} × {Q_h_M_k:.2f} = **{r['M_h_tr']:.2f} kNm/m** (factored driving moment)
+**Horizontal traffic — active side (PD6694-1 Table 6)**
+- Ka_tr (Table B.4 horiz. traffic surcharge) = **{r['Ka_tr']:.2f}** (Rankine formula Ka_char = {Ka_char:.4f})
+- σh = {_dc_udl_coeff:.0f} × {r['Ka_tr']:.2f} × {H_ext:.3f} m = **{r['Q_h_udl_k']:.2f} kN/m** (arm {H_ext/2:.3f} m)
+- Note 5 r_F (Hc={H_c:.3f} m): **{_rF:.4f}** {"(Hc≥2m — F=0)" if H_c >= 2.0 else ""}
+- {_dc_F_desc} = {_dc_F_formula} = **{_dc_F_k:.2f} kN/m** (arm {H_ext:.3f} m)
+- γQ × (σh + F) = {r['gQ']:.2f} × ({r['Q_h_udl_k']:.2f}+{_dc_F_k:.2f}) = **{r['F_h_tr']:.2f} kN/m** (factored)
+- γQ × M_h = {r['gQ']:.2f} × {r['Q_h_M_k_char']:.2f} = **{r['M_h_tr']:.2f} kNm/m** (factored driving moment)
 """)
 
-        c1, c2, c3 = st.columns(3)
+                c1, c2, c3 = st.columns(3)
 
-        with c1:
-            st.markdown(f"""
+                with c1:
+                    st.markdown(f"""
 **Table B.4 — Max vertical (Gk + Qk)**
 
 *Bearing*
-- V_u = {r['gG_u']:.2f}×{N_G_k:.2f} + {r['gQ']:.2f}×{Q_vk:.2f} = **{r['V_u']:.2f} kN/m**
+- V_u = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
 - q = V_u/B_ext = {r['V_u']:.2f}/{B_ext:.3f} = **{r['q_B4']:.2f} kPa**
 - q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B4_bear']:.3f}** {"✅" if r["UR_B4_bear"] <= 1.0 else "❌"}
 
-*Overturning (min V = Gk only)*
-- M_earth = {r['M_net_B4']:.2f} kNm/m &nbsp;·&nbsp; M_traffic = {r['M_h_tr']:.2f} kNm/m
-- M_dst = {r['M_net_B4']:.2f} + {r['M_h_tr']:.2f} = **{r['M_drv_B45']:.2f} kNm/m**
-- M_stb = {r['V_f']:.2f}×{B_ext/2:.3f} = **{r['M_stb']:.2f} kNm/m**
+*Overturning (max V = Gk + Qk)*
+- F_Ka·arm = {r['F_Ka']:.2f}×{r['arm_Ka']:.3f} = {r['F_Ka']*r['arm_Ka']:.2f} kNm/m (active)
+- F_Kmax·arm = {r['F_Kmax']:.2f}×{r['arm_Kmax']:.3f} = {r['F_Kmax']*r['arm_Kmax']:.2f} kNm/m (passive resist)
+- M_dst = {r['F_Ka']*r['arm_Ka']:.2f} + {r['M_h_tr']:.2f} − {r['F_Kmax']*r['arm_Kmax']:.2f} = **{r['M_drv_B45']:.2f} kNm/m**
+- M_stb = {r['V_u']:.2f}×{B_ext/2:.3f} = **{r['M_stb_B4']:.2f} kNm/m**
 - **UR = {r['UR_B4_ov']:.3f}** {"✅" if r["UR_B4_ov"] <= 1.0 else "❌"}
 
-*Sliding (min V = Gk only)*
-- F_earth = {r['F_net']:.2f} kN/m &nbsp;·&nbsp; F_traffic = {r['F_h_tr']:.2f} kN/m
-- F_drv = {r['F_net']:.2f} + {r['F_h_tr']:.2f} = **{r['F_drv_B45']:.2f} kN/m**
-- R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric']:.2f} kN/m**
+*Sliding (max V = Gk + Qk)*
+- F_Ka = {r['F_Ka']:.2f} kN/m · F_traffic = {r['F_h_tr']:.2f} kN/m · F_Kmax = {r['F_Kmax']:.2f} kN/m
+- Friction needed = {r['F_Ka']:.2f} + {r['F_h_tr']:.2f} − {r['F_Kmax']:.2f} = **{r['F_drv_B45']:.2f} kN/m**
+- R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_u']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B4']:.2f} kN/m**
 - **UR = {r['UR_B4_sl']:.3f}** {"✅" if r["UR_B4_sl"] <= 1.0 else "❌"}
 """)
 
-        with c2:
-            st.markdown(f"""
+                with c2:
+                    st.markdown(f"""
 **Table B.5 — Min vertical (Gk only)**
 
 *Bearing*
-- V_f = {r['gG_f']:.2f}×{N_G_k:.2f} = **{r['V_f']:.2f} kN/m** *(traffic excluded)*
+- V_f = {r['gG_f']:.2f}×{N_G_k_min:.2f} = **{r['V_f']:.2f} kN/m** *(traffic excluded)*
 - q = V_f/B_ext = {r['V_f']:.2f}/{B_ext:.3f} = **{r['q_B5']:.2f} kPa**
 - q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B5_bear']:.3f}** {"✅" if r["UR_B5_bear"] <= 1.0 else "❌"}
 
-*Overturning*
-- M_dst = {r['M_net_B4']:.2f} kN·m/m *(same K as B.4)*
-- M_stb = **{r['M_stb']:.2f} kN·m/m**
+*Overturning (min V = Gk only — governing)*
+- M_dst = **{r['M_drv_B45']:.2f} kNm/m** *(same horizontal forces as B.4)*
+- M_stb = {r['V_f']:.2f}×{B_ext/2:.3f} = **{r['M_stb']:.2f} kNm/m**
 - **UR = {r['UR_B5_ov']:.3f}** {"✅" if r["UR_B5_ov"] <= 1.0 else "❌"}
 
-*Sliding (friction only)*
-- Driving F_net = **{r['F_net']:.2f} kN/m**
-- R_fric = **{r['R_fric']:.2f} kN/m**
+*Sliding (min V = Gk only — governing)*
+- Friction needed = **{r['F_drv_B45']:.2f} kN/m** *(same as B.4)*
+- R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric']:.2f} kN/m**
 - **UR = {r['UR_B5_sl']:.3f}** {"✅" if r["UR_B5_sl"] <= 1.0 else "❌"}
 """)
 
-        with c3:
-            st.markdown(f"""
+                with c3:
+                    st.markdown(f"""
 **Table B.6 — Ka driving / Kr passive (WT: {h_wt:.2f} m BGL)**
 
 *Eff. stresses:* σ'top={r['σ_eff_top']:.2f} kPa, σ'bot={r['σ_eff_bot']:.2f} kPa · Uplift Uk={r['U_k']:.2f} kN/m
 
 *Bearing (max V − uplift)*
-- Vu B6 = {r['gG_u']:.2f}×{N_G_k:.2f} + {r['gQ']:.2f}×{Q_vk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
+- Vu B6 = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
 - q = Vu B6 / Bext = **{r['q_B6']:.2f} kPa** → **UR = {r['UR_B6_bear']:.3f}** {"✅" if r["UR_B6_bear"] <= 1.0 else "❌"}
 
 *Resistance vertical (min V − uplift)*
-- Vf B6 = {r['gG_f']:.2f}×{N_G_k:.2f} − {r['gG_u']:.2f}×{r['U_k']:.2f} = **{r['V_f_B6']:.2f} kN/m**
+- Vf B6 = {r['gG_f']:.2f}×{N_G_k_min:.2f} − {r['gG_u']:.2f}×{r['U_k']:.2f} = **{r['V_f_B6']:.2f} kN/m**
 
 *Overturning*
 - M_Ka (earth) = {r['F_Ka_B6']:.2f}×{r['arm_Ka_B6']:.3f} = **{r['F_Ka_B6']*r['arm_Ka_B6']:.2f} kNm/m**
@@ -1151,14 +1207,24 @@ with st.expander("Geometry & assumptions"):
 | H_inv | {H_c:.3f} + {H_ext:.3f} = **{H_inv:.3f} m** |
 | Concrete area | **{A_conc:.4f} m²/m** |
 | W_concrete | **{W_conc:.2f} kN/m** |
-| W_road (cover) | {γ_road:.1f} × {t_road:.3f} × {B_ext:.3f} = **{W_road:.2f} kN/m** |
+| W_road (nominal) | {γ_road:.1f} × {t_road:.3f} × {B_ext:.3f} = **{W_road:.2f} kN/m** |
+| W_road max (+55%) | {γ_road:.1f} × {t_road:.3f} × 1.55 × {B_ext:.3f} = **{W_road_max:.2f} kN/m** |
+| W_road min (−40%) | {γ_road:.1f} × {t_road:.3f} × 0.60 × {B_ext:.3f} = **{W_road_min:.2f} kN/m** |
 | W_subbase (cover) | {γ_sub:.1f} × {t_sub:.3f} × {B_ext:.3f} = **{W_sub:.2f} kN/m** |
 | W_fill (cover) | {γ_fill:.1f} × {t_fill:.3f} × {B_ext:.3f} = **{W_fill:.2f} kN/m** |
-| W_soil total | **{W_soil:.2f} kN/m** |
-| N_G,k (permanent) | **{N_G_k:.2f} kN/m** |
-| Q_v,k (LM1 all lanes) | **{Q_vk:.2f} kN/m** |
+| W_soil total (nominal) | **{W_soil:.2f} kN/m** |
+| N_G,k max (+55%, γSd;ec=1.15) | {W_conc:.2f} + 1.15×({W_road_max:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_max:.2f} kN/m** |
+| N_G,k min (−40%, γSd;ec=1.0) | {W_conc:.2f} + ({W_road_min:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_min:.2f} kN/m** |
+| Q_v,k (LM1 all lanes) | **{Q_vk_lm1:.2f} kN/m** |
+| Q_v,k (LM3 {lm3.vehicle_name}) | **{Q_vk_lm3:.2f} kN/m** |
 | σ_v at crown | {γ_road:.1f}×{t_road:.3f} + {γ_sub:.1f}×{t_sub:.3f} + {γ_fill:.1f}×{t_fill:.3f} = **{σ_top:.2f} kPa** |
 | σ_v at invert | {σ_top:.2f} + {γ_fill:.1f}×{H_ext:.3f} = **{σ_bot:.2f} kPa** |
+
+**Road construction deviation + model factor:**
+- UK NA Table NA.1 Cl.5.2.3(3): thickness deviation +55% (max) / −40% (min).
+- PD6694-1 Cl.10.2.2: γSd;ec = 1.15 applied to all superimposed permanent loads (road + subbase + fill) for unfavourable case; γSd;ec = 1.0 for favourable.
+- N_G,k max = W_conc + 1.15×(1.55×W_road + W_sub + W_fill) = **{N_G_k_max:.2f} kN/m** → used for B.4 bearing (V_u)
+- N_G,k min = W_conc + (0.60×W_road + W_sub + W_fill) = **{N_G_k_min:.2f} kN/m** → used for B.5 / OT / sliding (V_f)
 
 **Load case framework (PD6694-1 Annex B):**
 - **B.4 bearing** — Max vertical (γG_u × N_G,k + γQ × Q_v,k); Ka on active wall → governs bearing pressure.
@@ -1171,8 +1237,12 @@ with st.expander("Geometry & assumptions"):
 - γQ = 1.35 at ULS (STR/GEO, EQU); 1.00 at SLS — BS EN 1990 Table A2.4.
 - Traffic vertical is unfavourable for bearing (adds to V_u); excluded from OT/sliding resistance.
 - **Horizontal traffic (PD6694-1 Table 6, Figure 2) — active side only:**
-  - σh = 20 × Ka_char = {20*Ka_char:.2f} kN/m² over H_ext → resultant {Q_h_udl_k:.2f} kN/m (arm H_ext/2)
-  - F line loads: 2 × 300 × Ka_char × r_F / lane_width = {Q_h_F_k:.2f} kN/m at crown (arm H_ext); r_F = {_rF:.3f} {"(Hc≥2m, F=0)" if H_c >= 2.0 else f"(Note 5, Hc={H_c:.2f}m)"}
+  - LM1: σh = 20 × Ka_tr over H_ext; Ka_tr per Table B.4: SLS 0.33 / EQU 0.37 / C1 0.33 / C2 0.41
+  - LM3: σh = 30 × Ka_tr over H_ext; same Ka_tr values (Table 6: SV196/SV100 = 30Kd)
+  - LM1 F line loads: 2 × 330 × Ka_tr × r_F / lane_width at crown; r_F = {_rF:.3f} {"(Hc≥2m, F=0)" if H_c >= 2.0 else f"(Note 5, Hc={H_c:.2f}m)"}
+  - LM3 F line loads: same Table 6 F=330Kd as LM1, PLUS SV braking (0.25×basic GVW÷LL) added on top.
+  - σ_top for horizontal earth pressure uses +55% road construction deviation (PD6694-1 Cl.10.2.2).
+  - B.4 sliding/OT resistance uses max vertical V_u (Gk + Qk); B.5 uses min vertical V_f (Gk only).
   - Factored by γQ; added to driving force and moment in B.4/B.5 and B.6 OT/sliding checks.
 
 **Other notes:**
