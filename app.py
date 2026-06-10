@@ -1121,6 +1121,30 @@ for tab, name in zip(tabs, LS_NAMES):
                       f" + 0.25×{lm3.gvw:.0f}/{LL:.2f}m")
             )
             _dc_F_desc = "F_line (Table 6)" if _dc_is_lm1 else "F_line (Table 6) + SV braking"
+
+            # ── Sliding force build-up (factored components) ──────────────────────
+            _dc_F_line = Q_h_F_k_lm1[name]                                   # Table 6 line load
+            _dc_brk    = 0.0 if _dc_is_lm1 else lm3.braking.Q_brk_per_m      # SV braking (LM3 only)
+            _rect = σ_top * H_ext                          # rectangular surcharge stress-area
+            _tri  = 0.5 * (σ_bot - σ_top) * H_ext          # triangular backfill stress-area
+            # Horizontal — driving (active Ka + traffic) and resisting (restrained Kmax passive)
+            _act_sur = r['Ka']   * r['gG_super'] * _rect
+            _act_bf  = r['Ka']   * r['gG_self']  * _tri
+            _pas_sur = r['Kmax'] * r['gG_super'] * _rect
+            _pas_bf  = r['Kmax'] * r['gG_self']  * _tri
+            _tr_udl  = r['gQ'] * r['Q_h_udl_k']
+            _tr_line = r['gQ'] * _dc_F_line
+            _tr_brk  = r['gQ'] * _dc_brk
+            _H_drv   = _act_sur + _act_bf + _tr_udl + _tr_line + _tr_brk     # = F_Ka + F_h_tr
+            _H_res   = _pas_sur + _pas_bf                                    # = F_Kmax
+            _brk_row = (f"\n- Braking / acceleration (SV) = {r['gQ']:.2f}×{_dc_brk:.2f}"
+                        f" = **{_tr_brk:.2f}**") if _dc_brk > 0 else ""
+            # Vertical — split-factored permanent + traffic (= V_u)
+            _v_road = r['gG_super'] * g_Sd_ec * W_road_max
+            _v_fill = r['gG_super'] * g_Sd_ec * (W_sub + W_fill)
+            _v_conc = r['gG_self']  * W_conc
+            _v_traf = r['gQ'] * _dc_Qvk
+
             with _dc_tab:
                 st.markdown(f"""
 **Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG super = {r['gG_super']:.2f} · γG self = {r['gG_self']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
@@ -1167,10 +1191,31 @@ for tab, name in zip(tabs, LS_NAMES):
 - **UR = {r['UR_B4_ov']:.3f}** {"✅" if r["UR_B4_ov"] <= 1.0 else "❌"}
 
 *Sliding (max V = Gk + Qk)*
-- F_Ka = {r['F_Ka']:.2f} kN/m · F_traffic = {r['F_h_tr']:.2f} kN/m · F_Kmax = {r['F_Kmax']:.2f} kN/m
-- Friction needed = {r['F_Ka']:.2f} + {r['F_h_tr']:.2f} − {r['F_Kmax']:.2f} = **{r['F_drv_B45']:.2f} kN/m**
-- R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_u']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B4']:.2f} kN/m**
-- **UR = {r['UR_B4_sl']:.3f}** {"✅" if r["UR_B4_sl"] <= 1.0 else "❌"}
+
+**① Horizontal driving force ΣH_drv** (active earth + traffic surcharge)
+- Active surcharge (rect) = {r['Ka']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_act_sur:.2f}**
+- Active backfill (tri) = {r['Ka']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_act_bf:.2f}**
+- Traffic UDL surcharge = {r['gQ']:.2f}×{r['Q_h_udl_k']:.2f} = **{_tr_udl:.2f}**
+- Traffic line load (F) = {r['gQ']:.2f}×{_dc_F_line:.2f} = **{_tr_line:.2f}**{_brk_row}
+- **ΣH_drv = {_act_sur:.2f}+{_act_bf:.2f}+{_tr_udl:.2f}+{_tr_line:.2f}{('+'+format(_tr_brk,'.2f')) if _dc_brk>0 else ''} = {_H_drv:.2f} kN/m**
+
+**② Horizontal resisting force ΣH_res** (restrained Kmax passive)
+- Passive surcharge (rect) = {r['Kmax']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_pas_sur:.2f}**
+- Passive backfill (tri) = {r['Kmax']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_pas_bf:.2f}**
+- **ΣH_res = {_pas_sur:.2f}+{_pas_bf:.2f} = {_H_res:.2f} kN/m**
+
+**Net friction required** = ΣH_drv − ΣH_res = {_H_drv:.2f} − {_H_res:.2f} = **{r['F_drv_B45']:.2f} kN/m**
+
+**③ Vertical force ΣV = V_u** (mobilises base friction)
+- Road construction = {r['gG_super']:.2f}×1.15×{W_road_max:.2f} = **{_v_road:.2f}**
+- Fill above roof = {r['gG_super']:.2f}×1.15×({W_sub:.2f}+{W_fill:.2f}) = **{_v_fill:.2f}**
+- Concrete self-weight = {r['gG_self']:.2f}×{W_conc:.2f} = **{_v_conc:.2f}**
+- Traffic vertical = {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{_v_traf:.2f}**
+- **ΣV = {_v_road:.2f}+{_v_fill:.2f}+{_v_conc:.2f}+{_v_traf:.2f} = {r['V_u']:.2f} kN/m**
+
+**④ Sliding resistance & check**
+- R_fric = tan(φ'_fnd,d)×ΣV + c'_d×B_ext = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_u']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B4']:.2f} kN/m**
+- UR = {r['F_drv_B45']:.2f} / {r['R_fric_B4']:.2f} = **{r['UR_B4_sl']:.3f}** {"✅" if r["UR_B4_sl"] <= 1.0 else "❌"}
 """)
 
                 with c2:
