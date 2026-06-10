@@ -1137,8 +1137,9 @@ for tab, name in zip(tabs, LS_NAMES):
             _tr_brk  = r['gQ'] * _dc_brk
             _H_drv   = _act_sur + _act_bf + _tr_udl + _tr_line + _tr_brk     # = F_Ka + F_h_tr
             _H_res   = _pas_sur + _pas_bf                                    # = F_Kmax
-            _brk_row = (f"\n- Braking / acceleration (SV) = {r['gQ']:.2f}×{_dc_brk:.2f}"
-                        f" = **{_tr_brk:.2f}**") if _dc_brk > 0 else ""
+            _brk_row = (f"\n- Braking / acceleration (SV, 0.25×GVW÷LL) = "
+                        f"{r['gQ']:.2f}×0.25×{lm3.gvw:.0f}÷{LL:.2f} = "
+                        f"{r['gQ']:.2f}×{_dc_brk:.2f} = **{_tr_brk:.2f}**") if _dc_brk > 0 else ""
             # Vertical — split-factored permanent + traffic (= V_u)
             _v_road = r['gG_super'] * g_Sd_ec * W_road_max
             _v_fill = r['gG_super'] * g_Sd_ec * (W_sub + W_fill)
@@ -1195,8 +1196,8 @@ for tab, name in zip(tabs, LS_NAMES):
 **① Horizontal driving force ΣH_drv** (active earth + traffic surcharge)
 - Active surcharge (rect) = {r['Ka']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_act_sur:.2f}**
 - Active backfill (tri) = {r['Ka']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_act_bf:.2f}**
-- Traffic UDL surcharge = {r['gQ']:.2f}×{r['Q_h_udl_k']:.2f} = **{_tr_udl:.2f}**
-- Traffic line load (F) = {r['gQ']:.2f}×{_dc_F_line:.2f} = **{_tr_line:.2f}**{_brk_row}
+- Traffic UDL surcharge ({_dc_udl_coeff:.0f}×Kd×H) = {r['gQ']:.2f}×{_dc_udl_coeff:.0f}×{r['Ka_tr']:.2f}×{H_ext:.3f} = **{_tr_udl:.2f}**
+- Traffic line load F (Table 6) = {r['gQ']:.2f}×{_dc_F_line:.2f} = **{_tr_line:.2f}**{_brk_row}
 - **ΣH_drv = {_act_sur:.2f}+{_act_bf:.2f}+{_tr_udl:.2f}+{_tr_line:.2f}{('+'+format(_tr_brk,'.2f')) if _dc_brk>0 else ''} = {_H_drv:.2f} kN/m**
 
 **② Horizontal resisting force ΣH_res** (restrained Kmax passive)
