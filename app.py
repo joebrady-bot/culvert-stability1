@@ -17,13 +17,21 @@ st.caption("Metre-strip · PD6694-1 Annex B Tables B.4/B.5/B.6 · BS EN 1991-2 L
 # Kr  : Rankine passive for B.6 sliding resistance — computed from design φ (not tabulated)
 #
 # EC7 partial factors
-#   gG_u / gG_f: unfavourable / favourable on permanent actions
-#   g_phi / g_c: on shear strength parameters (resistance side)
+#   gG_super: unfavourable factor on SUPERIMPOSED permanent (road construction + sub-base
+#             + fill above roof) — drives the rectangular surcharge pressure & its vertical.
+#   gG_self : unfavourable factor on SELF-WEIGHT permanent (concrete box + backfill soil
+#             beside the walls) — drives the triangular backfill pressure & concrete vertical.
+#   gG_u    : general unfavourable permanent factor (used for water uplift in B.6).
+#   gG_f    : favourable permanent factor (min-vertical case, B.5).
+#   g_phi / g_c: on shear strength parameters (resistance side).
+# Values reconciled against the PD6694-1 worked example (D. Childs), Table B.4 sliding:
+#   EQU uses γG = 1.05 on permanent and γM = 1.10 on tanφ (not 1.25); C1 splits the
+#   permanent factor 1.20 (superimposed) / 1.35 (self-weight); C2 traffic γQ = 1.15.
 LS = {
-    "SLS":        {"Ka": 0.33, "Ka_tr": 0.33, "Kmax": 0.60, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.00},
-    "EQU":        {"Ka": 0.44, "Ka_tr": 0.37, "Kmax": 0.60, "gG_u": 1.10, "gG_f": 0.90, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
-    "STR/GEO C1": {"Ka": 0.40, "Ka_tr": 0.33, "Kmax": 0.72, "gG_u": 1.35, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.35},
-    "STR/GEO C2": {"Ka": 0.49, "Ka_tr": 0.41, "Kmax": 0.84, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.35},
+    "SLS":        {"Ka": 0.33, "Ka_tr": 0.33, "Kmax": 0.60, "gG_super": 1.00, "gG_self": 1.00, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.00},
+    "EQU":        {"Ka": 0.44, "Ka_tr": 0.37, "Kmax": 0.60, "gG_super": 1.05, "gG_self": 1.05, "gG_u": 1.05, "gG_f": 0.90, "g_phi": 1.10, "g_c": 1.10, "gQ": 1.35},
+    "STR/GEO C1": {"Ka": 0.40, "Ka_tr": 0.33, "Kmax": 0.72, "gG_super": 1.20, "gG_self": 1.35, "gG_u": 1.35, "gG_f": 1.00, "g_phi": 1.00, "g_c": 1.00, "gQ": 1.35},
+    "STR/GEO C2": {"Ka": 0.49, "Ka_tr": 0.41, "Kmax": 0.84, "gG_super": 1.00, "gG_self": 1.00, "gG_u": 1.00, "gG_f": 1.00, "g_phi": 1.25, "g_c": 1.25, "gQ": 1.15},
 }
 LS_NAMES = list(LS.keys())
 
@@ -103,6 +111,10 @@ W_road_min = W_road * 0.60   # −40% — unfavourable for min-vertical (B.5 / O
 g_Sd_ec    = 1.15   # applied to road + subbase + fill for max case; 1.0 for min case
 N_G_k_max  = W_conc + g_Sd_ec * (W_road_max + W_sub + W_fill)
 N_G_k_min  = W_conc +           (W_road_min + W_sub + W_fill)   # g_Sd_ec = 1.0 (favourable)
+# Split max-vertical permanent into superimposed dead vs self-weight so each can take its
+# own partial factor (worked example Table B.4: C1 = 1.20 super / 1.35 self; EQU = 1.05 both)
+P_super = g_Sd_ec * (W_road_max + W_sub + W_fill)   # road construction + sub-base + fill
+P_self  = W_conc                                     # concrete box self-weight
 
 φ_fill_k = math.radians(φ_fill_deg)   # backfill — governs Kr passive resistance
 φ_fnd_k  = math.radians(φ_fnd_deg)   # founding layer — governs base sliding resistance
@@ -160,6 +172,8 @@ Q_h_F_k_lm1 = {n: 2.0 * 330.0 * LS[n]["Ka_tr"] * _rF / lane_width for n in LS_NA
 # ── Per-limit-state calculations ───────────────────────────────────────────────
 def run(p, Q_vk, Q_h_F_k_arg, q_udl_coeff=20.0):
     Ka, Kmax   = p["Ka"],   p["Kmax"]
+    gG_super   = p["gG_super"]
+    gG_self    = p["gG_self"]
     gG_u, gG_f = p["gG_u"], p["gG_f"]
     gQ         = p["gQ"]
     g_phi, g_c = p["g_phi"],p["g_c"]
@@ -174,13 +188,25 @@ def run(p, Q_vk, Q_h_F_k_arg, q_udl_coeff=20.0):
     # ── B.4 / B.5 — total stresses, no water table effect ───────────────────
     # Traffic is unfavourable for B.4 bearing (max vertical); excluded from
     # B.5/overturning resistance where minimum vertical governs.
-    V_u = gG_u * N_G_k_max + gQ * Q_vk   # B.4 bearing: max vertical (+55% road construction)
-    V_f = gG_f * N_G_k_min               # B.4/B.5 OT/sliding resistance: min vertical (−40% road)
+    V_perm_max = gG_super * P_super + gG_self * P_self   # split-factored max permanent
+    V_u = V_perm_max + gQ * Q_vk   # B.4 bearing/sliding: max vertical (+55% road construction)
+    V_f = gG_f * N_G_k_min         # B.4/B.5 OT/sliding resistance: min vertical (−40% road)
 
-    F_Ka,   arm_Ka   = trapz_resultant(Ka,   σ_top, σ_bot, H_ext)
-    F_Kmax, arm_Kmax = trapz_resultant(Kmax, σ_top, σ_bot, H_ext)
+    # Horizontal earth pressure split into a rectangular surcharge part (superimposed dead,
+    # constant σ_top over H_ext) and a triangular backfill part (soil self-weight, 0→σ_bot−σ_top),
+    # so each can take its own permanent partial factor (worked example Table B.4 decomposition).
+    def earth_split(K):
+        F_rect = K * gG_super * σ_top * H_ext                          # arm = H_ext/2 from base
+        F_tri  = K * gG_self  * 0.5 * max(σ_bot - σ_top, 0.0) * H_ext   # arm = H_ext/3 from base
+        F   = F_rect + F_tri
+        M   = F_rect * (H_ext / 2.0) + F_tri * (H_ext / 3.0)           # moment about base
+        arm = M / F if F > 0 else H_ext / 3.0
+        return F, arm, M
+
+    F_Ka,   arm_Ka,   M_Ka_b   = earth_split(Ka)
+    F_Kmax, arm_Kmax, M_Kmax_b = earth_split(Kmax)
     F_net    = F_Kmax - F_Ka          # net passive-minus-active earth (for display)
-    M_net_B4 = F_Kmax * arm_Kmax - F_Ka * arm_Ka   # net Kmax-minus-Ka moment (for display)
+    M_net_B4 = M_Kmax_b - M_Ka_b      # net Kmax-minus-Ka moment about base (for display)
 
     # B.4 uses max V (with traffic) for friction/OT stability; B.5 uses min V (permanent only)
     R_fric_B4 = math.tan(φ_fnd_d) * V_u + c_fnd_d * B_ext   # B.4 — max vertical
@@ -212,7 +238,7 @@ def run(p, Q_vk, Q_h_F_k_arg, q_udl_coeff=20.0):
     UR_B5_sl   = F_drv_B45 / R_fric  if R_fric  > 0 else float("inf")
 
     # ── B.6 — effective stresses + uplift + traffic ──────────────────────────
-    V_u_B6 = max(gG_u * N_G_k_max + gQ * Q_vk - gG_f * U_k, 0.0)
+    V_u_B6 = max(V_perm_max + gQ * Q_vk - gG_f * U_k, 0.0)
     V_f_B6 = max(gG_f * N_G_k_min             - gG_u * U_k, 0.0)
 
     F_Ka_B6,   arm_Ka_B6 = trapz_resultant(Ka, σ_eff_top, σ_eff_bot, H_ext)
@@ -232,7 +258,8 @@ def run(p, Q_vk, Q_h_F_k_arg, q_udl_coeff=20.0):
     UR_B6_sl   = F_drv_B6 / R_B6     if R_B6     > 0 else float("inf")
 
     return dict(
-        Ka=Ka, Ka_tr=p["Ka_tr"], Kmax=Kmax, gG_u=gG_u, gG_f=gG_f, gQ=gQ, g_phi=g_phi, g_c=g_c,
+        Ka=Ka, Ka_tr=p["Ka_tr"], Kmax=Kmax, gG_super=gG_super, gG_self=gG_self,
+        gG_u=gG_u, gG_f=gG_f, gQ=gQ, g_phi=g_phi, g_c=g_c, V_perm_max=V_perm_max,
         Q_h_udl_k=Q_h_udl_k_r, Q_h_F_k_char=Q_h_F_k_arg,
         V_u=V_u, V_f=V_f, V_u_B6=V_u_B6, V_f_B6=V_f_B6, U_k=U_k,
         u_top=u_top, u_bot=u_bot, σ_eff_top=σ_eff_top, σ_eff_bot=σ_eff_bot,
@@ -1013,7 +1040,8 @@ with col_tbl_l:
         "Limit State":  LS_NAMES,
         "Ka (active)":  [LS[n]["Ka"]   for n in LS_NAMES],
         "Kmax (restrained)": [LS[n]["Kmax"] for n in LS_NAMES],
-        "γG unfav.":    [LS[n]["gG_u"] for n in LS_NAMES],
+        "γG super.":    [LS[n]["gG_super"] for n in LS_NAMES],
+        "γG self":      [LS[n]["gG_self"] for n in LS_NAMES],
         "γG fav.":      [LS[n]["gG_f"] for n in LS_NAMES],
         "γQ (traffic)": [LS[n]["gQ"]   for n in LS_NAMES],
         "γφ (resist.)": [LS[n]["g_phi"] for n in LS_NAMES],
@@ -1095,19 +1123,20 @@ for tab, name in zip(tabs, LS_NAMES):
             _dc_F_desc = "F_line (Table 6)" if _dc_is_lm1 else "F_line (Table 6) + SV braking"
             with _dc_tab:
                 st.markdown(f"""
-**Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG_u = {r['gG_u']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
+**Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG super = {r['gG_super']:.2f} · γG self = {r['gG_self']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
 
-**Characteristic vertical loads**
-- N_G,k max (+55% road, γSd;ec=1.15) = **{N_G_k_max:.2f} kN/m** &nbsp;·&nbsp; N_G,k min (−40% road) = **{N_G_k_min:.2f} kN/m**
+**Characteristic vertical loads** (split for per-source γG)
+- P_super (road+sub+fill, γSd;ec=1.15) = **{P_super:.2f} kN/m** &nbsp;·&nbsp; P_self (concrete) = **{P_self:.2f} kN/m**
+- N_G,k max = {N_G_k_max:.2f} kN/m &nbsp;·&nbsp; N_G,k min (−40% road) = {N_G_k_min:.2f} kN/m
 - Q_v,k ({_dc_label}) = {_dc_Qvk:.2f} kN/m
 
 **Factored vertical loads**
-- V_u (B.4 bearing, max) = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
+- V_u (B.4 max) = γG_super×P_super + γG_self×P_self + γQ×Q_v,k = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
 - V_f (B.5 resist., min) = {r['gG_f']:.2f}×{N_G_k_min:.2f} + 0×{_dc_Qvk:.2f} &nbsp;= **{r['V_f']:.2f} kN/m** *(traffic excluded — variable action not favourable)*
 
-**Horizontal earth pressure** (σ_top = {σ_top:.2f} kPa · σ_bot = {σ_bot:.2f} kPa)
-- F_Ka   = ½ × {r['Ka']} × ({σ_top:.2f}+{σ_bot:.2f}) × {H_ext:.3f} = **{r['F_Ka']:.2f} kN/m** (active)
-- F_Kmax = ½ × {r['Kmax']} × ({σ_top:.2f}+{σ_bot:.2f}) × {H_ext:.3f} = **{r['F_Kmax']:.2f} kN/m** (restrained)
+**Horizontal earth pressure** (σ_top = {σ_top:.2f} kPa · σ_bot = {σ_bot:.2f} kPa) — surcharge (rect, γG_super) + backfill (tri, γG_self)
+- F_Ka   = {r['Ka']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Ka']:.2f} kN/m** (active)
+- F_Kmax = {r['Kmax']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Kmax']:.2f} kN/m** (restrained)
 - F_net (earth only) = {r['F_Kmax']:.2f} − {r['F_Ka']:.2f} = **{r['F_net']:.2f} kN/m**
 
 **Horizontal traffic — active side (PD6694-1 Table 6)**
@@ -1126,7 +1155,7 @@ for tab, name in zip(tabs, LS_NAMES):
 **Table B.4 — Max vertical (Gk + Qk)**
 
 *Bearing*
-- V_u = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
+- V_u = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
 - q = V_u/B_ext = {r['V_u']:.2f}/{B_ext:.3f} = **{r['q_B4']:.2f} kPa**
 - q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B4_bear']:.3f}** {"✅" if r["UR_B4_bear"] <= 1.0 else "❌"}
 
@@ -1171,7 +1200,7 @@ for tab, name in zip(tabs, LS_NAMES):
 *Eff. stresses:* σ'top={r['σ_eff_top']:.2f} kPa, σ'bot={r['σ_eff_bot']:.2f} kPa · Uplift Uk={r['U_k']:.2f} kN/m
 
 *Bearing (max V − uplift)*
-- Vu B6 = {r['gG_u']:.2f}×{N_G_k_max:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
+- Vu B6 = V_perm_max + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = {r['V_perm_max']:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
 - q = Vu B6 / Bext = **{r['q_B6']:.2f} kPa** → **UR = {r['UR_B6_bear']:.3f}** {"✅" if r["UR_B6_bear"] <= 1.0 else "❌"}
 
 *Resistance vertical (min V − uplift)*
