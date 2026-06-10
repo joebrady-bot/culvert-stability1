@@ -128,7 +128,7 @@ class LM3Result:
     secondary_lanes:    List[LaneResult]    # LM1 Lanes 2, 3, 4
     secondary_per_m:    float              # LM1 secondary-lane total per metre strip (kN/m)
     braking:            LM3BrakingResult   # SV horizontal braking force
-    max_V_per_m:        float              # SV + secondary lanes (kN/m)
+    max_V_per_m:        float              # governing strip = SV (Lane 1) only (kN/m)
     min_V_per_m:        float              # = 0
 
 
@@ -262,7 +262,11 @@ def compute(
             udl_per_m=udl, ts_per_m=ts, total_per_m=tot,
         ))
 
-    max_V = sv_load + sec_total
+    # The worst 1 m strip (along barrel axis LL) lies under the SV in Lane 1. The LM1
+    # secondary lanes occupy *different* LL bands across the carriageway, so they load
+    # *other* strips — they must NOT be summed onto the SV strip. The governing per-metre
+    # vertical is therefore the SV load alone (cf. worked example p.7: SV-only = 151.4 kN/m).
+    max_V = sv_load
 
     # ── SV braking — BS EN 1991-2 Cl. 4.4.4 / PD6694-1 Cl. 10.2.8.2 ──────────
     # 25% of basic (unfactored) GVW, distributed over barrel length via in-plane rigidity.

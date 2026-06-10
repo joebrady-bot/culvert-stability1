@@ -788,8 +788,8 @@ with st.expander("LM3 Special Vehicle Loading", expanded=False):
 - Per metre strip: **{brk.Q_brk_per_m:.2f} kN/m** (applied at crown, arm = H_ext)
 
 ---
-- LM1 secondary lanes total: &nbsp;**{lm3.secondary_per_m:.2f} kN/m**
-- **Max vertical (SV + secondary): {lm3.max_V_per_m:.2f} kN/m**
+- LM1 secondary lanes total: &nbsp;{lm3.secondary_per_m:.2f} kN/m *(act on separate LL strips — not added to the SV strip)*
+- **Governing vertical (SV strip, Lane 1): {lm3.max_V_per_m:.2f} kN/m**
 - Min vertical (no LL): **0.00 kN/m**
 """)
 
@@ -1109,7 +1109,7 @@ for tab, name in zip(tabs, LS_NAMES):
         for _dc_tab, (_dc_Qvk, _dc_res, _dc_label, _dc_F_k) in zip(
             _dc_subtabs,
             [(Q_vk_lm1, res_lm1, "LM1 — all lanes",                            Q_h_F_k_lm1[name]),
-             (Q_vk_lm3, res_lm3, f"LM3 {lm3.vehicle_name} + secondary lanes", Q_h_F_k_lm1[name] + lm3.braking.Q_brk_per_m)],
+             (Q_vk_lm3, res_lm3, f"LM3 {lm3.vehicle_name} (SV strip)", Q_h_F_k_lm1[name] + lm3.braking.Q_brk_per_m)],
         ):
             r = _dc_res[name]
             _dc_is_lm1    = _dc_label.startswith("LM1")
