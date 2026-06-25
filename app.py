@@ -330,7 +330,7 @@ if _tool == "📦  Box Culvert Stability":
         xlim = (-B_ext/2 - pad, B_ext/2 + pad)
         ylim = (-(H_inv + fnd_depth + 0.2), 0.4)
 
-        fig, ax = plt.subplots(figsize=(4, 5))
+        fig, ax = plt.subplots(figsize=(3, 4))
         ax.set_facecolor("white")
 
         # Founding layer — sits at base, below invert
@@ -393,7 +393,7 @@ if _tool == "📦  Box Culvert Stability":
     with col_elev:
         st.subheader("Longitudinal Section")
 
-        fig_e, ax_e = plt.subplots(figsize=(5, 4))
+        fig_e, ax_e = plt.subplots(figsize=(4, 3))
         ax_e.set_facecolor("white")
 
         # Founding layer — greyed warm tone, distinct from engineered fill above
@@ -536,7 +536,7 @@ if _tool == "📦  Box Culvert Stability":
             st.markdown("**Worst-case tandem position — Lane 1 (travel / B_ext direction)**")
 
             # --- Vehicle position diagram (in travel direction, B_ext on x-axis) ---
-            fig_v, ax_v = plt.subplots(figsize=(5, 4))
+            fig_v, ax_v = plt.subplots(figsize=(4, 3))
             ax_v.set_facecolor("white")
 
             pad_v = max(B_ext * 0.35, 0.6)
@@ -640,7 +640,7 @@ if _tool == "📦  Box Culvert Stability":
         _y_bot_ll  = -(H_c + _arr_space + 0.22)
         _ll_cw_x0  = LL / 2 - cw_width / 2   # carriageway left edge in LL
 
-        fig_ll, ax_ll = plt.subplots(figsize=(10, 3.8))
+        fig_ll, ax_ll = plt.subplots(figsize=(7, 3))
         ax_ll.set_facecolor("white")
 
         # Background fill layers
@@ -808,7 +808,7 @@ if _tool == "📦  Box Culvert Stability":
             # Diagram: SV vehicle worst-case position in B_ext direction
             st.markdown(f"**Worst-case axle positions — {lm3.vehicle_name} (B_ext direction)**")
 
-            fig_sv, ax_sv = plt.subplots(figsize=(5, 4))
+            fig_sv, ax_sv = plt.subplots(figsize=(4, 3))
             ax_sv.set_facecolor("white")
 
             pad_sv  = max(B_ext * 0.35, 0.6)
@@ -893,7 +893,7 @@ if _tool == "📦  Box Culvert Stability":
         _lm3_cw_x0    = LL / 2 - cw_width / 2
         _lm3_disp_LL  = lm3.dispersion.disp_LL   # same formula as LM1
 
-        fig_ll3, ax_ll3 = plt.subplots(figsize=(10, 3.8))
+        fig_ll3, ax_ll3 = plt.subplots(figsize=(7, 3))
         ax_ll3.set_facecolor("white")
 
         # Background fill layers
