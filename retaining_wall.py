@@ -691,17 +691,17 @@ def render():
 
         with c1:
             st.markdown("##### Geometry (m)")
-            H_stem   = st.number_input("Stem height H (m)",       0.5,  15.0,  4.0,  0.1,  "%.2f", key="rw_H")
-            t_stem   = st.number_input("Stem thickness t_s (m)",  0.1,   2.0,  0.40, 0.05, "%.3f", key="rw_ts")
-            L_base   = st.number_input("Base length L_base (m)",  0.5,  20.0,  3.20, 0.05, "%.2f", key="rw_Lb")
-            L_toe    = st.number_input("Toe length L_toe (m)",    0.0,  10.0,  0.50, 0.05, "%.2f", key="rw_Lt")
-            t_base   = st.number_input("Base thickness t_b (m)",  0.1,   2.0,  0.45, 0.05, "%.3f", key="rw_tb")
+            H_stem   = st.number_input("Stem height H (m)",       0.5,  15.0,  1.815,0.1,  "%.3f", key="rw_H")
+            t_stem   = st.number_input("Stem thickness t_s (m)",  0.1,   2.0,  0.25, 0.05, "%.3f", key="rw_ts")
+            L_base   = st.number_input("Base length L_base (m)",  0.5,  20.0,  2.35, 0.05, "%.2f", key="rw_Lb")
+            L_toe    = st.number_input("Toe length L_toe (m)",    0.0,  10.0,  0.25, 0.05, "%.2f", key="rw_Lt")
+            t_base   = st.number_input("Base thickness t_b (m)",  0.0,   2.0,  0.0,  0.05, "%.3f", key="rw_tb")
 
         with c2:
             st.markdown("##### Retained Soil")
-            phi_k    = st.number_input("φ'_k (°)",              15.0,  45.0,  30.0, 1.0,  "%.1f", key="rw_phi")
-            gamma_r  = st.number_input("γ_soil (kN/m³)",        14.0,  23.0,  18.0, 0.5,          key="rw_gr")
-            q_k      = st.number_input("Surcharge q_k (kPa)",    0.0, 100.0,  10.0, 1.0,  "%.1f", key="rw_qk",
+            phi_k    = st.number_input("φ'_k (°)",              15.0,  45.0,  35.0, 1.0,  "%.1f", key="rw_phi")
+            gamma_r  = st.number_input("γ_soil (kN/m³)",        14.0,  23.0,  19.5, 0.5,          key="rw_gr")
+            q_k      = st.number_input("Surcharge q_k (kPa)",    0.0, 100.0,  30.0, 1.0,  "%.1f", key="rw_qk",
                                         help="Variable surcharge on retained side (e.g. LM1 equivalent)")
             h_wt     = st.number_input("Water table depth (m)",   0.0, 200.0,  99.0, 0.5,  "%.1f", key="rw_wt",
                                         help="Depth below top of retained fill. Set large (e.g. 99) for fully dry.")
