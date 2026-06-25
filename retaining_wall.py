@@ -487,7 +487,7 @@ def _wall_diagram(H_stem, t_stem, L_base, L_toe, t_base, h_wt, q_k,
     H_total = H_stem + t_base
     pad = max(L_base * 0.18, 0.3)
 
-    fig, ax = plt.subplots(figsize=(5, 4))
+    fig, ax = plt.subplots(figsize=(4, 3.5))
     ax.set_aspect('equal')
     ax.set_facecolor('#f5f5f2')
 
@@ -635,7 +635,7 @@ def _pressure_diagram(phi_k, gamma_r, q_k, H_stem, t_base, h_wt,
             p = Ka_c2 * (gQ_c2 * q_k + gG_c2 * (gamma_r * h_wt + (gamma_r - GAMMA_W) * d_w)) + GAMMA_W * d_w
         p_c2.append(p)
 
-    fig, ax = plt.subplots(figsize=(3.5, 4))
+    fig, ax = plt.subplots(figsize=(3, 3.5))
     ax.plot(p_char, y_arr, 'b-', lw=2, label=f'Characteristic (Ka={Ka_char:.3f})')
     ax.fill_betweenx(y_arr, p_char, alpha=0.10, color='blue')
     ax.plot(p_c2, y_arr, 'r--', lw=1.5, label=f'C2 design (Ka={Ka_c2:.3f})')
@@ -780,12 +780,10 @@ def render():
     dcol1, dcol2 = st.columns([3, 2])
     with dcol1:
         st.pyplot(_wall_diagram(H_stem, t_stem, L_base, L_toe, t_base,
-                                h_wt, q_k, geo_results, str_data),
-                  use_container_width=True)
+                                h_wt, q_k, geo_results, str_data))
     with dcol2:
         st.pyplot(_pressure_diagram(phi_k, gamma_r, q_k, H_stem, t_base,
-                                    h_wt, geo_results, str_data),
-                  use_container_width=True)
+                                    h_wt, geo_results, str_data))
 
     # ── EC7 Geotechnical Results ─────────────────────────────────────────────
     with st.expander("EC7 — Geotechnical Stability (Design Approach 1)", expanded=True):

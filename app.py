@@ -330,7 +330,7 @@ if _tool == "📦  Box Culvert Stability":
         xlim = (-B_ext/2 - pad, B_ext/2 + pad)
         ylim = (-(H_inv + fnd_depth + 0.2), 0.4)
 
-        fig, ax = plt.subplots(figsize=(3, 4))
+        fig, ax = plt.subplots(figsize=(2.8, 3.5))
         ax.set_facecolor("white")
 
         # Founding layer — sits at base, below invert
@@ -386,14 +386,14 @@ if _tool == "📦  Box Culvert Stability":
         ax.set_xlim(xlim); ax.set_ylim(ylim); ax.set_aspect("equal")
         ax.set_xlabel("(m)", fontsize=8); ax.set_ylabel("Depth below GL (m)", fontsize=8)
         ax.tick_params(labelsize=7); fig.tight_layout()
-        st.pyplot(fig, use_container_width=True)
+        st.pyplot(fig, use_container_width=False)
         plt.close()
 
     # ── Longitudinal elevation diagram ────────────────────────────────────────────
     with col_elev:
         st.subheader("Longitudinal Section")
 
-        fig_e, ax_e = plt.subplots(figsize=(4, 3))
+        fig_e, ax_e = plt.subplots(figsize=(3.5, 2.5))
         ax_e.set_facecolor("white")
 
         # Founding layer — greyed warm tone, distinct from engineered fill above
@@ -495,7 +495,7 @@ if _tool == "📦  Box Culvert Stability":
         ax_e.set_ylabel("Depth below GL (m)", fontsize=8)
         ax_e.tick_params(labelsize=7)
         fig_e.tight_layout()
-        st.pyplot(fig_e, use_container_width=True)
+        st.pyplot(fig_e, use_container_width=False)
         plt.close()
 
     # ══ Section 2: LM1 Vehicle Loading ════════════════════════════════════════════
@@ -515,7 +515,7 @@ if _tool == "📦  Box Culvert Stability":
                     "TS/m (kN/m)":    f"{ln.ts_per_m:.2f}",
                     "Total/m (kN/m)": f"{ln.total_per_m:.2f}",
                 })
-            st.dataframe(pd.DataFrame(lm1_rows), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(lm1_rows), hide_index=True, use_container_width=False)
 
             st.markdown(f"""
     **Dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
@@ -536,7 +536,7 @@ if _tool == "📦  Box Culvert Stability":
             st.markdown("**Worst-case tandem position — Lane 1 (travel / B_ext direction)**")
 
             # --- Vehicle position diagram (in travel direction, B_ext on x-axis) ---
-            fig_v, ax_v = plt.subplots(figsize=(4, 3))
+            fig_v, ax_v = plt.subplots(figsize=(3.5, 2.5))
             ax_v.set_facecolor("white")
 
             pad_v = max(B_ext * 0.35, 0.6)
@@ -628,7 +628,7 @@ if _tool == "📦  Box Culvert Stability":
             ax_v.set_ylabel("Depth (m)", fontsize=8)
             ax_v.tick_params(labelsize=7)
             fig_v.tight_layout()
-            st.pyplot(fig_v, use_container_width=True)
+            st.pyplot(fig_v, use_container_width=False)
             plt.close()
 
         # ── LL direction diagram ──────────────────────────────────────────────────
@@ -640,7 +640,7 @@ if _tool == "📦  Box Culvert Stability":
         _y_bot_ll  = -(H_c + _arr_space + 0.22)
         _ll_cw_x0  = LL / 2 - cw_width / 2   # carriageway left edge in LL
 
-        fig_ll, ax_ll = plt.subplots(figsize=(7, 3))
+        fig_ll, ax_ll = plt.subplots(figsize=(6, 2.5))
         ax_ll.set_facecolor("white")
 
         # Background fill layers
@@ -751,7 +751,7 @@ if _tool == "📦  Box Culvert Stability":
         ax_ll.set_ylabel("Depth (m)", fontsize=8)
         ax_ll.tick_params(labelsize=7)
         fig_ll.tight_layout()
-        st.pyplot(fig_ll, use_container_width=True)
+        st.pyplot(fig_ll, use_container_width=False)
         plt.close()
 
     # ══ Section 2b: LM3 Special Vehicle Loading ═══════════════════════════════════
@@ -808,7 +808,7 @@ if _tool == "📦  Box Culvert Stability":
             # Diagram: SV vehicle worst-case position in B_ext direction
             st.markdown(f"**Worst-case axle positions — {lm3.vehicle_name} (B_ext direction)**")
 
-            fig_sv, ax_sv = plt.subplots(figsize=(4, 3))
+            fig_sv, ax_sv = plt.subplots(figsize=(3.5, 2.5))
             ax_sv.set_facecolor("white")
 
             pad_sv  = max(B_ext * 0.35, 0.6)
@@ -878,7 +878,7 @@ if _tool == "📦  Box Culvert Stability":
                 fontsize=6.5, pad=4
             )
             fig_sv.tight_layout()
-            st.pyplot(fig_sv, use_container_width=True)
+            st.pyplot(fig_sv, use_container_width=False)
             plt.close()
 
         # ── LL direction diagram ──────────────────────────────────────────────────
@@ -893,7 +893,7 @@ if _tool == "📦  Box Culvert Stability":
         _lm3_cw_x0    = LL / 2 - cw_width / 2
         _lm3_disp_LL  = lm3.dispersion.disp_LL   # same formula as LM1
 
-        fig_ll3, ax_ll3 = plt.subplots(figsize=(7, 3))
+        fig_ll3, ax_ll3 = plt.subplots(figsize=(6, 2.5))
         ax_ll3.set_facecolor("white")
 
         # Background fill layers
@@ -1037,7 +1037,7 @@ if _tool == "📦  Box Culvert Stability":
         ax_ll3.set_ylabel("Depth (m)", fontsize=8)
         ax_ll3.tick_params(labelsize=7)
         fig_ll3.tight_layout()
-        st.pyplot(fig_ll3, use_container_width=True)
+        st.pyplot(fig_ll3, use_container_width=False)
         plt.close()
 
     # ══ Section 3: Stability check results ════════════════════════════════════════
@@ -1057,7 +1057,7 @@ if _tool == "📦  Box Culvert Stability":
             "γQ (traffic)": [LS[n]["gQ"]   for n in LS_NAMES],
             "γφ (resist.)": [LS[n]["g_phi"] for n in LS_NAMES],
         })
-        st.dataframe(param_df, hide_index=True, use_container_width=True)
+        st.dataframe(param_df, hide_index=True, use_container_width=False)
 
     with col_tbl_r:
         # ── Utilisation ratio summary ──────────────────────────────────────────────
@@ -1087,7 +1087,7 @@ if _tool == "📦  Box Culvert Stability":
                     "Case":  [row[1] for row in rows],
                     **{n: [fmt(_ur_res[n][row[2]]) for row in rows] for n in LS_NAMES},
                 }
-                st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
+                st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=False)
 
         # Overall verdict — worst of LM1 and LM3 across all limit states
         all_keys = ("UR_B4_bear", "UR_B4_ov", "UR_B4_sl",
