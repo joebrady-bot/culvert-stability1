@@ -5,11 +5,10 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import lm1_loading
 import lm3_loading
+import retaining_wall
 
-st.set_page_config(page_title="Box Culvert Stability", layout="wide")
+st.set_page_config(page_title="Geotechnical Design Calculators", layout="wide")
 
-st.title("Buried Box Culvert — Stability Checker")
-st.caption("Metre-strip · PD6694-1 Annex B Tables B.4/B.5/B.6 · BS EN 1991-2 LM1 · BS EN 1997-1")
 
 # ── PD6694-1 Annex B ──────────────────────────────────────────────────────────
 # Ka  : design active coefficient — Tables B.4/B.5/B.6 (includes γM · γSd;K = 1.2)
@@ -308,1021 +307,1031 @@ legend_patches.append(patches.Patch(fc="#8B7355", label="Founding layer"))
 
 fnd_depth = 0.5   # founding layer depth shown below invert in both diagrams
 
-# ══ Section 1: Geometry ═══════════════════════════════════════════════════════
-with st.expander("Geometry", expanded=True):
-    col_xs, col_elev = st.columns(2)
+# ══ Tool tabs ════════════════════════════════════════════════════════════════════════
+tab1, tab2 = st.tabs(["\U0001f4e6  Box Culvert Stability", "\U0001f9f1  L-Shape Retaining Wall (EC2 & EC7)"])
 
-# ── Cross-section diagram ──────────────────────────────────────────────────────
-with col_xs:
-    st.subheader("Cross-Section")
-    pad  = max(B_ext * 0.6, 0.8)
-    xlim = (-B_ext/2 - pad, B_ext/2 + pad)
-    ylim = (-(H_inv + fnd_depth + 0.2), 0.4)
+with tab1:
+    st.title("Buried Box Culvert — Stability Checker")
+    st.caption("Metre-strip · PD6694-1 Annex B Tables B.4/B.5/B.6 · BS EN 1991-2 LM1 · BS EN 1997-1")
 
-    fig, ax = plt.subplots(figsize=(4, 5))
-    ax.set_facecolor("white")
+    # ══ Section 1: Geometry ═══════════════════════════════════════════════════════
+    with st.expander("Geometry", expanded=True):
+        col_xs, col_elev = st.columns(2)
 
-    # Founding layer — sits at base, below invert
-    ax.add_patch(patches.Rectangle(
-        (xlim[0], -(H_inv + fnd_depth)), xlim[1]-xlim[0], fnd_depth,
-        fc="#8A8278", ec="none", zorder=0))
-    ax.text(0, -(H_inv + fnd_depth/2), "Founding Layer",
-            ha="center", va="center", fontsize=6.5, color="white", fontweight="bold")
+    # ── Cross-section diagram ──────────────────────────────────────────────────────
+    with col_xs:
+        st.subheader("Cross-Section")
+        pad  = max(B_ext * 0.6, 0.8)
+        xlim = (-B_ext/2 - pad, B_ext/2 + pad)
+        ylim = (-(H_inv + fnd_depth + 0.2), 0.4)
 
-    # Fill layer — from invert level up to GL (alongside culvert walls and above)
-    ax.add_patch(patches.Rectangle(
-        (xlim[0], -H_inv), xlim[1]-xlim[0], H_inv,
-        fc="#C8A86E", ec="none", zorder=1))
+        fig, ax = plt.subplots(figsize=(4, 5))
+        ax.set_facecolor("white")
 
-    # Subbase layer (overwrites fill above)
-    if t_sub > 0:
+        # Founding layer — sits at base, below invert
         ax.add_patch(patches.Rectangle(
-            (xlim[0], -(t_road + t_sub)), xlim[1]-xlim[0], t_sub,
-            fc="#B0B0B0", ec="none", zorder=1))
+            (xlim[0], -(H_inv + fnd_depth)), xlim[1]-xlim[0], fnd_depth,
+            fc="#8A8278", ec="none", zorder=0))
+        ax.text(0, -(H_inv + fnd_depth/2), "Founding Layer",
+                ha="center", va="center", fontsize=6.5, color="white", fontweight="bold")
 
-    # Road construction layer
-    if t_road > 0:
+        # Fill layer — from invert level up to GL (alongside culvert walls and above)
         ax.add_patch(patches.Rectangle(
-            (xlim[0], -t_road), xlim[1]-xlim[0], t_road,
-            fc="#404040", ec="none", zorder=1))
+            (xlim[0], -H_inv), xlim[1]-xlim[0], H_inv,
+            fc="#C8A86E", ec="none", zorder=1))
 
-    # Culvert concrete box
-    ax.add_patch(patches.Rectangle(
-        (-B_ext/2, -H_inv), B_ext, H_ext, fc="#BBBBBB", ec="#333333", lw=2, zorder=3))
-    # Internal void
-    ax.add_patch(patches.Rectangle(
-        (-B/2, -H_inv+t_s), B, H, fc="#F0F8FF", ec="#777777", lw=1, zorder=4))
-    ax.axhline(0, color="#3E1E00", lw=2.5, zorder=5)
-    ax.text(xlim[1]-0.05, 0.08, "GL", color="#3E1E00", fontsize=8,
-            ha="right", va="bottom", fontweight="bold")
-
-    # Water table
-    if ylim[0] < -h_wt < ylim[1]:
-        ax.axhline(-h_wt, color="#1A6EBD", lw=1.2, ls="--", zorder=6)
-        ax.text(xlim[0] + 0.05, -h_wt + 0.05, "▼ WT",
-                color="#1A6EBD", fontsize=6.5, va="bottom", fontweight="bold")
-
-    xr = B_ext/2 + 0.22
-    xl = -B_ext/2 - 0.22
-    if H_c > 0:
-        dim_arrow(ax, xr, -H_c, 0, f"Hc={H_c:.2f} m")
-    dim_arrow(ax, xr, -H_inv, -H_c, f"Hext={H_ext:.2f} m")
-    dim_arrow(ax, xl, -H_inv, 0, f"Hinv={H_inv:.2f} m", "l")
-    ax.annotate("", xy=(B_ext/2, -H_inv-0.32), xytext=(-B_ext/2, -H_inv-0.32),
-                arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
-    ax.text(0, -H_inv-0.50, f"Bext = {B_ext:.2f} m", ha="center", fontsize=6.5)
-
-    ax.set_xlim(xlim); ax.set_ylim(ylim); ax.set_aspect("equal")
-    ax.set_xlabel("(m)", fontsize=8); ax.set_ylabel("Depth below GL (m)", fontsize=8)
-    ax.tick_params(labelsize=7); fig.tight_layout()
-    st.pyplot(fig, use_container_width=True)
-    plt.close()
-
-# ── Longitudinal elevation diagram ────────────────────────────────────────────
-with col_elev:
-    st.subheader("Longitudinal Section")
-
-    fig_e, ax_e = plt.subplots(figsize=(5, 4))
-    ax_e.set_facecolor("white")
-
-    # Founding layer — greyed warm tone, distinct from engineered fill above
-    ax_e.add_patch(patches.Rectangle(
-        (0, -(H_inv + fnd_depth)), LL, fnd_depth,
-        fc="#8A8278", ec="#4A4240", lw=0.8, zorder=0))
-    ax_e.text(LL / 2, -(H_inv + fnd_depth / 2), "Founding Layer",
-              ha="center", va="center", fontsize=6.5, color="white", fontweight="bold")
-
-    # Fill (full width, from invert up to GL)
-    ax_e.add_patch(patches.Rectangle(
-        (0, -H_inv), LL, H_inv, fc="#C8A86E", ec="none", zorder=1))
-
-    # Subbase
-    if t_sub > 0:
-        ax_e.add_patch(patches.Rectangle(
-            (0, -(t_road + t_sub)), LL, t_sub, fc="#B0B0B0", ec="none", zorder=2))
-
-    # Road construction
-    if t_road > 0:
-        ax_e.add_patch(patches.Rectangle(
-            (0, -t_road), LL, t_road, fc="#404040", ec="none", zorder=2))
-
-    # Culvert box (top and bottom slab + side walls visible in section)
-    # Top slab
-    ax_e.add_patch(patches.Rectangle(
-        (0, -H_c), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=3))
-    # Bottom slab
-    ax_e.add_patch(patches.Rectangle(
-        (0, -H_inv), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=3))
-    # Left headwall hint
-    ax_e.add_patch(patches.Rectangle(
-        (0, -H_inv), t_w, H_ext, fc="#AAAAAA", ec="#333333", lw=1.2, zorder=3))
-    # Right headwall hint
-    ax_e.add_patch(patches.Rectangle(
-        (LL - t_w, -H_inv), t_w, H_ext, fc="#AAAAAA", ec="#333333", lw=1.2, zorder=3))
-    # Interior void
-    ax_e.add_patch(patches.Rectangle(
-        (t_w, -H_inv + t_s), LL - 2*t_w, H, fc="#F0F8FF", ec="#777777", lw=0.8, zorder=4))
-
-    # Carriageway — centred on LL, width = cw_width
-    cw_x0    = LL / 2 - cw_width / 2
-    cw_x1    = LL / 2 + cw_width / 2
-    cw_y_top = 0.22
-    kerb_w   = max(0.05, cw_width * 0.015)
-
-    # Road surface
-    ax_e.add_patch(patches.Rectangle(
-        (cw_x0, 0), cw_width, cw_y_top, fc="#3A3A3A", ec="none", zorder=5))
-
-    # Dashed lane dividers
-    for i in range(1, n_lanes):
-        x_div = cw_x0 + i * lane_width
-        if cw_x0 < x_div < cw_x1:
-            ax_e.plot([x_div, x_div], [0, cw_y_top], color="white", lw=0.7, ls="--", zorder=6)
-
-    # Lane labels
-    for i in range(n_lanes):
-        x_mid = cw_x0 + (i + 0.5) * lane_width
-        if cw_x0 < x_mid < cw_x1:
-            ax_e.text(x_mid, cw_y_top / 2, f"L{i+1}",
-                      ha="center", va="center", fontsize=5, color="white")
-
-    # Kerbs — full height of carriageway strip, at each edge
-    for kx in [cw_x0 - kerb_w, cw_x1]:
-        ax_e.add_patch(patches.Rectangle(
-            (kx, 0), kerb_w, cw_y_top, fc="#888888", ec="#444444", lw=0.5, zorder=7))
-
-    # Width annotation
-    ax_e.annotate("", xy=(cw_x1, cw_y_top + 0.07), xytext=(cw_x0, cw_y_top + 0.07),
-                  arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
-    ax_e.text(LL / 2, cw_y_top + 0.13,
-              f"CW={cw_width:.2f}m  {n_lanes}ln  lw={lane_width:.2f}m",
-              ha="center", fontsize=5.5, color="#CCCCCC")
-
-    # GL
-    ax_e.axhline(0, color="#3E1E00", lw=2, zorder=5)
-    ax_e.text(LL + 0.05, 0.04, "GL", color="#3E1E00", fontsize=7,
-              ha="left", va="bottom", fontweight="bold")
-
-    # Water table
-    elev_ylim_bot = -(H_inv + fnd_depth + 0.35)
-    if elev_ylim_bot < -h_wt < 0.45:
-        ax_e.axhline(-h_wt, color="#1A6EBD", lw=1.2, ls="--", zorder=6)
-        ax_e.text(-0.05, -h_wt + 0.03, "▼ WT",
-                  color="#1A6EBD", fontsize=6, va="bottom", ha="right", fontweight="bold")
-
-    # Dimensions
-    xr_e = LL + 0.15
-    if H_c > 0:
-        dim_arrow(ax_e, xr_e, -H_c, 0,      f"Hc={H_c:.2f}m")
-    dim_arrow(ax_e, xr_e, -H_inv, -H_c,     f"Hext={H_ext:.2f}m")
-    dim_arrow(ax_e, -0.15, -H_inv, 0,        f"Hinv={H_inv:.2f}m", "l")
-    h_dim_arrow(ax_e, 0, LL, -(H_inv + fnd_depth + 0.15), f"LL = {LL:.1f} m")
-
-    ax_e.set_xlim(-0.5, LL + 0.55)
-    ax_e.set_ylim(-(H_inv + fnd_depth + 0.35), 0.65)
-    ax_e.set_xlabel("Length (m)", fontsize=8)
-    ax_e.set_ylabel("Depth below GL (m)", fontsize=8)
-    ax_e.tick_params(labelsize=7)
-    fig_e.tight_layout()
-    st.pyplot(fig_e, use_container_width=True)
-    plt.close()
-
-# ══ Section 2: LM1 Vehicle Loading ════════════════════════════════════════════
-with st.expander("LM1 Vehicle Loading", expanded=True):
-    _lm1_left, _lm1_right = st.columns([1, 1])
-
-    with _lm1_left:
-        st.markdown("**LM1 characteristic loads per metre strip** (BS EN 1991-2, UK NA α=1.0)")
-        dg = lm1.dispersion
-        lm1_rows = []
-        for ln in lm1.lanes:
-            lm1_rows.append({
-                "Lane": f"Lane {ln.lane}",
-                "Q_ik (kN/axle)": f"{ln.Q_ik:.0f}",
-                "q_ik (kN/m²)":   f"{ln.q_ik:.1f}",
-                "UDL/m (kN/m)":   f"{ln.udl_per_m:.2f}",
-                "TS/m (kN/m)":    f"{ln.ts_per_m:.2f}",
-                "Total/m (kN/m)": f"{ln.total_per_m:.2f}",
-            })
-        st.dataframe(pd.DataFrame(lm1_rows), hide_index=True, use_container_width=True)
-
-        st.markdown(f"""
-**Dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
-- LL direction: {dg.disp_LL:.3f} m &nbsp;·&nbsp; B_ext direction: {dg.disp_Bext:.3f} m ({'merged' if dg.axles_merged else 'separate'})
-- Effective loaded length: min({dg.disp_Bext:.3f}, {B_ext:.3f}) = {dg.Bext_loaded:.3f} m
-
-**Totals:**
-- Max vertical (all lanes): **{lm1.max_V_per_m:.2f} kN/m**
-- Min vertical (no LL): **0.00 kN/m**
-
-**Braking (Lane 1 governs — BS EN 1991-2 Cl. 4.4.1):**
-- Q_lk = 0.6×2×{lm1_loading.LM1_CHAR[1]['Q_ik']:.0f} + 0.10×{lm1_loading.LM1_CHAR[1]['q_ik']:.1f}×{lane_width:.2f}×{B_ext:.2f} = {lm1.braking.Q_lk_raw:.1f} kN
-- Clamped [180, 900] kN → **{lm1.braking.Q_lk:.1f} kN**
-- Per metre strip (÷ {lane_width:.2f} m lane width): **{lm1.braking.Q_lk_per_m:.2f} kN/m**
-""")
-
-    with _lm1_right:
-        st.markdown("**Worst-case tandem position — Lane 1 (travel / B_ext direction)**")
-
-        # --- Vehicle position diagram (in travel direction, B_ext on x-axis) ---
-        fig_v, ax_v = plt.subplots(figsize=(5, 4))
-        ax_v.set_facecolor("white")
-
-        pad_v = max(B_ext * 0.35, 0.6)
-        x0_v  = -pad_v
-        x1_v  =  B_ext + pad_v
-        y_bot = -(H_c + 0.3)    # show a little below crown
-
-        # Fill layers behind (in travel direction cross-section)
-        ax_v.add_patch(patches.Rectangle((x0_v, y_bot), x1_v - x0_v, -y_bot,
-                                          fc="#C8A86E", ec="none", zorder=0))
+        # Subbase layer (overwrites fill above)
         if t_sub > 0:
-            ax_v.add_patch(patches.Rectangle((x0_v, -(t_road + t_sub)), x1_v - x0_v, t_sub,
-                                              fc="#B0B0B0", ec="none", zorder=1))
+            ax.add_patch(patches.Rectangle(
+                (xlim[0], -(t_road + t_sub)), xlim[1]-xlim[0], t_sub,
+                fc="#B0B0B0", ec="none", zorder=1))
+
+        # Road construction layer
         if t_road > 0:
-            ax_v.add_patch(patches.Rectangle((x0_v, -t_road), x1_v - x0_v, t_road,
-                                              fc="#404040", ec="none", zorder=1))
+            ax.add_patch(patches.Rectangle(
+                (xlim[0], -t_road), xlim[1]-xlim[0], t_road,
+                fc="#404040", ec="none", zorder=1))
 
-        # Culvert top slab (just the top edge in this section)
-        ax_v.add_patch(patches.Rectangle((0, -H_c), B_ext, t_s,
-                                          fc="#BBBBBB", ec="#333333", lw=1.5, zorder=2))
+        # Culvert concrete box
+        ax.add_patch(patches.Rectangle(
+            (-B_ext/2, -H_inv), B_ext, H_ext, fc="#BBBBBB", ec="#333333", lw=2, zorder=3))
+        # Internal void
+        ax.add_patch(patches.Rectangle(
+            (-B/2, -H_inv+t_s), B, H, fc="#F0F8FF", ec="#777777", lw=1, zorder=4))
+        ax.axhline(0, color="#3E1E00", lw=2.5, zorder=5)
+        ax.text(xlim[1]-0.05, 0.08, "GL", color="#3E1E00", fontsize=8,
+                ha="right", va="bottom", fontweight="bold")
 
-        # GL line
-        ax_v.axhline(0, color="#3E1E00", lw=2, zorder=5)
-        ax_v.text(x1_v - 0.05, 0.04, "GL", color="#3E1E00", fontsize=7,
-                  ha="right", va="bottom", fontweight="bold")
+        # Water table
+        if ylim[0] < -h_wt < ylim[1]:
+            ax.axhline(-h_wt, color="#1A6EBD", lw=1.2, ls="--", zorder=6)
+            ax.text(xlim[0] + 0.05, -h_wt + 0.05, "▼ WT",
+                    color="#1A6EBD", fontsize=6.5, va="bottom", fontweight="bold")
 
-        # Crown line
-        ax_v.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
-        ax_v.text(x1_v - 0.05, -H_c + 0.02, "Crown", color="#333333",
-                  fontsize=6, ha="right", va="bottom")
+        xr = B_ext/2 + 0.22
+        xl = -B_ext/2 - 0.22
+        if H_c > 0:
+            dim_arrow(ax, xr, -H_c, 0, f"Hc={H_c:.2f} m")
+        dim_arrow(ax, xr, -H_inv, -H_c, f"Hext={H_ext:.2f} m")
+        dim_arrow(ax, xl, -H_inv, 0, f"Hinv={H_inv:.2f} m", "l")
+        ax.annotate("", xy=(B_ext/2, -H_inv-0.32), xytext=(-B_ext/2, -H_inv-0.32),
+                    arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
+        ax.text(0, -H_inv-0.50, f"Bext = {B_ext:.2f} m", ha="center", fontsize=6.5)
 
-        # Tandem worst position: centred over culvert in B_ext direction
-        ctr  = B_ext / 2
-        ax1  = ctr - lm1_loading.AXLE_SPACING / 2   # front axle x-centre
-        ax2  = ctr + lm1_loading.AXLE_SPACING / 2   # rear  axle x-centre
-        cl   = lm1_loading.CONTACT_L                 # contact patch length
-        wh   = 0.08                                   # wheel drawing height (visual)
-
-        _spread_bext = lm1_loading.DISP * H_c
-        for ax_x in [ax1, ax2]:
-            # Wheel contact patch
-            ax_v.add_patch(patches.Rectangle((ax_x - cl/2, 0), cl, wh,
-                                              fc="#222222", ec="#111111", lw=0.8, zorder=6))
-            # Dispersion lines at 30° through H_c
-            left_edge  = ax_x - cl/2
-            right_edge = ax_x + cl/2
-            ax_v.plot([left_edge,  left_edge  - _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
-            ax_v.plot([right_edge, right_edge + _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
-
-        # Dispersed footprint at crown level
-        left_disp  = ctr - dg.disp_Bext / 2
-        right_disp = ctr + dg.disp_Bext / 2
-        ax_v.annotate("", xy=(min(right_disp, B_ext), -H_c - 0.06),
-                      xytext=(max(left_disp, 0), -H_c - 0.06),
-                      arrowprops=dict(arrowstyle="<->", color="red", lw=1.0))
-        ax_v.text(ctr, -H_c - 0.14, f"disp={dg.disp_Bext:.2f}m",
-                  ha="center", fontsize=6, color="red")
-
-        # Axle load labels — Q1k is per axle; tandem = 2 axles = 2 × Q1k
-        Q1k = lm1_loading.LM1_CHAR[1]["Q_ik"]
-        for label, ax_x in zip(["Axle 1", "Axle 2"], [ax1, ax2]):
-            ax_v.text(ax_x, wh + 0.04, f"{label}\n{Q1k:.0f} kN",
-                      ha="center", va="bottom", fontsize=5.5, color="#222222", fontweight="bold",
-                      linespacing=1.3)
-        # Total tandem label centred between axles
-        ax_v.text(ctr, wh + 0.32, f"Tandem: 2 × {Q1k:.0f} = {2*Q1k:.0f} kN total",
-                  ha="center", fontsize=6, color="#222222",
-                  bbox=dict(fc="lightyellow", ec="#AAAAAA", lw=0.5, pad=2))
-
-        # Axle spacing dimension (below wheel patches)
-        ax_v.annotate("", xy=(ax2, -0.06), xytext=(ax1, -0.06),
-                      arrowprops=dict(arrowstyle="<->", color="#555555", lw=0.8))
-        ax_v.text(ctr, -0.11, f"{lm1_loading.AXLE_SPACING:.1f} m",
-                  ha="center", fontsize=6, color="#555555")
-
-        # B_ext span arrow
-        ax_v.annotate("", xy=(B_ext, y_bot + 0.05), xytext=(0, y_bot + 0.05),
-                      arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
-        ax_v.text(ctr, y_bot + 0.10, f"B_ext={B_ext:.2f}m", ha="center", fontsize=6.5)
-
-        # H_c depth label
-        ax_v.annotate("", xy=(x0_v + 0.15, -H_c), xytext=(x0_v + 0.15, 0),
-                      arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
-        ax_v.text(x0_v + 0.22, -H_c / 2, f"Hc={H_c:.3f}m", fontsize=6, va="center")
-
-        ax_v.set_xlim(x0_v, x1_v)
-        ax_v.set_ylim(y_bot, wh + 0.50)
-        ax_v.set_xlabel("B_ext direction (m)", fontsize=8)
-        ax_v.set_ylabel("Depth (m)", fontsize=8)
-        ax_v.tick_params(labelsize=7)
-        fig_v.tight_layout()
-        st.pyplot(fig_v, use_container_width=True)
+        ax.set_xlim(xlim); ax.set_ylim(ylim); ax.set_aspect("equal")
+        ax.set_xlabel("(m)", fontsize=8); ax.set_ylabel("Depth below GL (m)", fontsize=8)
+        ax.tick_params(labelsize=7); fig.tight_layout()
+        st.pyplot(fig, use_container_width=True)
         plt.close()
 
-    # ── LL direction diagram ──────────────────────────────────────────────────
-    st.markdown("---")
-    st.markdown("**Lane distribution — LL direction** (barrel axis; vehicles travel into page)")
+    # ── Longitudinal elevation diagram ────────────────────────────────────────────
+    with col_elev:
+        st.subheader("Longitudinal Section")
 
-    # Dynamic bottom margin to fit all staggered dispersion arrows
-    _arr_space = 0.10 * len(lm1.lanes) + 0.18
-    _y_bot_ll  = -(H_c + _arr_space + 0.22)
-    _ll_cw_x0  = LL / 2 - cw_width / 2   # carriageway left edge in LL
+        fig_e, ax_e = plt.subplots(figsize=(5, 4))
+        ax_e.set_facecolor("white")
 
-    fig_ll, ax_ll = plt.subplots(figsize=(10, 3.8))
-    ax_ll.set_facecolor("white")
+        # Founding layer — greyed warm tone, distinct from engineered fill above
+        ax_e.add_patch(patches.Rectangle(
+            (0, -(H_inv + fnd_depth)), LL, fnd_depth,
+            fc="#8A8278", ec="#4A4240", lw=0.8, zorder=0))
+        ax_e.text(LL / 2, -(H_inv + fnd_depth / 2), "Founding Layer",
+                  ha="center", va="center", fontsize=6.5, color="white", fontweight="bold")
 
-    # Background fill layers
-    ax_ll.add_patch(patches.Rectangle((0, _y_bot_ll), LL, abs(_y_bot_ll),
-                                      fc="#C8A86E", ec="none", zorder=0))
-    if t_sub > 0:
-        ax_ll.add_patch(patches.Rectangle((0, -(t_road + t_sub)), LL, t_sub,
-                                          fc="#B0B0B0", ec="none", zorder=1))
-    if t_road > 0:
-        ax_ll.add_patch(patches.Rectangle((0, -t_road), LL, t_road,
-                                          fc="#404040", ec="none", zorder=1))
+        # Fill (full width, from invert up to GL)
+        ax_e.add_patch(patches.Rectangle(
+            (0, -H_inv), LL, H_inv, fc="#C8A86E", ec="none", zorder=1))
 
-    # Culvert top slab (full LL width)
-    ax_ll.add_patch(patches.Rectangle((0, -H_c), LL, t_s,
-                                      fc="#BBBBBB", ec="#333333", lw=1.2, zorder=2))
+        # Subbase
+        if t_sub > 0:
+            ax_e.add_patch(patches.Rectangle(
+                (0, -(t_road + t_sub)), LL, t_sub, fc="#B0B0B0", ec="none", zorder=2))
 
-    # GL and crown reference lines
-    ax_ll.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
-    ax_ll.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
-    ax_ll.text(LL + 0.06, 0.03,   "GL",    color="#3E1E00", fontsize=7, ha="left", va="bottom")
-    ax_ll.text(LL + 0.06, -H_c + 0.02, "Crown", color="#333333", fontsize=6, ha="left", va="bottom")
+        # Road construction
+        if t_road > 0:
+            ax_e.add_patch(patches.Rectangle(
+                (0, -t_road), LL, t_road, fc="#404040", ec="none", zorder=2))
 
-    _wh_ll  = 0.07   # wheel patch visual height (not structural)
-    _lclrs  = ["#5A8FD0", "#5CA06A", "#C86060", "#9A70C0"]
+        # Culvert box (top and bottom slab + side walls visible in section)
+        # Top slab
+        ax_e.add_patch(patches.Rectangle(
+            (0, -H_c), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=3))
+        # Bottom slab
+        ax_e.add_patch(patches.Rectangle(
+            (0, -H_inv), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=3))
+        # Left headwall hint
+        ax_e.add_patch(patches.Rectangle(
+            (0, -H_inv), t_w, H_ext, fc="#AAAAAA", ec="#333333", lw=1.2, zorder=3))
+        # Right headwall hint
+        ax_e.add_patch(patches.Rectangle(
+            (LL - t_w, -H_inv), t_w, H_ext, fc="#AAAAAA", ec="#333333", lw=1.2, zorder=3))
+        # Interior void
+        ax_e.add_patch(patches.Rectangle(
+            (t_w, -H_inv + t_s), LL - 2*t_w, H, fc="#F0F8FF", ec="#777777", lw=0.8, zorder=4))
 
-    for _i, _ln in enumerate(lm1.lanes):
-        _lctr  = _ll_cw_x0 + (_i + 0.5) * lane_width
-        _lleft = _ll_cw_x0 + _i * lane_width
-        _lc    = _lclrs[_i % len(_lclrs)]
+        # Carriageway — centred on LL, width = cw_width
+        cw_x0    = LL / 2 - cw_width / 2
+        cw_x1    = LL / 2 + cw_width / 2
+        cw_y_top = 0.22
+        kerb_w   = max(0.05, cw_width * 0.015)
 
-        # Lane strip above GL (colour tint so lanes are distinguishable)
-        ax_ll.add_patch(patches.Rectangle((_lleft, 0), lane_width, 0.11,
-                                          fc=_lc, ec="white", lw=0.5, alpha=0.75, zorder=4))
-        ax_ll.text(_lctr, 0.055, f"Lane {_ln.lane}  —  {_ln.Q_ik:.0f} kN/axle",
-                   ha="center", va="center", fontsize=5.5, color="white",
-                   fontweight="bold", zorder=7)
+        # Road surface
+        ax_e.add_patch(patches.Rectangle(
+            (cw_x0, 0), cw_width, cw_y_top, fc="#3A3A3A", ec="none", zorder=5))
 
-        # Lane boundary
-        ax_ll.axvline(_lleft, color="#999999", lw=0.5, ls=":", zorder=3)
+        # Dashed lane dividers
+        for i in range(1, n_lanes):
+            x_div = cw_x0 + i * lane_width
+            if cw_x0 < x_div < cw_x1:
+                ax_e.plot([x_div, x_div], [0, cw_y_top], color="white", lw=0.7, ls="--", zorder=6)
 
-        # Wheel patches and dispersion for this lane
-        _w_l = _lctr - lm1_loading.WHEEL_SPACING / 2
-        _w_r = _lctr + lm1_loading.WHEEL_SPACING / 2
-        _spread_ll = lm1_loading.DISP * H_c
-        for _wx in [_w_l, _w_r]:
-            _wx0 = _wx - lm1_loading.CONTACT_T / 2
-            _wx1 = _wx + lm1_loading.CONTACT_T / 2
-            ax_ll.add_patch(patches.Rectangle((_wx0, 0), lm1_loading.CONTACT_T, _wh_ll,
-                                              fc="#222222", ec="#111111", lw=0.6, zorder=6))
-            ax_ll.plot([_wx0, _wx0 - _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
-                       alpha=0.80, zorder=5)
-            ax_ll.plot([_wx1, _wx1 + _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
-                       alpha=0.80, zorder=5)
+        # Lane labels
+        for i in range(n_lanes):
+            x_mid = cw_x0 + (i + 0.5) * lane_width
+            if cw_x0 < x_mid < cw_x1:
+                ax_e.text(x_mid, cw_y_top / 2, f"L{i+1}",
+                          ha="center", va="center", fontsize=5, color="white")
 
-        # Staggered dispersion arrow at crown level
-        _dsp_l = _lctr - dg.disp_LL / 2
-        _dsp_r = _lctr + dg.disp_LL / 2
-        _y_arr = -H_c - 0.09 - _i * 0.10
-        ax_ll.annotate("", xy=(_dsp_r, _y_arr), xytext=(_dsp_l, _y_arr),
-                        arrowprops=dict(arrowstyle="<->", color=_lc, lw=1.0))
-        ax_ll.text(_lctr, _y_arr - 0.05,
-                   f"disp_LL = {dg.disp_LL:.2f} m",
-                   ha="center", fontsize=5, color=_lc)
+        # Kerbs — full height of carriageway strip, at each edge
+        for kx in [cw_x0 - kerb_w, cw_x1]:
+            ax_e.add_patch(patches.Rectangle(
+                (kx, 0), kerb_w, cw_y_top, fc="#888888", ec="#444444", lw=0.5, zorder=7))
 
-    # Right carriageway edge
-    ax_ll.axvline(_ll_cw_x0 + cw_width, color="#999999", lw=0.5, ls=":", zorder=3)
+        # Width annotation
+        ax_e.annotate("", xy=(cw_x1, cw_y_top + 0.07), xytext=(cw_x0, cw_y_top + 0.07),
+                      arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
+        ax_e.text(LL / 2, cw_y_top + 0.13,
+                  f"CW={cw_width:.2f}m  {n_lanes}ln  lw={lane_width:.2f}m",
+                  ha="center", fontsize=5.5, color="#CCCCCC")
 
-    # Wheel-to-wheel spacing annotation (Lane 1 only, above wheels)
-    _ln1_ctr = _ll_cw_x0 + 0.5 * lane_width
-    ax_ll.annotate("",
-                   xy  =(_ln1_ctr + lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
-                   xytext=(_ln1_ctr - lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
-                   arrowprops=dict(arrowstyle="<->", color="#333333", lw=0.9))
-    ax_ll.text(_ln1_ctr, _wh_ll + 0.08,
-               f"Wheel spacing = {lm1_loading.WHEEL_SPACING:.1f} m",
-               ha="center", fontsize=5.5, color="#333333")
+        # GL
+        ax_e.axhline(0, color="#3E1E00", lw=2, zorder=5)
+        ax_e.text(LL + 0.05, 0.04, "GL", color="#3E1E00", fontsize=7,
+                  ha="left", va="bottom", fontweight="bold")
 
-    # 1m strip indicator (centred on Lane 1 tandem centroid)
-    ax_ll.add_patch(patches.Rectangle(
-        (_ln1_ctr - 0.5, _y_bot_ll), 1.0, abs(_y_bot_ll) + 0.13,
-        fc="none", ec="darkorange", lw=1.3, ls="-", alpha=0.8, zorder=8))
-    ax_ll.text(_ln1_ctr, _y_bot_ll + 0.05,
-               "1 m strip (worst)", ha="center", fontsize=5.5, color="darkorange")
+        # Water table
+        elev_ylim_bot = -(H_inv + fnd_depth + 0.35)
+        if elev_ylim_bot < -h_wt < 0.45:
+            ax_e.axhline(-h_wt, color="#1A6EBD", lw=1.2, ls="--", zorder=6)
+            ax_e.text(-0.05, -h_wt + 0.03, "▼ WT",
+                      color="#1A6EBD", fontsize=6, va="bottom", ha="right", fontweight="bold")
 
-    # H_c depth annotation
-    ax_ll.annotate("", xy=(-0.3, -H_c), xytext=(-0.3, 0),
-                    arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
-    ax_ll.text(-0.35, -H_c / 2, f"Hc\n{H_c:.3f} m",
-               fontsize=5.5, va="center", ha="right", linespacing=1.2)
+        # Dimensions
+        xr_e = LL + 0.15
+        if H_c > 0:
+            dim_arrow(ax_e, xr_e, -H_c, 0,      f"Hc={H_c:.2f}m")
+        dim_arrow(ax_e, xr_e, -H_inv, -H_c,     f"Hext={H_ext:.2f}m")
+        dim_arrow(ax_e, -0.15, -H_inv, 0,        f"Hinv={H_inv:.2f}m", "l")
+        h_dim_arrow(ax_e, 0, LL, -(H_inv + fnd_depth + 0.15), f"LL = {LL:.1f} m")
 
-    # Carriageway width annotation
-    ax_ll.annotate("",
-                   xy  =(_ll_cw_x0 + cw_width, 0.18),
-                   xytext=(_ll_cw_x0, 0.18),
-                   arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
-    ax_ll.text(LL / 2, 0.21,
-               f"Carriageway = {cw_width:.2f} m  ({n_lanes} notional lanes × {lane_width:.2f} m)",
-               ha="center", fontsize=6, color="#CCCCCC")
+        ax_e.set_xlim(-0.5, LL + 0.55)
+        ax_e.set_ylim(-(H_inv + fnd_depth + 0.35), 0.65)
+        ax_e.set_xlabel("Length (m)", fontsize=8)
+        ax_e.set_ylabel("Depth below GL (m)", fontsize=8)
+        ax_e.tick_params(labelsize=7)
+        fig_e.tight_layout()
+        st.pyplot(fig_e, use_container_width=True)
+        plt.close()
 
-    # LL total span annotation
-    ax_ll.annotate("", xy=(LL, _y_bot_ll + 0.07), xytext=(0, _y_bot_ll + 0.07),
-                    arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
-    ax_ll.text(LL / 2, _y_bot_ll + 0.14, f"LL = {LL:.1f} m", ha="center", fontsize=6.5)
+    # ══ Section 2: LM1 Vehicle Loading ════════════════════════════════════════════
+    with st.expander("LM1 Vehicle Loading", expanded=True):
+        _lm1_left, _lm1_right = st.columns([1, 1])
 
-    ax_ll.set_xlim(-0.7, LL + 0.7)
-    ax_ll.set_ylim(_y_bot_ll, 0.28)
-    ax_ll.set_xlabel("LL direction — barrel axis (m)", fontsize=8)
-    ax_ll.set_ylabel("Depth (m)", fontsize=8)
-    ax_ll.tick_params(labelsize=7)
-    fig_ll.tight_layout()
-    st.pyplot(fig_ll, use_container_width=True)
-    plt.close()
-
-# ══ Section 2b: LM3 Special Vehicle Loading ═══════════════════════════════════
-with st.expander("LM3 Special Vehicle Loading", expanded=False):
-    sv = lm3_loading.SV_VEHICLES[lm3.vehicle_name]
-    st.warning("SV axle data is **approximate** — verify all values against UK NA Table NA.5 before use in design.")
-
-    col_l3, col_r3 = st.columns([1, 1])
-
-    with col_l3:
-        st.markdown(f"""
-**{lm3.vehicle_name}** — {lm3.gvw:.0f} kN GVW · {len(sv.axle_loads)} axles · {len(sv.axle_loads)} × {sv.axle_loads[0]:.0f} kN/axle
-
-**Per-axle dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
-- LL direction:   {lm3.dispersion.disp_LL:.3f} m &nbsp;=&nbsp; {lm1_loading.WHEEL_SPACING:.1f} + {lm1_loading.CONTACT_T:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
-- B_ext per axle: {lm3.dispersion.disp_B:.3f} m &nbsp;=&nbsp; {lm1_loading.CONTACT_L:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
-
-**Worst-case position scan (0.05 m step):**
-- Front-axle offset from culvert edge: **{lm3.sv_worst_offset:+.3f} m**
-- Axles contributing at worst position: **{lm3.sv_n_axles}**
-- SV load (Lane 1) per metre strip: &nbsp;**{lm3.sv_load_per_m:.2f} kN/m**
-""")
-
-        if lm3.secondary_lanes:
-            sec_rows = []
-            for ln in lm3.secondary_lanes:
-                sec_rows.append({
+        with _lm1_left:
+            st.markdown("**LM1 characteristic loads per metre strip** (BS EN 1991-2, UK NA α=1.0)")
+            dg = lm1.dispersion
+            lm1_rows = []
+            for ln in lm1.lanes:
+                lm1_rows.append({
                     "Lane": f"Lane {ln.lane}",
-                    "Q_ik (kN)":      f"{ln.Q_ik:.0f}",
+                    "Q_ik (kN/axle)": f"{ln.Q_ik:.0f}",
                     "q_ik (kN/m²)":   f"{ln.q_ik:.1f}",
                     "UDL/m (kN/m)":   f"{ln.udl_per_m:.2f}",
                     "TS/m (kN/m)":    f"{ln.ts_per_m:.2f}",
                     "Total/m (kN/m)": f"{ln.total_per_m:.2f}",
                 })
-            st.markdown("**Secondary lanes (LM1 Lane 2 / 3 / 4 TS + UDL):**")
-            st.table(pd.DataFrame(sec_rows).set_index("Lane"))
-        else:
-            st.markdown("*No secondary lanes (only 1 notional lane).*")
+            st.dataframe(pd.DataFrame(lm1_rows), hide_index=True, use_container_width=True)
 
-        brk = lm3.braking
-        st.markdown(f"""
-**Braking force — BS EN 1991-2 Cl. 4.4.4 / PD6694-1 Cl. 10.2.8.2:**
-- Q_brk = 0.25 × {lm3.gvw:.0f} kN (basic GVW) = **{brk.Q_brk_raw:.1f} kN**
-- Distributed over barrel length LL = {LL:.2f} m (in-plane rigidity, Lj = LL)
-- Per metre strip: **{brk.Q_brk_per_m:.2f} kN/m** (applied at crown, arm = H_ext)
+            st.markdown(f"""
+    **Dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
+    - LL direction: {dg.disp_LL:.3f} m &nbsp;·&nbsp; B_ext direction: {dg.disp_Bext:.3f} m ({'merged' if dg.axles_merged else 'separate'})
+    - Effective loaded length: min({dg.disp_Bext:.3f}, {B_ext:.3f}) = {dg.Bext_loaded:.3f} m
 
----
-- LM1 secondary lanes total: &nbsp;{lm3.secondary_per_m:.2f} kN/m *(act on separate LL strips — not added to the SV strip)*
-- **Governing vertical (SV strip, Lane 1): {lm3.max_V_per_m:.2f} kN/m**
-- Min vertical (no LL): **0.00 kN/m**
-""")
+    **Totals:**
+    - Max vertical (all lanes): **{lm1.max_V_per_m:.2f} kN/m**
+    - Min vertical (no LL): **0.00 kN/m**
 
-    with col_r3:
-        # Diagram: SV vehicle worst-case position in B_ext direction
-        st.markdown(f"**Worst-case axle positions — {lm3.vehicle_name} (B_ext direction)**")
+    **Braking (Lane 1 governs — BS EN 1991-2 Cl. 4.4.1):**
+    - Q_lk = 0.6×2×{lm1_loading.LM1_CHAR[1]['Q_ik']:.0f} + 0.10×{lm1_loading.LM1_CHAR[1]['q_ik']:.1f}×{lane_width:.2f}×{B_ext:.2f} = {lm1.braking.Q_lk_raw:.1f} kN
+    - Clamped [180, 900] kN → **{lm1.braking.Q_lk:.1f} kN**
+    - Per metre strip (÷ {lane_width:.2f} m lane width): **{lm1.braking.Q_lk_per_m:.2f} kN/m**
+    """)
 
-        fig_sv, ax_sv = plt.subplots(figsize=(5, 4))
-        ax_sv.set_facecolor("white")
+        with _lm1_right:
+            st.markdown("**Worst-case tandem position — Lane 1 (travel / B_ext direction)**")
 
-        pad_sv  = max(B_ext * 0.35, 0.6)
-        x0_sv   = -pad_sv
-        x1_sv   = B_ext + pad_sv
-        y_bot_sv = -(H_c + 0.3)
+            # --- Vehicle position diagram (in travel direction, B_ext on x-axis) ---
+            fig_v, ax_v = plt.subplots(figsize=(5, 4))
+            ax_v.set_facecolor("white")
 
-        # Fill layers
-        ax_sv.add_patch(patches.Rectangle((x0_sv, y_bot_sv), x1_sv - x0_sv, abs(y_bot_sv),
+            pad_v = max(B_ext * 0.35, 0.6)
+            x0_v  = -pad_v
+            x1_v  =  B_ext + pad_v
+            y_bot = -(H_c + 0.3)    # show a little below crown
+
+            # Fill layers behind (in travel direction cross-section)
+            ax_v.add_patch(patches.Rectangle((x0_v, y_bot), x1_v - x0_v, -y_bot,
+                                              fc="#C8A86E", ec="none", zorder=0))
+            if t_sub > 0:
+                ax_v.add_patch(patches.Rectangle((x0_v, -(t_road + t_sub)), x1_v - x0_v, t_sub,
+                                                  fc="#B0B0B0", ec="none", zorder=1))
+            if t_road > 0:
+                ax_v.add_patch(patches.Rectangle((x0_v, -t_road), x1_v - x0_v, t_road,
+                                                  fc="#404040", ec="none", zorder=1))
+
+            # Culvert top slab (just the top edge in this section)
+            ax_v.add_patch(patches.Rectangle((0, -H_c), B_ext, t_s,
+                                              fc="#BBBBBB", ec="#333333", lw=1.5, zorder=2))
+
+            # GL line
+            ax_v.axhline(0, color="#3E1E00", lw=2, zorder=5)
+            ax_v.text(x1_v - 0.05, 0.04, "GL", color="#3E1E00", fontsize=7,
+                      ha="right", va="bottom", fontweight="bold")
+
+            # Crown line
+            ax_v.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
+            ax_v.text(x1_v - 0.05, -H_c + 0.02, "Crown", color="#333333",
+                      fontsize=6, ha="right", va="bottom")
+
+            # Tandem worst position: centred over culvert in B_ext direction
+            ctr  = B_ext / 2
+            ax1  = ctr - lm1_loading.AXLE_SPACING / 2   # front axle x-centre
+            ax2  = ctr + lm1_loading.AXLE_SPACING / 2   # rear  axle x-centre
+            cl   = lm1_loading.CONTACT_L                 # contact patch length
+            wh   = 0.08                                   # wheel drawing height (visual)
+
+            _spread_bext = lm1_loading.DISP * H_c
+            for ax_x in [ax1, ax2]:
+                # Wheel contact patch
+                ax_v.add_patch(patches.Rectangle((ax_x - cl/2, 0), cl, wh,
+                                                  fc="#222222", ec="#111111", lw=0.8, zorder=6))
+                # Dispersion lines at 30° through H_c
+                left_edge  = ax_x - cl/2
+                right_edge = ax_x + cl/2
+                ax_v.plot([left_edge,  left_edge  - _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
+                ax_v.plot([right_edge, right_edge + _spread_bext], [0, -H_c], "r--", lw=0.8, zorder=4)
+
+            # Dispersed footprint at crown level
+            left_disp  = ctr - dg.disp_Bext / 2
+            right_disp = ctr + dg.disp_Bext / 2
+            ax_v.annotate("", xy=(min(right_disp, B_ext), -H_c - 0.06),
+                          xytext=(max(left_disp, 0), -H_c - 0.06),
+                          arrowprops=dict(arrowstyle="<->", color="red", lw=1.0))
+            ax_v.text(ctr, -H_c - 0.14, f"disp={dg.disp_Bext:.2f}m",
+                      ha="center", fontsize=6, color="red")
+
+            # Axle load labels — Q1k is per axle; tandem = 2 axles = 2 × Q1k
+            Q1k = lm1_loading.LM1_CHAR[1]["Q_ik"]
+            for label, ax_x in zip(["Axle 1", "Axle 2"], [ax1, ax2]):
+                ax_v.text(ax_x, wh + 0.04, f"{label}\n{Q1k:.0f} kN",
+                          ha="center", va="bottom", fontsize=5.5, color="#222222", fontweight="bold",
+                          linespacing=1.3)
+            # Total tandem label centred between axles
+            ax_v.text(ctr, wh + 0.32, f"Tandem: 2 × {Q1k:.0f} = {2*Q1k:.0f} kN total",
+                      ha="center", fontsize=6, color="#222222",
+                      bbox=dict(fc="lightyellow", ec="#AAAAAA", lw=0.5, pad=2))
+
+            # Axle spacing dimension (below wheel patches)
+            ax_v.annotate("", xy=(ax2, -0.06), xytext=(ax1, -0.06),
+                          arrowprops=dict(arrowstyle="<->", color="#555555", lw=0.8))
+            ax_v.text(ctr, -0.11, f"{lm1_loading.AXLE_SPACING:.1f} m",
+                      ha="center", fontsize=6, color="#555555")
+
+            # B_ext span arrow
+            ax_v.annotate("", xy=(B_ext, y_bot + 0.05), xytext=(0, y_bot + 0.05),
+                          arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
+            ax_v.text(ctr, y_bot + 0.10, f"B_ext={B_ext:.2f}m", ha="center", fontsize=6.5)
+
+            # H_c depth label
+            ax_v.annotate("", xy=(x0_v + 0.15, -H_c), xytext=(x0_v + 0.15, 0),
+                          arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
+            ax_v.text(x0_v + 0.22, -H_c / 2, f"Hc={H_c:.3f}m", fontsize=6, va="center")
+
+            ax_v.set_xlim(x0_v, x1_v)
+            ax_v.set_ylim(y_bot, wh + 0.50)
+            ax_v.set_xlabel("B_ext direction (m)", fontsize=8)
+            ax_v.set_ylabel("Depth (m)", fontsize=8)
+            ax_v.tick_params(labelsize=7)
+            fig_v.tight_layout()
+            st.pyplot(fig_v, use_container_width=True)
+            plt.close()
+
+        # ── LL direction diagram ──────────────────────────────────────────────────
+        st.markdown("---")
+        st.markdown("**Lane distribution — LL direction** (barrel axis; vehicles travel into page)")
+
+        # Dynamic bottom margin to fit all staggered dispersion arrows
+        _arr_space = 0.10 * len(lm1.lanes) + 0.18
+        _y_bot_ll  = -(H_c + _arr_space + 0.22)
+        _ll_cw_x0  = LL / 2 - cw_width / 2   # carriageway left edge in LL
+
+        fig_ll, ax_ll = plt.subplots(figsize=(10, 3.8))
+        ax_ll.set_facecolor("white")
+
+        # Background fill layers
+        ax_ll.add_patch(patches.Rectangle((0, _y_bot_ll), LL, abs(_y_bot_ll),
                                           fc="#C8A86E", ec="none", zorder=0))
         if t_sub > 0:
-            ax_sv.add_patch(patches.Rectangle((x0_sv, -(t_road + t_sub)), x1_sv - x0_sv, t_sub,
+            ax_ll.add_patch(patches.Rectangle((0, -(t_road + t_sub)), LL, t_sub,
                                               fc="#B0B0B0", ec="none", zorder=1))
         if t_road > 0:
-            ax_sv.add_patch(patches.Rectangle((x0_sv, -t_road), x1_sv - x0_sv, t_road,
+            ax_ll.add_patch(patches.Rectangle((0, -t_road), LL, t_road,
                                               fc="#404040", ec="none", zorder=1))
 
-        # Culvert top slab
-        ax_sv.add_patch(patches.Rectangle((0, -H_c), B_ext, t_s,
-                                          fc="#BBBBBB", ec="#333333", lw=1.5, zorder=2))
+        # Culvert top slab (full LL width)
+        ax_ll.add_patch(patches.Rectangle((0, -H_c), LL, t_s,
+                                          fc="#BBBBBB", ec="#333333", lw=1.2, zorder=2))
 
-        # GL and crown
-        ax_sv.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
-        ax_sv.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
-        ax_sv.text(x1_sv - 0.05, 0.04,     "GL",    color="#3E1E00", fontsize=7, ha="right", va="bottom")
-        ax_sv.text(x1_sv - 0.05, -H_c+0.02,"Crown", color="#333333", fontsize=6,  ha="right", va="bottom")
+        # GL and crown reference lines
+        ax_ll.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
+        ax_ll.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
+        ax_ll.text(LL + 0.06, 0.03,   "GL",    color="#3E1E00", fontsize=7, ha="left", va="bottom")
+        ax_ll.text(LL + 0.06, -H_c + 0.02, "Crown", color="#333333", fontsize=6, ha="left", va="bottom")
 
-        wh_sv = 0.07
-        half_B_sv = lm3.dispersion.disp_B / 2.0
-        offset = lm3.sv_worst_offset
+        _wh_ll  = 0.07   # wheel patch visual height (not structural)
+        _lclrs  = ["#5A8FD0", "#5CA06A", "#C86060", "#9A70C0"]
 
-        for ax_pos, ax_load in zip(sv.axle_pos, sv.axle_loads):
-            centre = offset + ax_pos
-            fp_l   = centre - half_B_sv
-            fp_r   = centre + half_B_sv
-            overlap = max(0.0, min(fp_r, B_ext) - max(fp_l, 0.0))
-            on_culvert = overlap > 0.0
+        for _i, _ln in enumerate(lm1.lanes):
+            _lctr  = _ll_cw_x0 + (_i + 0.5) * lane_width
+            _lleft = _ll_cw_x0 + _i * lane_width
+            _lc    = _lclrs[_i % len(_lclrs)]
 
-            colour = "#CC3300" if on_culvert else "#888888"
-            # Wheel patch at GL level
-            ax_sv.add_patch(patches.Rectangle((centre - lm1_loading.CONTACT_L/2, 0),
-                                              lm1_loading.CONTACT_L, wh_sv,
-                                              fc=colour, ec="#333333", lw=0.6, zorder=6))
-            # Dispersion lines: start at contact-patch edges (GL), spread to crown footprint edges
-            cl = lm1_loading.CONTACT_L
-            ax_sv.plot([centre - cl/2, fp_l], [0, -H_c], color=colour, lw=0.7, ls="--", alpha=0.7, zorder=4)
-            ax_sv.plot([centre + cl/2, fp_r], [0, -H_c], color=colour, lw=0.7, ls="--", alpha=0.7, zorder=4)
+            # Lane strip above GL (colour tint so lanes are distinguishable)
+            ax_ll.add_patch(patches.Rectangle((_lleft, 0), lane_width, 0.11,
+                                              fc=_lc, ec="white", lw=0.5, alpha=0.75, zorder=4))
+            ax_ll.text(_lctr, 0.055, f"Lane {_ln.lane}  —  {_ln.Q_ik:.0f} kN/axle",
+                       ha="center", va="center", fontsize=5.5, color="white",
+                       fontweight="bold", zorder=7)
 
-        # B_ext span arrow
-        ax_sv.annotate("", xy=(B_ext, y_bot_sv + 0.05), xytext=(0, y_bot_sv + 0.05),
-                       arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
-        ax_sv.text(B_ext/2, y_bot_sv + 0.10, f"B_ext={B_ext:.2f}m", ha="center", fontsize=6.5)
+            # Lane boundary
+            ax_ll.axvline(_lleft, color="#999999", lw=0.5, ls=":", zorder=3)
 
-        # H_c depth
-        ax_sv.annotate("", xy=(x0_sv + 0.15, -H_c), xytext=(x0_sv + 0.15, 0),
-                       arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
-        ax_sv.text(x0_sv + 0.22, -H_c/2, f"Hc={H_c:.3f}m", fontsize=6, va="center")
+            # Wheel patches and dispersion for this lane
+            _w_l = _lctr - lm1_loading.WHEEL_SPACING / 2
+            _w_r = _lctr + lm1_loading.WHEEL_SPACING / 2
+            _spread_ll = lm1_loading.DISP * H_c
+            for _wx in [_w_l, _w_r]:
+                _wx0 = _wx - lm1_loading.CONTACT_T / 2
+                _wx1 = _wx + lm1_loading.CONTACT_T / 2
+                ax_ll.add_patch(patches.Rectangle((_wx0, 0), lm1_loading.CONTACT_T, _wh_ll,
+                                                  fc="#222222", ec="#111111", lw=0.6, zorder=6))
+                ax_ll.plot([_wx0, _wx0 - _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
+                           alpha=0.80, zorder=5)
+                ax_ll.plot([_wx1, _wx1 + _spread_ll], [0, -H_c], color=_lc, lw=0.9, ls="--",
+                           alpha=0.80, zorder=5)
 
-        ax_sv.set_xlim(x0_sv, x1_sv)
-        ax_sv.set_ylim(y_bot_sv, wh_sv + 0.45)
-        ax_sv.set_xlabel("B_ext direction (m)", fontsize=8)
-        ax_sv.set_ylabel("Depth (m)", fontsize=8)
-        ax_sv.tick_params(labelsize=7)
-        ax_sv.set_title(
-            f"{lm3.vehicle_name} worst position (offset={lm3.sv_worst_offset:+.3f} m) — "
-            f"red=contributing, grey=outside",
-            fontsize=6.5, pad=4
-        )
-        fig_sv.tight_layout()
-        st.pyplot(fig_sv, use_container_width=True)
+            # Staggered dispersion arrow at crown level
+            _dsp_l = _lctr - dg.disp_LL / 2
+            _dsp_r = _lctr + dg.disp_LL / 2
+            _y_arr = -H_c - 0.09 - _i * 0.10
+            ax_ll.annotate("", xy=(_dsp_r, _y_arr), xytext=(_dsp_l, _y_arr),
+                            arrowprops=dict(arrowstyle="<->", color=_lc, lw=1.0))
+            ax_ll.text(_lctr, _y_arr - 0.05,
+                       f"disp_LL = {dg.disp_LL:.2f} m",
+                       ha="center", fontsize=5, color=_lc)
+
+        # Right carriageway edge
+        ax_ll.axvline(_ll_cw_x0 + cw_width, color="#999999", lw=0.5, ls=":", zorder=3)
+
+        # Wheel-to-wheel spacing annotation (Lane 1 only, above wheels)
+        _ln1_ctr = _ll_cw_x0 + 0.5 * lane_width
+        ax_ll.annotate("",
+                       xy  =(_ln1_ctr + lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
+                       xytext=(_ln1_ctr - lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
+                       arrowprops=dict(arrowstyle="<->", color="#333333", lw=0.9))
+        ax_ll.text(_ln1_ctr, _wh_ll + 0.08,
+                   f"Wheel spacing = {lm1_loading.WHEEL_SPACING:.1f} m",
+                   ha="center", fontsize=5.5, color="#333333")
+
+        # 1m strip indicator (centred on Lane 1 tandem centroid)
+        ax_ll.add_patch(patches.Rectangle(
+            (_ln1_ctr - 0.5, _y_bot_ll), 1.0, abs(_y_bot_ll) + 0.13,
+            fc="none", ec="darkorange", lw=1.3, ls="-", alpha=0.8, zorder=8))
+        ax_ll.text(_ln1_ctr, _y_bot_ll + 0.05,
+                   "1 m strip (worst)", ha="center", fontsize=5.5, color="darkorange")
+
+        # H_c depth annotation
+        ax_ll.annotate("", xy=(-0.3, -H_c), xytext=(-0.3, 0),
+                        arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
+        ax_ll.text(-0.35, -H_c / 2, f"Hc\n{H_c:.3f} m",
+                   fontsize=5.5, va="center", ha="right", linespacing=1.2)
+
+        # Carriageway width annotation
+        ax_ll.annotate("",
+                       xy  =(_ll_cw_x0 + cw_width, 0.18),
+                       xytext=(_ll_cw_x0, 0.18),
+                       arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
+        ax_ll.text(LL / 2, 0.21,
+                   f"Carriageway = {cw_width:.2f} m  ({n_lanes} notional lanes × {lane_width:.2f} m)",
+                   ha="center", fontsize=6, color="#CCCCCC")
+
+        # LL total span annotation
+        ax_ll.annotate("", xy=(LL, _y_bot_ll + 0.07), xytext=(0, _y_bot_ll + 0.07),
+                        arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
+        ax_ll.text(LL / 2, _y_bot_ll + 0.14, f"LL = {LL:.1f} m", ha="center", fontsize=6.5)
+
+        ax_ll.set_xlim(-0.7, LL + 0.7)
+        ax_ll.set_ylim(_y_bot_ll, 0.28)
+        ax_ll.set_xlabel("LL direction — barrel axis (m)", fontsize=8)
+        ax_ll.set_ylabel("Depth (m)", fontsize=8)
+        ax_ll.tick_params(labelsize=7)
+        fig_ll.tight_layout()
+        st.pyplot(fig_ll, use_container_width=True)
         plt.close()
 
-    # ── LL direction diagram ──────────────────────────────────────────────────
-    st.markdown("---")
-    st.markdown(
-        f"**Lane distribution — LL direction** (barrel axis; {lm3.vehicle_name} travels into page)"
-    )
+    # ══ Section 2b: LM3 Special Vehicle Loading ═══════════════════════════════════
+    with st.expander("LM3 Special Vehicle Loading", expanded=False):
+        sv = lm3_loading.SV_VEHICLES[lm3.vehicle_name]
+        st.warning("SV axle data is **approximate** — verify all values against UK NA Table NA.5 before use in design.")
 
-    _lm3_n_disp   = lm3.n_lanes           # total lanes shown (SV + secondary)
-    _lm3_arr_sp   = 0.10 * _lm3_n_disp + 0.18
-    _lm3_y_bot    = -(H_c + _lm3_arr_sp + 0.22)
-    _lm3_cw_x0    = LL / 2 - cw_width / 2
-    _lm3_disp_LL  = lm3.dispersion.disp_LL   # same formula as LM1
+        col_l3, col_r3 = st.columns([1, 1])
 
-    fig_ll3, ax_ll3 = plt.subplots(figsize=(10, 3.8))
-    ax_ll3.set_facecolor("white")
+        with col_l3:
+            st.markdown(f"""
+    **{lm3.vehicle_name}** — {lm3.gvw:.0f} kN GVW · {len(sv.axle_loads)} axles · {len(sv.axle_loads)} × {sv.axle_loads[0]:.0f} kN/axle
 
-    # Background fill layers
-    ax_ll3.add_patch(patches.Rectangle(
-        (0, _lm3_y_bot), LL, abs(_lm3_y_bot), fc="#C8A86E", ec="none", zorder=0))
-    if t_sub > 0:
+    **Per-axle dispersion through {H_c:.3f} m cover (30°, tan30°={lm1_loading.DISP:.4f}):**
+    - LL direction:   {lm3.dispersion.disp_LL:.3f} m &nbsp;=&nbsp; {lm1_loading.WHEEL_SPACING:.1f} + {lm1_loading.CONTACT_T:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
+    - B_ext per axle: {lm3.dispersion.disp_B:.3f} m &nbsp;=&nbsp; {lm1_loading.CONTACT_L:.1f} + 2×{lm1_loading.DISP:.4f}×{H_c:.3f}
+
+    **Worst-case position scan (0.05 m step):**
+    - Front-axle offset from culvert edge: **{lm3.sv_worst_offset:+.3f} m**
+    - Axles contributing at worst position: **{lm3.sv_n_axles}**
+    - SV load (Lane 1) per metre strip: &nbsp;**{lm3.sv_load_per_m:.2f} kN/m**
+    """)
+
+            if lm3.secondary_lanes:
+                sec_rows = []
+                for ln in lm3.secondary_lanes:
+                    sec_rows.append({
+                        "Lane": f"Lane {ln.lane}",
+                        "Q_ik (kN)":      f"{ln.Q_ik:.0f}",
+                        "q_ik (kN/m²)":   f"{ln.q_ik:.1f}",
+                        "UDL/m (kN/m)":   f"{ln.udl_per_m:.2f}",
+                        "TS/m (kN/m)":    f"{ln.ts_per_m:.2f}",
+                        "Total/m (kN/m)": f"{ln.total_per_m:.2f}",
+                    })
+                st.markdown("**Secondary lanes (LM1 Lane 2 / 3 / 4 TS + UDL):**")
+                st.table(pd.DataFrame(sec_rows).set_index("Lane"))
+            else:
+                st.markdown("*No secondary lanes (only 1 notional lane).*")
+
+            brk = lm3.braking
+            st.markdown(f"""
+    **Braking force — BS EN 1991-2 Cl. 4.4.4 / PD6694-1 Cl. 10.2.8.2:**
+    - Q_brk = 0.25 × {lm3.gvw:.0f} kN (basic GVW) = **{brk.Q_brk_raw:.1f} kN**
+    - Distributed over barrel length LL = {LL:.2f} m (in-plane rigidity, Lj = LL)
+    - Per metre strip: **{brk.Q_brk_per_m:.2f} kN/m** (applied at crown, arm = H_ext)
+
+    ---
+    - LM1 secondary lanes total: &nbsp;{lm3.secondary_per_m:.2f} kN/m *(act on separate LL strips — not added to the SV strip)*
+    - **Governing vertical (SV strip, Lane 1): {lm3.max_V_per_m:.2f} kN/m**
+    - Min vertical (no LL): **0.00 kN/m**
+    """)
+
+        with col_r3:
+            # Diagram: SV vehicle worst-case position in B_ext direction
+            st.markdown(f"**Worst-case axle positions — {lm3.vehicle_name} (B_ext direction)**")
+
+            fig_sv, ax_sv = plt.subplots(figsize=(5, 4))
+            ax_sv.set_facecolor("white")
+
+            pad_sv  = max(B_ext * 0.35, 0.6)
+            x0_sv   = -pad_sv
+            x1_sv   = B_ext + pad_sv
+            y_bot_sv = -(H_c + 0.3)
+
+            # Fill layers
+            ax_sv.add_patch(patches.Rectangle((x0_sv, y_bot_sv), x1_sv - x0_sv, abs(y_bot_sv),
+                                              fc="#C8A86E", ec="none", zorder=0))
+            if t_sub > 0:
+                ax_sv.add_patch(patches.Rectangle((x0_sv, -(t_road + t_sub)), x1_sv - x0_sv, t_sub,
+                                                  fc="#B0B0B0", ec="none", zorder=1))
+            if t_road > 0:
+                ax_sv.add_patch(patches.Rectangle((x0_sv, -t_road), x1_sv - x0_sv, t_road,
+                                                  fc="#404040", ec="none", zorder=1))
+
+            # Culvert top slab
+            ax_sv.add_patch(patches.Rectangle((0, -H_c), B_ext, t_s,
+                                              fc="#BBBBBB", ec="#333333", lw=1.5, zorder=2))
+
+            # GL and crown
+            ax_sv.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
+            ax_sv.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
+            ax_sv.text(x1_sv - 0.05, 0.04,     "GL",    color="#3E1E00", fontsize=7, ha="right", va="bottom")
+            ax_sv.text(x1_sv - 0.05, -H_c+0.02,"Crown", color="#333333", fontsize=6,  ha="right", va="bottom")
+
+            wh_sv = 0.07
+            half_B_sv = lm3.dispersion.disp_B / 2.0
+            offset = lm3.sv_worst_offset
+
+            for ax_pos, ax_load in zip(sv.axle_pos, sv.axle_loads):
+                centre = offset + ax_pos
+                fp_l   = centre - half_B_sv
+                fp_r   = centre + half_B_sv
+                overlap = max(0.0, min(fp_r, B_ext) - max(fp_l, 0.0))
+                on_culvert = overlap > 0.0
+
+                colour = "#CC3300" if on_culvert else "#888888"
+                # Wheel patch at GL level
+                ax_sv.add_patch(patches.Rectangle((centre - lm1_loading.CONTACT_L/2, 0),
+                                                  lm1_loading.CONTACT_L, wh_sv,
+                                                  fc=colour, ec="#333333", lw=0.6, zorder=6))
+                # Dispersion lines: start at contact-patch edges (GL), spread to crown footprint edges
+                cl = lm1_loading.CONTACT_L
+                ax_sv.plot([centre - cl/2, fp_l], [0, -H_c], color=colour, lw=0.7, ls="--", alpha=0.7, zorder=4)
+                ax_sv.plot([centre + cl/2, fp_r], [0, -H_c], color=colour, lw=0.7, ls="--", alpha=0.7, zorder=4)
+
+            # B_ext span arrow
+            ax_sv.annotate("", xy=(B_ext, y_bot_sv + 0.05), xytext=(0, y_bot_sv + 0.05),
+                           arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
+            ax_sv.text(B_ext/2, y_bot_sv + 0.10, f"B_ext={B_ext:.2f}m", ha="center", fontsize=6.5)
+
+            # H_c depth
+            ax_sv.annotate("", xy=(x0_sv + 0.15, -H_c), xytext=(x0_sv + 0.15, 0),
+                           arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
+            ax_sv.text(x0_sv + 0.22, -H_c/2, f"Hc={H_c:.3f}m", fontsize=6, va="center")
+
+            ax_sv.set_xlim(x0_sv, x1_sv)
+            ax_sv.set_ylim(y_bot_sv, wh_sv + 0.45)
+            ax_sv.set_xlabel("B_ext direction (m)", fontsize=8)
+            ax_sv.set_ylabel("Depth (m)", fontsize=8)
+            ax_sv.tick_params(labelsize=7)
+            ax_sv.set_title(
+                f"{lm3.vehicle_name} worst position (offset={lm3.sv_worst_offset:+.3f} m) — "
+                f"red=contributing, grey=outside",
+                fontsize=6.5, pad=4
+            )
+            fig_sv.tight_layout()
+            st.pyplot(fig_sv, use_container_width=True)
+            plt.close()
+
+        # ── LL direction diagram ──────────────────────────────────────────────────
+        st.markdown("---")
+        st.markdown(
+            f"**Lane distribution — LL direction** (barrel axis; {lm3.vehicle_name} travels into page)"
+        )
+
+        _lm3_n_disp   = lm3.n_lanes           # total lanes shown (SV + secondary)
+        _lm3_arr_sp   = 0.10 * _lm3_n_disp + 0.18
+        _lm3_y_bot    = -(H_c + _lm3_arr_sp + 0.22)
+        _lm3_cw_x0    = LL / 2 - cw_width / 2
+        _lm3_disp_LL  = lm3.dispersion.disp_LL   # same formula as LM1
+
+        fig_ll3, ax_ll3 = plt.subplots(figsize=(10, 3.8))
+        ax_ll3.set_facecolor("white")
+
+        # Background fill layers
         ax_ll3.add_patch(patches.Rectangle(
-            (0, -(t_road + t_sub)), LL, t_sub, fc="#B0B0B0", ec="none", zorder=1))
-    if t_road > 0:
+            (0, _lm3_y_bot), LL, abs(_lm3_y_bot), fc="#C8A86E", ec="none", zorder=0))
+        if t_sub > 0:
+            ax_ll3.add_patch(patches.Rectangle(
+                (0, -(t_road + t_sub)), LL, t_sub, fc="#B0B0B0", ec="none", zorder=1))
+        if t_road > 0:
+            ax_ll3.add_patch(patches.Rectangle(
+                (0, -t_road), LL, t_road, fc="#404040", ec="none", zorder=1))
+
+        # Culvert top slab
         ax_ll3.add_patch(patches.Rectangle(
-            (0, -t_road), LL, t_road, fc="#404040", ec="none", zorder=1))
+            (0, -H_c), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=2))
 
-    # Culvert top slab
-    ax_ll3.add_patch(patches.Rectangle(
-        (0, -H_c), LL, t_s, fc="#BBBBBB", ec="#333333", lw=1.2, zorder=2))
+        ax_ll3.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
+        ax_ll3.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
+        ax_ll3.text(LL + 0.06, 0.03,      "GL",    color="#3E1E00", fontsize=7, ha="left", va="bottom")
+        ax_ll3.text(LL + 0.06, -H_c+0.02, "Crown", color="#333333", fontsize=6,  ha="left", va="bottom")
 
-    ax_ll3.axhline(0,    color="#3E1E00", lw=2,   zorder=5)
-    ax_ll3.axhline(-H_c, color="#333333", lw=0.8, ls=":", zorder=3)
-    ax_ll3.text(LL + 0.06, 0.03,      "GL",    color="#3E1E00", fontsize=7, ha="left", va="bottom")
-    ax_ll3.text(LL + 0.06, -H_c+0.02, "Crown", color="#333333", fontsize=6,  ha="left", va="bottom")
+        _wh_ll3 = 0.07
+        _lclrs3 = ["#5A8FD0", "#5CA06A", "#C86060", "#9A70C0"]
 
-    _wh_ll3 = 0.07
-    _lclrs3 = ["#5A8FD0", "#5CA06A", "#C86060", "#9A70C0"]
-
-    # Lane 1 — SV vehicle (i = 0)
-    _sv_axle_kn  = sv.axle_loads[0]
-    _ln1_ctr3    = _lm3_cw_x0 + 0.5 * lane_width
-    _lc1_3       = _lclrs3[0]
-
-    ax_ll3.add_patch(patches.Rectangle(
-        (_lm3_cw_x0, 0), lane_width, 0.11,
-        fc=_lc1_3, ec="white", lw=0.5, alpha=0.75, zorder=4))
-    ax_ll3.text(_ln1_ctr3, 0.055,
-                f"Lane 1 ({lm3.vehicle_name} — {_sv_axle_kn:.0f} kN/axle)",
-                ha="center", va="center", fontsize=5.5, color="white",
-                fontweight="bold", zorder=7)
-    ax_ll3.axvline(_lm3_cw_x0, color="#999999", lw=0.5, ls=":", zorder=3)
-
-    _spread_ll3 = lm1_loading.DISP * H_c
-    for _wx3 in [_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2,
-                 _ln1_ctr3 + lm1_loading.WHEEL_SPACING/2]:
-        _wx0_3 = _wx3 - lm1_loading.CONTACT_T / 2
-        _wx1_3 = _wx3 + lm1_loading.CONTACT_T / 2
-        ax_ll3.add_patch(patches.Rectangle(
-            (_wx0_3, 0), lm1_loading.CONTACT_T, _wh_ll3,
-            fc="#222222", ec="#111111", lw=0.6, zorder=6))
-        ax_ll3.plot([_wx0_3, _wx0_3 - _spread_ll3], [0, -H_c],
-                    color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
-        ax_ll3.plot([_wx1_3, _wx1_3 + _spread_ll3], [0, -H_c],
-                    color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
-
-    # Lane 1 dispersion arrow (i = 0, no stagger offset)
-    _y_arr3_1 = -H_c - 0.09
-    ax_ll3.annotate("",
-                    xy=(_ln1_ctr3 + _lm3_disp_LL/2, _y_arr3_1),
-                    xytext=(_ln1_ctr3 - _lm3_disp_LL/2, _y_arr3_1),
-                    arrowprops=dict(arrowstyle="<->", color=_lc1_3, lw=1.0))
-    ax_ll3.text(_ln1_ctr3, _y_arr3_1 - 0.05,
-                f"disp_LL = {_lm3_disp_LL:.2f} m",
-                ha="center", fontsize=5, color=_lc1_3)
-
-    # Secondary lanes (LM1 Lane 2 / 3 / 4) — loop index i starts at 1
-    for _ln3 in lm3.secondary_lanes:
-        _i3    = _ln3.lane - 1   # 0-based (lane 2 → 1, lane 3 → 2, …)
-        _lctr3 = _lm3_cw_x0 + (_i3 + 0.5) * lane_width
-        _lft3  = _lm3_cw_x0 + _i3 * lane_width
-        _lc3   = _lclrs3[_i3 % len(_lclrs3)]
+        # Lane 1 — SV vehicle (i = 0)
+        _sv_axle_kn  = sv.axle_loads[0]
+        _ln1_ctr3    = _lm3_cw_x0 + 0.5 * lane_width
+        _lc1_3       = _lclrs3[0]
 
         ax_ll3.add_patch(patches.Rectangle(
-            (_lft3, 0), lane_width, 0.11,
-            fc=_lc3, ec="white", lw=0.5, alpha=0.75, zorder=4))
-        ax_ll3.text(_lctr3, 0.055,
-                    f"Lane {_ln3.lane} (LM1 — {_ln3.Q_ik:.0f} kN/axle)",
+            (_lm3_cw_x0, 0), lane_width, 0.11,
+            fc=_lc1_3, ec="white", lw=0.5, alpha=0.75, zorder=4))
+        ax_ll3.text(_ln1_ctr3, 0.055,
+                    f"Lane 1 ({lm3.vehicle_name} — {_sv_axle_kn:.0f} kN/axle)",
                     ha="center", va="center", fontsize=5.5, color="white",
                     fontweight="bold", zorder=7)
-        ax_ll3.axvline(_lft3, color="#999999", lw=0.5, ls=":", zorder=3)
+        ax_ll3.axvline(_lm3_cw_x0, color="#999999", lw=0.5, ls=":", zorder=3)
 
-        for _wxs in [_lctr3 - lm1_loading.WHEEL_SPACING/2,
-                     _lctr3 + lm1_loading.WHEEL_SPACING/2]:
-            _wx0_s = _wxs - lm1_loading.CONTACT_T / 2
-            _wx1_s = _wxs + lm1_loading.CONTACT_T / 2
+        _spread_ll3 = lm1_loading.DISP * H_c
+        for _wx3 in [_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2,
+                     _ln1_ctr3 + lm1_loading.WHEEL_SPACING/2]:
+            _wx0_3 = _wx3 - lm1_loading.CONTACT_T / 2
+            _wx1_3 = _wx3 + lm1_loading.CONTACT_T / 2
             ax_ll3.add_patch(patches.Rectangle(
-                (_wx0_s, 0), lm1_loading.CONTACT_T, _wh_ll3,
+                (_wx0_3, 0), lm1_loading.CONTACT_T, _wh_ll3,
                 fc="#222222", ec="#111111", lw=0.6, zorder=6))
-            ax_ll3.plot([_wx0_s, _wx0_s - _spread_ll3], [0, -H_c],
-                        color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
-            ax_ll3.plot([_wx1_s, _wx1_s + _spread_ll3], [0, -H_c],
-                        color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
+            ax_ll3.plot([_wx0_3, _wx0_3 - _spread_ll3], [0, -H_c],
+                        color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
+            ax_ll3.plot([_wx1_3, _wx1_3 + _spread_ll3], [0, -H_c],
+                        color=_lc1_3, lw=0.9, ls="--", alpha=0.80, zorder=5)
 
-        _y_arr3_s = -H_c - 0.09 - _i3 * 0.10
+        # Lane 1 dispersion arrow (i = 0, no stagger offset)
+        _y_arr3_1 = -H_c - 0.09
         ax_ll3.annotate("",
-                        xy=(_lctr3 + _lm3_disp_LL/2, _y_arr3_s),
-                        xytext=(_lctr3 - _lm3_disp_LL/2, _y_arr3_s),
-                        arrowprops=dict(arrowstyle="<->", color=_lc3, lw=1.0))
-        ax_ll3.text(_lctr3, _y_arr3_s - 0.05,
+                        xy=(_ln1_ctr3 + _lm3_disp_LL/2, _y_arr3_1),
+                        xytext=(_ln1_ctr3 - _lm3_disp_LL/2, _y_arr3_1),
+                        arrowprops=dict(arrowstyle="<->", color=_lc1_3, lw=1.0))
+        ax_ll3.text(_ln1_ctr3, _y_arr3_1 - 0.05,
                     f"disp_LL = {_lm3_disp_LL:.2f} m",
-                    ha="center", fontsize=5, color=_lc3)
+                    ha="center", fontsize=5, color=_lc1_3)
 
-    # Right carriageway edge
-    ax_ll3.axvline(_lm3_cw_x0 + cw_width, color="#999999", lw=0.5, ls=":", zorder=3)
+        # Secondary lanes (LM1 Lane 2 / 3 / 4) — loop index i starts at 1
+        for _ln3 in lm3.secondary_lanes:
+            _i3    = _ln3.lane - 1   # 0-based (lane 2 → 1, lane 3 → 2, …)
+            _lctr3 = _lm3_cw_x0 + (_i3 + 0.5) * lane_width
+            _lft3  = _lm3_cw_x0 + _i3 * lane_width
+            _lc3   = _lclrs3[_i3 % len(_lclrs3)]
 
-    # Wheel spacing annotation — Lane 1
-    ax_ll3.annotate("",
-                    xy  =(_ln1_ctr3 + lm1_loading.WHEEL_SPACING/2, _wh_ll3 + 0.04),
-                    xytext=(_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2, _wh_ll3 + 0.04),
-                    arrowprops=dict(arrowstyle="<->", color="#333333", lw=0.9))
-    ax_ll3.text(_ln1_ctr3, _wh_ll3 + 0.08,
-                f"Wheel spacing = {lm1_loading.WHEEL_SPACING:.1f} m",
-                ha="center", fontsize=5.5, color="#333333")
+            ax_ll3.add_patch(patches.Rectangle(
+                (_lft3, 0), lane_width, 0.11,
+                fc=_lc3, ec="white", lw=0.5, alpha=0.75, zorder=4))
+            ax_ll3.text(_lctr3, 0.055,
+                        f"Lane {_ln3.lane} (LM1 — {_ln3.Q_ik:.0f} kN/axle)",
+                        ha="center", va="center", fontsize=5.5, color="white",
+                        fontweight="bold", zorder=7)
+            ax_ll3.axvline(_lft3, color="#999999", lw=0.5, ls=":", zorder=3)
 
-    # 1m strip indicator — centred on Lane 1
-    ax_ll3.add_patch(patches.Rectangle(
-        (_ln1_ctr3 - 0.5, _lm3_y_bot), 1.0, abs(_lm3_y_bot) + 0.13,
-        fc="none", ec="darkorange", lw=1.3, ls="-", alpha=0.8, zorder=8))
-    ax_ll3.text(_ln1_ctr3, _lm3_y_bot + 0.05,
-                "1 m strip (worst)", ha="center", fontsize=5.5, color="darkorange")
+            for _wxs in [_lctr3 - lm1_loading.WHEEL_SPACING/2,
+                         _lctr3 + lm1_loading.WHEEL_SPACING/2]:
+                _wx0_s = _wxs - lm1_loading.CONTACT_T / 2
+                _wx1_s = _wxs + lm1_loading.CONTACT_T / 2
+                ax_ll3.add_patch(patches.Rectangle(
+                    (_wx0_s, 0), lm1_loading.CONTACT_T, _wh_ll3,
+                    fc="#222222", ec="#111111", lw=0.6, zorder=6))
+                ax_ll3.plot([_wx0_s, _wx0_s - _spread_ll3], [0, -H_c],
+                            color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
+                ax_ll3.plot([_wx1_s, _wx1_s + _spread_ll3], [0, -H_c],
+                            color=_lc3, lw=0.9, ls="--", alpha=0.80, zorder=5)
 
-    # H_c depth annotation
-    ax_ll3.annotate("", xy=(-0.3, -H_c), xytext=(-0.3, 0),
-                    arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
-    ax_ll3.text(-0.35, -H_c/2, f"Hc\n{H_c:.3f} m",
-                fontsize=5.5, va="center", ha="right", linespacing=1.2)
+            _y_arr3_s = -H_c - 0.09 - _i3 * 0.10
+            ax_ll3.annotate("",
+                            xy=(_lctr3 + _lm3_disp_LL/2, _y_arr3_s),
+                            xytext=(_lctr3 - _lm3_disp_LL/2, _y_arr3_s),
+                            arrowprops=dict(arrowstyle="<->", color=_lc3, lw=1.0))
+            ax_ll3.text(_lctr3, _y_arr3_s - 0.05,
+                        f"disp_LL = {_lm3_disp_LL:.2f} m",
+                        ha="center", fontsize=5, color=_lc3)
 
-    # Carriageway width annotation
-    ax_ll3.annotate("",
-                    xy  =(_lm3_cw_x0 + cw_width, 0.18),
-                    xytext=(_lm3_cw_x0, 0.18),
-                    arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
-    ax_ll3.text(LL/2, 0.21,
-                f"Carriageway = {cw_width:.2f} m  ({n_lanes} notional lanes × {lane_width:.2f} m)",
-                ha="center", fontsize=6, color="#CCCCCC")
+        # Right carriageway edge
+        ax_ll3.axvline(_lm3_cw_x0 + cw_width, color="#999999", lw=0.5, ls=":", zorder=3)
 
-    # LL span annotation
-    ax_ll3.annotate("", xy=(LL, _lm3_y_bot + 0.07), xytext=(0, _lm3_y_bot + 0.07),
-                    arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
-    ax_ll3.text(LL/2, _lm3_y_bot + 0.14, f"LL = {LL:.1f} m", ha="center", fontsize=6.5)
+        # Wheel spacing annotation — Lane 1
+        ax_ll3.annotate("",
+                        xy  =(_ln1_ctr3 + lm1_loading.WHEEL_SPACING/2, _wh_ll3 + 0.04),
+                        xytext=(_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2, _wh_ll3 + 0.04),
+                        arrowprops=dict(arrowstyle="<->", color="#333333", lw=0.9))
+        ax_ll3.text(_ln1_ctr3, _wh_ll3 + 0.08,
+                    f"Wheel spacing = {lm1_loading.WHEEL_SPACING:.1f} m",
+                    ha="center", fontsize=5.5, color="#333333")
 
-    ax_ll3.set_xlim(-0.7, LL + 0.7)
-    ax_ll3.set_ylim(_lm3_y_bot, 0.28)
-    ax_ll3.set_xlabel("LL direction — barrel axis (m)", fontsize=8)
-    ax_ll3.set_ylabel("Depth (m)", fontsize=8)
-    ax_ll3.tick_params(labelsize=7)
-    fig_ll3.tight_layout()
-    st.pyplot(fig_ll3, use_container_width=True)
-    plt.close()
+        # 1m strip indicator — centred on Lane 1
+        ax_ll3.add_patch(patches.Rectangle(
+            (_ln1_ctr3 - 0.5, _lm3_y_bot), 1.0, abs(_lm3_y_bot) + 0.13,
+            fc="none", ec="darkorange", lw=1.3, ls="-", alpha=0.8, zorder=8))
+        ax_ll3.text(_ln1_ctr3, _lm3_y_bot + 0.05,
+                    "1 m strip (worst)", ha="center", fontsize=5.5, color="darkorange")
 
-# ══ Section 3: Stability check results ════════════════════════════════════════
-with st.expander("Stability Check Results", expanded=True):
-    col_tbl_l, col_tbl_r = st.columns(2)
+        # H_c depth annotation
+        ax_ll3.annotate("", xy=(-0.3, -H_c), xytext=(-0.3, 0),
+                        arrowprops=dict(arrowstyle="<->", color="black", lw=0.8))
+        ax_ll3.text(-0.35, -H_c/2, f"Hc\n{H_c:.3f} m",
+                    fontsize=5.5, va="center", ha="right", linespacing=1.2)
 
-with col_tbl_l:
-    # ── K-value parameter table ────────────────────────────────────────────────
-    st.subheader("Limit State Parameters — PD6694-1 Annex B")
-    param_df = pd.DataFrame({
-        "Limit State":  LS_NAMES,
-        "Ka (active)":  [LS[n]["Ka"]   for n in LS_NAMES],
-        "Kmax (restrained)": [LS[n]["Kmax"] for n in LS_NAMES],
-        "γG super.":    [LS[n]["gG_super"] for n in LS_NAMES],
-        "γG self":      [LS[n]["gG_self"] for n in LS_NAMES],
-        "γG fav.":      [LS[n]["gG_f"] for n in LS_NAMES],
-        "γQ (traffic)": [LS[n]["gQ"]   for n in LS_NAMES],
-        "γφ (resist.)": [LS[n]["g_phi"] for n in LS_NAMES],
-    })
-    st.dataframe(param_df, hide_index=True, use_container_width=True)
+        # Carriageway width annotation
+        ax_ll3.annotate("",
+                        xy  =(_lm3_cw_x0 + cw_width, 0.18),
+                        xytext=(_lm3_cw_x0, 0.18),
+                        arrowprops=dict(arrowstyle="<->", color="#CCCCCC", lw=0.9))
+        ax_ll3.text(LL/2, 0.21,
+                    f"Carriageway = {cw_width:.2f} m  ({n_lanes} notional lanes × {lane_width:.2f} m)",
+                    ha="center", fontsize=6, color="#CCCCCC")
 
-with col_tbl_r:
-    # ── Utilisation ratio summary ──────────────────────────────────────────────
-    st.subheader("Utilisation Ratios  Ed / Rd  (≤ 1.00 = PASS)")
+        # LL span annotation
+        ax_ll3.annotate("", xy=(LL, _lm3_y_bot + 0.07), xytext=(0, _lm3_y_bot + 0.07),
+                        arrowprops=dict(arrowstyle="<->", color="black", lw=0.9))
+        ax_ll3.text(LL/2, _lm3_y_bot + 0.14, f"LL = {LL:.1f} m", ha="center", fontsize=6.5)
 
-    def fmt(ur):
-        s = f"{ur:.3f}" if ur < 1e6 else "∞"
-        return f"{s} {'✅' if ur <= 1.0 else '❌'}"
+        ax_ll3.set_xlim(-0.7, LL + 0.7)
+        ax_ll3.set_ylim(_lm3_y_bot, 0.28)
+        ax_ll3.set_xlabel("LL direction — barrel axis (m)", fontsize=8)
+        ax_ll3.set_ylabel("Depth (m)", fontsize=8)
+        ax_ll3.tick_params(labelsize=7)
+        fig_ll3.tight_layout()
+        st.pyplot(fig_ll3, use_container_width=True)
+        plt.close()
 
-    rows = [
-        ("Bearing",             "B.4 (Gk+Qk)",   "UR_B4_bear"),
-        ("Overturning",         "B.4/B.5 (Gk)",  "UR_B4_ov"),
-        ("Sliding (fric only)", "B.4/B.5 (Gk)",  "UR_B4_sl"),
-        ("Bearing",             "B.5 (Gk only)",  "UR_B5_bear"),
-        ("Bearing",             "B.6 (Gk+Qk)",   "UR_B6_bear"),
-        ("Overturning",         "B.6 (Gk)",      "UR_B6_ov"),
-        ("Sliding (fric+Kr)",   "B.6 (Gk)",      "UR_B6_sl"),
-    ]
-    _ur_tabs = st.tabs([
-        f"LM1  ({Q_vk_lm1:.1f} kN/m)",
-        f"LM3 {lm3.vehicle_name}  ({Q_vk_lm3:.1f} kN/m)",
-    ])
-    for _ur_tab, _ur_res in zip(_ur_tabs, [res_lm1, res_lm3]):
-        with _ur_tab:
-            summary_data = {
-                "Check": [row[0] for row in rows],
-                "Case":  [row[1] for row in rows],
-                **{n: [fmt(_ur_res[n][row[2]]) for row in rows] for n in LS_NAMES},
-            }
-            st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
+    # ══ Section 3: Stability check results ════════════════════════════════════════
+    with st.expander("Stability Check Results", expanded=True):
+        col_tbl_l, col_tbl_r = st.columns(2)
 
-    # Overall verdict — worst of LM1 and LM3 across all limit states
-    all_keys = ("UR_B4_bear", "UR_B4_ov", "UR_B4_sl",
-                "UR_B5_bear", "UR_B6_bear", "UR_B6_ov", "UR_B6_sl")
-    all_urs = [_r[n][k] for _r in [res_lm1, res_lm3] for n in LS_NAMES for k in all_keys]
-    if all(u <= 1.0 for u in all_urs if u < 1e6):
-        st.success("**PASS** — All checks satisfied (LM1 and LM3) across all four limit states.")
-    else:
-        fails = []
-        check_map = [("Bearing B.4",    "UR_B4_bear"), ("Overturning B.4/B.5", "UR_B4_ov"),
-                     ("Sliding B.4/B.5","UR_B4_sl"),   ("Bearing B.5",         "UR_B5_bear"),
-                     ("Bearing B.6",    "UR_B6_bear"), ("Overturning B.6",     "UR_B6_ov"),
-                     ("Sliding B.6",    "UR_B6_sl")]
-        for _lm_label, _r in [("LM1", res_lm1), (f"LM3 {lm3.vehicle_name}", res_lm3)]:
-            for n in LS_NAMES:
-                for label, key in check_map:
-                    if _r[n][key] > 1.0:
-                        fails.append(f"{label} [{n}] ({_lm_label})")
-        st.error("**FAIL** — " + " · ".join(fails))
+    with col_tbl_l:
+        # ── K-value parameter table ────────────────────────────────────────────────
+        st.subheader("Limit State Parameters — PD6694-1 Annex B")
+        param_df = pd.DataFrame({
+            "Limit State":  LS_NAMES,
+            "Ka (active)":  [LS[n]["Ka"]   for n in LS_NAMES],
+            "Kmax (restrained)": [LS[n]["Kmax"] for n in LS_NAMES],
+            "γG super.":    [LS[n]["gG_super"] for n in LS_NAMES],
+            "γG self":      [LS[n]["gG_self"] for n in LS_NAMES],
+            "γG fav.":      [LS[n]["gG_f"] for n in LS_NAMES],
+            "γQ (traffic)": [LS[n]["gQ"]   for n in LS_NAMES],
+            "γφ (resist.)": [LS[n]["g_phi"] for n in LS_NAMES],
+        })
+        st.dataframe(param_df, hide_index=True, use_container_width=True)
 
-# ══ Section 4: Detailed calculations ══════════════════════════════════════════
-with st.expander("Detailed Calculations", expanded=False):
-    tabs = st.tabs(LS_NAMES)
-for tab, name in zip(tabs, LS_NAMES):
-    with tab:
-        _dc_subtabs = st.tabs([
+    with col_tbl_r:
+        # ── Utilisation ratio summary ──────────────────────────────────────────────
+        st.subheader("Utilisation Ratios  Ed / Rd  (≤ 1.00 = PASS)")
+
+        def fmt(ur):
+            s = f"{ur:.3f}" if ur < 1e6 else "∞"
+            return f"{s} {'✅' if ur <= 1.0 else '❌'}"
+
+        rows = [
+            ("Bearing",             "B.4 (Gk+Qk)",   "UR_B4_bear"),
+            ("Overturning",         "B.4/B.5 (Gk)",  "UR_B4_ov"),
+            ("Sliding (fric only)", "B.4/B.5 (Gk)",  "UR_B4_sl"),
+            ("Bearing",             "B.5 (Gk only)",  "UR_B5_bear"),
+            ("Bearing",             "B.6 (Gk+Qk)",   "UR_B6_bear"),
+            ("Overturning",         "B.6 (Gk)",      "UR_B6_ov"),
+            ("Sliding (fric+Kr)",   "B.6 (Gk)",      "UR_B6_sl"),
+        ]
+        _ur_tabs = st.tabs([
             f"LM1  ({Q_vk_lm1:.1f} kN/m)",
             f"LM3 {lm3.vehicle_name}  ({Q_vk_lm3:.1f} kN/m)",
         ])
-        for _dc_tab, (_dc_Qvk, _dc_res, _dc_label, _dc_F_k) in zip(
-            _dc_subtabs,
-            [(Q_vk_lm1, res_lm1, "LM1 — all lanes",                            Q_h_F_k_lm1[name]),
-             (Q_vk_lm3, res_lm3, f"LM3 {lm3.vehicle_name} (SV strip)", Q_h_F_k_lm1[name] + lm3.braking.Q_brk_per_m)],
-        ):
-            r = _dc_res[name]
-            _dc_is_lm1    = _dc_label.startswith("LM1")
-            _dc_udl_coeff = 20.0 if _dc_is_lm1 else 30.0
-            _dc_F_formula = (
-                f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
-                if _dc_is_lm1
-                else (f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
-                      f" + 0.25×{lm3.gvw:.0f}/{LL:.2f}m")
-            )
-            _dc_F_desc = "F_line (Table 6)" if _dc_is_lm1 else "F_line (Table 6) + SV braking"
+        for _ur_tab, _ur_res in zip(_ur_tabs, [res_lm1, res_lm3]):
+            with _ur_tab:
+                summary_data = {
+                    "Check": [row[0] for row in rows],
+                    "Case":  [row[1] for row in rows],
+                    **{n: [fmt(_ur_res[n][row[2]]) for row in rows] for n in LS_NAMES},
+                }
+                st.dataframe(pd.DataFrame(summary_data), hide_index=True, use_container_width=True)
 
-            # ── Sliding force build-up (factored components) ──────────────────────
-            _dc_F_line = Q_h_F_k_lm1[name]                                   # Table 6 line load
-            _dc_brk    = 0.0 if _dc_is_lm1 else lm3.braking.Q_brk_per_m      # SV braking (LM3 only)
-            _rect = σ_top * H_ext                          # rectangular surcharge stress-area
-            _tri  = 0.5 * (σ_bot - σ_top) * H_ext          # triangular backfill stress-area
-            # Horizontal — driving (active Ka + traffic) and resisting (restrained Kmax passive)
-            _act_sur = r['Ka']   * r['gG_super'] * _rect
-            _act_bf  = r['Ka']   * r['gG_self']  * _tri
-            _pas_sur = r['Kmax'] * r['gG_super'] * _rect
-            _pas_bf  = r['Kmax'] * r['gG_self']  * _tri
-            _tr_udl  = r['gQ'] * r['Q_h_udl_k']
-            _tr_line = r['gQ'] * _dc_F_line
-            _tr_brk  = r['gQ'] * _dc_brk
-            _H_drv   = _act_sur + _act_bf + _tr_udl + _tr_line + _tr_brk     # = F_Ka + F_h_tr
-            _H_res   = _pas_sur + _pas_bf                                    # = F_Kmax
-            _brk_row = (f"\n- Braking / acceleration (SV, 0.25×GVW÷LL) = "
-                        f"{r['gQ']:.2f}×0.25×{lm3.gvw:.0f}÷{LL:.2f} = "
-                        f"{r['gQ']:.2f}×{_dc_brk:.2f} = **{_tr_brk:.2f}**") if _dc_brk > 0 else ""
-            # Vertical — split-factored permanent + traffic (= V_u)
-            _v_road = r['gG_super'] * g_Sd_ec * W_road_max
-            _v_fill = r['gG_super'] * g_Sd_ec * (W_sub + W_fill)
-            _v_conc = r['gG_self']  * W_conc
-            _v_traf = r['gQ'] * _dc_Qvk
+        # Overall verdict — worst of LM1 and LM3 across all limit states
+        all_keys = ("UR_B4_bear", "UR_B4_ov", "UR_B4_sl",
+                    "UR_B5_bear", "UR_B6_bear", "UR_B6_ov", "UR_B6_sl")
+        all_urs = [_r[n][k] for _r in [res_lm1, res_lm3] for n in LS_NAMES for k in all_keys]
+        if all(u <= 1.0 for u in all_urs if u < 1e6):
+            st.success("**PASS** — All checks satisfied (LM1 and LM3) across all four limit states.")
+        else:
+            fails = []
+            check_map = [("Bearing B.4",    "UR_B4_bear"), ("Overturning B.4/B.5", "UR_B4_ov"),
+                         ("Sliding B.4/B.5","UR_B4_sl"),   ("Bearing B.5",         "UR_B5_bear"),
+                         ("Bearing B.6",    "UR_B6_bear"), ("Overturning B.6",     "UR_B6_ov"),
+                         ("Sliding B.6",    "UR_B6_sl")]
+            for _lm_label, _r in [("LM1", res_lm1), (f"LM3 {lm3.vehicle_name}", res_lm3)]:
+                for n in LS_NAMES:
+                    for label, key in check_map:
+                        if _r[n][key] > 1.0:
+                            fails.append(f"{label} [{n}] ({_lm_label})")
+            st.error("**FAIL** — " + " · ".join(fails))
 
-            with _dc_tab:
-                st.markdown(f"""
-**Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG super = {r['gG_super']:.2f} · γG self = {r['gG_self']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
+    # ══ Section 4: Detailed calculations ══════════════════════════════════════════
+    with st.expander("Detailed Calculations", expanded=False):
+        tabs = st.tabs(LS_NAMES)
+    for tab, name in zip(tabs, LS_NAMES):
+        with tab:
+            _dc_subtabs = st.tabs([
+                f"LM1  ({Q_vk_lm1:.1f} kN/m)",
+                f"LM3 {lm3.vehicle_name}  ({Q_vk_lm3:.1f} kN/m)",
+            ])
+            for _dc_tab, (_dc_Qvk, _dc_res, _dc_label, _dc_F_k) in zip(
+                _dc_subtabs,
+                [(Q_vk_lm1, res_lm1, "LM1 — all lanes",                            Q_h_F_k_lm1[name]),
+                 (Q_vk_lm3, res_lm3, f"LM3 {lm3.vehicle_name} (SV strip)", Q_h_F_k_lm1[name] + lm3.braking.Q_brk_per_m)],
+            ):
+                r = _dc_res[name]
+                _dc_is_lm1    = _dc_label.startswith("LM1")
+                _dc_udl_coeff = 20.0 if _dc_is_lm1 else 30.0
+                _dc_F_formula = (
+                    f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
+                    if _dc_is_lm1
+                    else (f"2×330×{LS[name]['Ka_tr']:.2f}×{_rF:.4f}/{lane_width:.2f}"
+                          f" + 0.25×{lm3.gvw:.0f}/{LL:.2f}m")
+                )
+                _dc_F_desc = "F_line (Table 6)" if _dc_is_lm1 else "F_line (Table 6) + SV braking"
 
-**Characteristic vertical loads** (split for per-source γG)
-- P_super (road+sub+fill, γSd;ec=1.15) = **{P_super:.2f} kN/m** &nbsp;·&nbsp; P_self (concrete) = **{P_self:.2f} kN/m**
-- N_G,k max = {N_G_k_max:.2f} kN/m &nbsp;·&nbsp; N_G,k min (−40% road) = {N_G_k_min:.2f} kN/m
-- Q_v,k ({_dc_label}) = {_dc_Qvk:.2f} kN/m
+                # ── Sliding force build-up (factored components) ──────────────────────
+                _dc_F_line = Q_h_F_k_lm1[name]                                   # Table 6 line load
+                _dc_brk    = 0.0 if _dc_is_lm1 else lm3.braking.Q_brk_per_m      # SV braking (LM3 only)
+                _rect = σ_top * H_ext                          # rectangular surcharge stress-area
+                _tri  = 0.5 * (σ_bot - σ_top) * H_ext          # triangular backfill stress-area
+                # Horizontal — driving (active Ka + traffic) and resisting (restrained Kmax passive)
+                _act_sur = r['Ka']   * r['gG_super'] * _rect
+                _act_bf  = r['Ka']   * r['gG_self']  * _tri
+                _pas_sur = r['Kmax'] * r['gG_super'] * _rect
+                _pas_bf  = r['Kmax'] * r['gG_self']  * _tri
+                _tr_udl  = r['gQ'] * r['Q_h_udl_k']
+                _tr_line = r['gQ'] * _dc_F_line
+                _tr_brk  = r['gQ'] * _dc_brk
+                _H_drv   = _act_sur + _act_bf + _tr_udl + _tr_line + _tr_brk     # = F_Ka + F_h_tr
+                _H_res   = _pas_sur + _pas_bf                                    # = F_Kmax
+                _brk_row = (f"\n- Braking / acceleration (SV, 0.25×GVW÷LL) = "
+                            f"{r['gQ']:.2f}×0.25×{lm3.gvw:.0f}÷{LL:.2f} = "
+                            f"{r['gQ']:.2f}×{_dc_brk:.2f} = **{_tr_brk:.2f}**") if _dc_brk > 0 else ""
+                # Vertical — split-factored permanent + traffic (= V_u)
+                _v_road = r['gG_super'] * g_Sd_ec * W_road_max
+                _v_fill = r['gG_super'] * g_Sd_ec * (W_sub + W_fill)
+                _v_conc = r['gG_self']  * W_conc
+                _v_traf = r['gQ'] * _dc_Qvk
 
-**Factored vertical loads**
-- V_u (B.4 max) = γG_super×P_super + γG_self×P_self + γQ×Q_v,k = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
-- V_f (B.5 resist., min) = {r['gG_f']:.2f}×{N_G_k_min:.2f} + 0×{_dc_Qvk:.2f} &nbsp;= **{r['V_f']:.2f} kN/m** *(traffic excluded — variable action not favourable)*
-
-**Horizontal earth pressure** (σ_top = {σ_top:.2f} kPa · σ_bot = {σ_bot:.2f} kPa) — surcharge (rect, γG_super) + backfill (tri, γG_self)
-- F_Ka   = {r['Ka']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Ka']:.2f} kN/m** (active)
-- F_Kmax = {r['Kmax']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Kmax']:.2f} kN/m** (restrained)
-- F_net (earth only) = {r['F_Kmax']:.2f} − {r['F_Ka']:.2f} = **{r['F_net']:.2f} kN/m**
-
-**Horizontal traffic — active side (PD6694-1 Table 6)**
-- Ka_tr (Table B.4 horiz. traffic surcharge) = **{r['Ka_tr']:.2f}** (Rankine formula Ka_char = {Ka_char:.4f})
-- σh = {_dc_udl_coeff:.0f} × {r['Ka_tr']:.2f} × {H_ext:.3f} m = **{r['Q_h_udl_k']:.2f} kN/m** (arm {H_ext/2:.3f} m)
-- Note 5 r_F (Hc={H_c:.3f} m): **{_rF:.4f}** {"(Hc≥2m — F=0)" if H_c >= 2.0 else ""}
-- {_dc_F_desc} = {_dc_F_formula} = **{_dc_F_k:.2f} kN/m** (arm {H_ext:.3f} m)
-- γQ × (σh + F) = {r['gQ']:.2f} × ({r['Q_h_udl_k']:.2f}+{_dc_F_k:.2f}) = **{r['F_h_tr']:.2f} kN/m** (factored)
-- γQ × M_h = {r['gQ']:.2f} × {r['Q_h_M_k_char']:.2f} = **{r['M_h_tr']:.2f} kNm/m** (factored driving moment)
-""")
-
-                c1, c2, c3 = st.columns(3)
-
-                with c1:
+                with _dc_tab:
                     st.markdown(f"""
-**Table B.4 — Max vertical (Gk + Qk)**
+    **Limit state parameters** · Ka = {r['Ka']} · Kmax = {r['Kmax']} · γG super = {r['gG_super']:.2f} · γG self = {r['gG_self']:.2f} · γG_f = {r['gG_f']:.2f} · γQ = {r['gQ']:.2f} · γφ = {r['g_phi']:.2f}
 
-*Bearing*
-- V_u = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
-- q = V_u/B_ext = {r['V_u']:.2f}/{B_ext:.3f} = **{r['q_B4']:.2f} kPa**
-- q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B4_bear']:.3f}** {"✅" if r["UR_B4_bear"] <= 1.0 else "❌"}
+    **Characteristic vertical loads** (split for per-source γG)
+    - P_super (road+sub+fill, γSd;ec=1.15) = **{P_super:.2f} kN/m** &nbsp;·&nbsp; P_self (concrete) = **{P_self:.2f} kN/m**
+    - N_G,k max = {N_G_k_max:.2f} kN/m &nbsp;·&nbsp; N_G,k min (−40% road) = {N_G_k_min:.2f} kN/m
+    - Q_v,k ({_dc_label}) = {_dc_Qvk:.2f} kN/m
 
-*Overturning (max V = Gk + Qk)*
-- F_Ka·arm = {r['F_Ka']:.2f}×{r['arm_Ka']:.3f} = {r['F_Ka']*r['arm_Ka']:.2f} kNm/m (active)
-- F_Kmax·arm = {r['F_Kmax']:.2f}×{r['arm_Kmax']:.3f} = {r['F_Kmax']*r['arm_Kmax']:.2f} kNm/m (passive resist)
-- M_dst = {r['F_Ka']*r['arm_Ka']:.2f} + {r['M_h_tr']:.2f} − {r['F_Kmax']*r['arm_Kmax']:.2f} = **{r['M_drv_B45']:.2f} kNm/m**
-- M_stb = {r['V_u']:.2f}×{B_ext/2:.3f} = **{r['M_stb_B4']:.2f} kNm/m**
-- **UR = {r['UR_B4_ov']:.3f}** {"✅" if r["UR_B4_ov"] <= 1.0 else "❌"}
+    **Factored vertical loads**
+    - V_u (B.4 max) = γG_super×P_super + γG_self×P_self + γQ×Q_v,k = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
+    - V_f (B.5 resist., min) = {r['gG_f']:.2f}×{N_G_k_min:.2f} + 0×{_dc_Qvk:.2f} &nbsp;= **{r['V_f']:.2f} kN/m** *(traffic excluded — variable action not favourable)*
 
-*Sliding (max V = Gk + Qk)*
+    **Horizontal earth pressure** (σ_top = {σ_top:.2f} kPa · σ_bot = {σ_bot:.2f} kPa) — surcharge (rect, γG_super) + backfill (tri, γG_self)
+    - F_Ka   = {r['Ka']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Ka']:.2f} kN/m** (active)
+    - F_Kmax = {r['Kmax']}×[{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} + {r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f}] = **{r['F_Kmax']:.2f} kN/m** (restrained)
+    - F_net (earth only) = {r['F_Kmax']:.2f} − {r['F_Ka']:.2f} = **{r['F_net']:.2f} kN/m**
 
-**① Horizontal driving force ΣH_drv** (active earth + traffic surcharge)
-- Active surcharge (rect) = {r['Ka']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_act_sur:.2f}**
-- Active backfill (tri) = {r['Ka']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_act_bf:.2f}**
-- Traffic UDL surcharge ({_dc_udl_coeff:.0f}×Kd×H) = {r['gQ']:.2f}×{_dc_udl_coeff:.0f}×{r['Ka_tr']:.2f}×{H_ext:.3f} = **{_tr_udl:.2f}**
-- Traffic line load F (Table 6) = {r['gQ']:.2f}×{_dc_F_line:.2f} = **{_tr_line:.2f}**{_brk_row}
-- **ΣH_drv = {_act_sur:.2f}+{_act_bf:.2f}+{_tr_udl:.2f}+{_tr_line:.2f}{('+'+format(_tr_brk,'.2f')) if _dc_brk>0 else ''} = {_H_drv:.2f} kN/m**
+    **Horizontal traffic — active side (PD6694-1 Table 6)**
+    - Ka_tr (Table B.4 horiz. traffic surcharge) = **{r['Ka_tr']:.2f}** (Rankine formula Ka_char = {Ka_char:.4f})
+    - σh = {_dc_udl_coeff:.0f} × {r['Ka_tr']:.2f} × {H_ext:.3f} m = **{r['Q_h_udl_k']:.2f} kN/m** (arm {H_ext/2:.3f} m)
+    - Note 5 r_F (Hc={H_c:.3f} m): **{_rF:.4f}** {"(Hc≥2m — F=0)" if H_c >= 2.0 else ""}
+    - {_dc_F_desc} = {_dc_F_formula} = **{_dc_F_k:.2f} kN/m** (arm {H_ext:.3f} m)
+    - γQ × (σh + F) = {r['gQ']:.2f} × ({r['Q_h_udl_k']:.2f}+{_dc_F_k:.2f}) = **{r['F_h_tr']:.2f} kN/m** (factored)
+    - γQ × M_h = {r['gQ']:.2f} × {r['Q_h_M_k_char']:.2f} = **{r['M_h_tr']:.2f} kNm/m** (factored driving moment)
+    """)
 
-**② Horizontal resisting force ΣH_res** (restrained Kmax passive)
-- Passive surcharge (rect) = {r['Kmax']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_pas_sur:.2f}**
-- Passive backfill (tri) = {r['Kmax']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_pas_bf:.2f}**
-- **ΣH_res = {_pas_sur:.2f}+{_pas_bf:.2f} = {_H_res:.2f} kN/m**
+                    c1, c2, c3 = st.columns(3)
 
-**Net friction required** = ΣH_drv − ΣH_res = {_H_drv:.2f} − {_H_res:.2f} = **{r['F_drv_B45']:.2f} kN/m**
+                    with c1:
+                        st.markdown(f"""
+    **Table B.4 — Max vertical (Gk + Qk)**
 
-**③ Vertical force ΣV = V_u** (mobilises base friction)
-- Road construction = {r['gG_super']:.2f}×1.15×{W_road_max:.2f} = **{_v_road:.2f}**
-- Fill above roof = {r['gG_super']:.2f}×1.15×({W_sub:.2f}+{W_fill:.2f}) = **{_v_fill:.2f}**
-- Concrete self-weight = {r['gG_self']:.2f}×{W_conc:.2f} = **{_v_conc:.2f}**
-- Traffic vertical = {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{_v_traf:.2f}**
-- **ΣV = {_v_road:.2f}+{_v_fill:.2f}+{_v_conc:.2f}+{_v_traf:.2f} = {r['V_u']:.2f} kN/m**
+    *Bearing*
+    - V_u = {r['gG_super']:.2f}×{P_super:.2f} + {r['gG_self']:.2f}×{P_self:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{r['V_u']:.2f} kN/m**
+    - q = V_u/B_ext = {r['V_u']:.2f}/{B_ext:.3f} = **{r['q_B4']:.2f} kPa**
+    - q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B4_bear']:.3f}** {"✅" if r["UR_B4_bear"] <= 1.0 else "❌"}
 
-**④ Sliding resistance & check**
-- R_fric = tan(φ'_fnd,d)×ΣV + c'_d×B_ext = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_u']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B4']:.2f} kN/m**
-- UR = {r['F_drv_B45']:.2f} / {r['R_fric_B4']:.2f} = **{r['UR_B4_sl']:.3f}** {"✅" if r["UR_B4_sl"] <= 1.0 else "❌"}
-""")
+    *Overturning (max V = Gk + Qk)*
+    - F_Ka·arm = {r['F_Ka']:.2f}×{r['arm_Ka']:.3f} = {r['F_Ka']*r['arm_Ka']:.2f} kNm/m (active)
+    - F_Kmax·arm = {r['F_Kmax']:.2f}×{r['arm_Kmax']:.3f} = {r['F_Kmax']*r['arm_Kmax']:.2f} kNm/m (passive resist)
+    - M_dst = {r['F_Ka']*r['arm_Ka']:.2f} + {r['M_h_tr']:.2f} − {r['F_Kmax']*r['arm_Kmax']:.2f} = **{r['M_drv_B45']:.2f} kNm/m**
+    - M_stb = {r['V_u']:.2f}×{B_ext/2:.3f} = **{r['M_stb_B4']:.2f} kNm/m**
+    - **UR = {r['UR_B4_ov']:.3f}** {"✅" if r["UR_B4_ov"] <= 1.0 else "❌"}
 
-                with c2:
-                    st.markdown(f"""
-**Table B.5 — Min vertical (Gk only)**
+    *Sliding (max V = Gk + Qk)*
 
-*Bearing*
-- V_f = {r['gG_f']:.2f}×{N_G_k_min:.2f} = **{r['V_f']:.2f} kN/m** *(traffic excluded)*
-- q = V_f/B_ext = {r['V_f']:.2f}/{B_ext:.3f} = **{r['q_B5']:.2f} kPa**
-- q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B5_bear']:.3f}** {"✅" if r["UR_B5_bear"] <= 1.0 else "❌"}
+    **① Horizontal driving force ΣH_drv** (active earth + traffic surcharge)
+    - Active surcharge (rect) = {r['Ka']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_act_sur:.2f}**
+    - Active backfill (tri) = {r['Ka']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_act_bf:.2f}**
+    - Traffic UDL surcharge ({_dc_udl_coeff:.0f}×Kd×H) = {r['gQ']:.2f}×{_dc_udl_coeff:.0f}×{r['Ka_tr']:.2f}×{H_ext:.3f} = **{_tr_udl:.2f}**
+    - Traffic line load F (Table 6) = {r['gQ']:.2f}×{_dc_F_line:.2f} = **{_tr_line:.2f}**{_brk_row}
+    - **ΣH_drv = {_act_sur:.2f}+{_act_bf:.2f}+{_tr_udl:.2f}+{_tr_line:.2f}{('+'+format(_tr_brk,'.2f')) if _dc_brk>0 else ''} = {_H_drv:.2f} kN/m**
 
-*Overturning (min V = Gk only — governing)*
-- M_dst = **{r['M_drv_B45']:.2f} kNm/m** *(same horizontal forces as B.4)*
-- M_stb = {r['V_f']:.2f}×{B_ext/2:.3f} = **{r['M_stb']:.2f} kNm/m**
-- **UR = {r['UR_B5_ov']:.3f}** {"✅" if r["UR_B5_ov"] <= 1.0 else "❌"}
+    **② Horizontal resisting force ΣH_res** (restrained Kmax passive)
+    - Passive surcharge (rect) = {r['Kmax']}×{r['gG_super']:.2f}×{σ_top:.2f}×{H_ext:.3f} = **{_pas_sur:.2f}**
+    - Passive backfill (tri) = {r['Kmax']}×{r['gG_self']:.2f}×½×{σ_bot-σ_top:.2f}×{H_ext:.3f} = **{_pas_bf:.2f}**
+    - **ΣH_res = {_pas_sur:.2f}+{_pas_bf:.2f} = {_H_res:.2f} kN/m**
 
-*Sliding (min V = Gk only — governing)*
-- Friction needed = **{r['F_drv_B45']:.2f} kN/m** *(same as B.4)*
-- R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric']:.2f} kN/m**
-- **UR = {r['UR_B5_sl']:.3f}** {"✅" if r["UR_B5_sl"] <= 1.0 else "❌"}
-""")
+    **Net friction required** = ΣH_drv − ΣH_res = {_H_drv:.2f} − {_H_res:.2f} = **{r['F_drv_B45']:.2f} kN/m**
 
-                with c3:
-                    st.markdown(f"""
-**Table B.6 — Ka driving / Kr passive (WT: {h_wt:.2f} m BGL)**
+    **③ Vertical force ΣV = V_u** (mobilises base friction)
+    - Road construction = {r['gG_super']:.2f}×1.15×{W_road_max:.2f} = **{_v_road:.2f}**
+    - Fill above roof = {r['gG_super']:.2f}×1.15×({W_sub:.2f}+{W_fill:.2f}) = **{_v_fill:.2f}**
+    - Concrete self-weight = {r['gG_self']:.2f}×{W_conc:.2f} = **{_v_conc:.2f}**
+    - Traffic vertical = {r['gQ']:.2f}×{_dc_Qvk:.2f} = **{_v_traf:.2f}**
+    - **ΣV = {_v_road:.2f}+{_v_fill:.2f}+{_v_conc:.2f}+{_v_traf:.2f} = {r['V_u']:.2f} kN/m**
 
-*Eff. stresses:* σ'top={r['σ_eff_top']:.2f} kPa, σ'bot={r['σ_eff_bot']:.2f} kPa · Uplift Uk={r['U_k']:.2f} kN/m
+    **④ Sliding resistance & check**
+    - R_fric = tan(φ'_fnd,d)×ΣV + c'_d×B_ext = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_u']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B4']:.2f} kN/m**
+    - UR = {r['F_drv_B45']:.2f} / {r['R_fric_B4']:.2f} = **{r['UR_B4_sl']:.3f}** {"✅" if r["UR_B4_sl"] <= 1.0 else "❌"}
+    """)
 
-*Bearing (max V − uplift)*
-- Vu B6 = V_perm_max + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = {r['V_perm_max']:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
-- q = Vu B6 / Bext = **{r['q_B6']:.2f} kPa** → **UR = {r['UR_B6_bear']:.3f}** {"✅" if r["UR_B6_bear"] <= 1.0 else "❌"}
+                    with c2:
+                        st.markdown(f"""
+    **Table B.5 — Min vertical (Gk only)**
 
-*Resistance vertical (min V − uplift)*
-- Vf B6 = {r['gG_f']:.2f}×{N_G_k_min:.2f} − {r['gG_u']:.2f}×{r['U_k']:.2f} = **{r['V_f_B6']:.2f} kN/m**
+    *Bearing*
+    - V_f = {r['gG_f']:.2f}×{N_G_k_min:.2f} = **{r['V_f']:.2f} kN/m** *(traffic excluded)*
+    - q = V_f/B_ext = {r['V_f']:.2f}/{B_ext:.3f} = **{r['q_B5']:.2f} kPa**
+    - q_Rd = {q_Rd:.1f} kPa → **UR = {r['UR_B5_bear']:.3f}** {"✅" if r["UR_B5_bear"] <= 1.0 else "❌"}
 
-*Overturning*
-- M_Ka (earth) = {r['F_Ka_B6']:.2f}×{r['arm_Ka_B6']:.3f} = **{r['F_Ka_B6']*r['arm_Ka_B6']:.2f} kNm/m**
-- M_traffic = **{r['M_h_tr']:.2f} kNm/m**
-- M_Ka total = {r['F_Ka_B6']*r['arm_Ka_B6']:.2f}+{r['M_h_tr']:.2f} = **{r['M_Ka_B6']:.2f} kNm/m**
-- M_Kr = {r['F_Kr']:.2f}×{r['arm_Kr']:.3f} = **{r['F_Kr']*r['arm_Kr']:.2f} kNm/m**
-- M_net = max(0, {r['M_Ka_B6']:.2f}−{r['F_Kr']*r['arm_Kr']:.2f}) = **{r['M_net_B6']:.2f} kNm/m**
-- M_stb = {r['V_f_B6']:.2f}×{B_ext/2:.3f} = **{r['M_stb_B6']:.2f} kNm/m**
-- **UR = {r['UR_B6_ov']:.3f}** {"✅" if r["UR_B6_ov"] <= 1.0 else "❌"}
+    *Overturning (min V = Gk only — governing)*
+    - M_dst = **{r['M_drv_B45']:.2f} kNm/m** *(same horizontal forces as B.4)*
+    - M_stb = {r['V_f']:.2f}×{B_ext/2:.3f} = **{r['M_stb']:.2f} kNm/m**
+    - **UR = {r['UR_B5_ov']:.3f}** {"✅" if r["UR_B5_ov"] <= 1.0 else "❌"}
 
-*Sliding (friction + passive Kr)*
-- F_Ka (earth) = **{r['F_Ka_B6']:.2f} kN/m** · F_traffic = **{r['F_h_tr']:.2f} kN/m**
-- F_drv = {r['F_Ka_B6']:.2f}+{r['F_h_tr']:.2f} = **{r['F_drv_B6']:.2f} kN/m**
-- φ_fill_d = **{r['φ_fill_d_deg']:.2f}°** → Kp_d = **{r['Kp']:.3f}**
-- F_Kr = **{r['F_Kr']:.2f} kN/m**
-- R_fric_B6 = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f_B6']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B6']:.2f} kN/m**
-- R_B6 = {r['F_Kr']:.2f}+{r['R_fric_B6']:.2f} = **{r['R_B6']:.2f} kN/m**
-- **UR = {r['UR_B6_sl']:.3f}** {"✅" if r["UR_B6_sl"] <= 1.0 else "❌"}
-""")
+    *Sliding (min V = Gk only — governing)*
+    - Friction needed = **{r['F_drv_B45']:.2f} kN/m** *(same as B.4)*
+    - R_fric = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric']:.2f} kN/m**
+    - **UR = {r['UR_B5_sl']:.3f}** {"✅" if r["UR_B5_sl"] <= 1.0 else "❌"}
+    """)
 
-# ── Geometry / assumptions note ────────────────────────────────────────────────
-with st.expander("Geometry & assumptions"):
-    st.markdown(f"""
-| Parameter | Value |
-|---|---|
-| B_ext | {B:.2f} + 2×{t_w:.2f} = **{B_ext:.3f} m** |
-| H_ext | {H:.2f} + 2×{t_s:.2f} = **{H_ext:.3f} m** |
-| H_c | {t_road:.3f} + {t_sub:.3f} + {t_fill:.3f} = **{H_c:.3f} m** |
-| H_inv | {H_c:.3f} + {H_ext:.3f} = **{H_inv:.3f} m** |
-| Concrete area | **{A_conc:.4f} m²/m** |
-| W_concrete | **{W_conc:.2f} kN/m** |
-| W_road (nominal) | {γ_road:.1f} × {t_road:.3f} × {B_ext:.3f} = **{W_road:.2f} kN/m** |
-| W_road max (+55%) | {γ_road:.1f} × {t_road:.3f} × 1.55 × {B_ext:.3f} = **{W_road_max:.2f} kN/m** |
-| W_road min (−40%) | {γ_road:.1f} × {t_road:.3f} × 0.60 × {B_ext:.3f} = **{W_road_min:.2f} kN/m** |
-| W_subbase (cover) | {γ_sub:.1f} × {t_sub:.3f} × {B_ext:.3f} = **{W_sub:.2f} kN/m** |
-| W_fill (cover) | {γ_fill:.1f} × {t_fill:.3f} × {B_ext:.3f} = **{W_fill:.2f} kN/m** |
-| W_soil total (nominal) | **{W_soil:.2f} kN/m** |
-| N_G,k max (+55%, γSd;ec=1.15) | {W_conc:.2f} + 1.15×({W_road_max:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_max:.2f} kN/m** |
-| N_G,k min (−40%, γSd;ec=1.0) | {W_conc:.2f} + ({W_road_min:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_min:.2f} kN/m** |
-| Q_v,k (LM1 all lanes) | **{Q_vk_lm1:.2f} kN/m** |
-| Q_v,k (LM3 {lm3.vehicle_name}) | **{Q_vk_lm3:.2f} kN/m** |
-| σ_v at crown | {γ_road:.1f}×{t_road:.3f} + {γ_sub:.1f}×{t_sub:.3f} + {γ_fill:.1f}×{t_fill:.3f} = **{σ_top:.2f} kPa** |
-| σ_v at invert | {σ_top:.2f} + {γ_fill:.1f}×{H_ext:.3f} = **{σ_bot:.2f} kPa** |
+                    with c3:
+                        st.markdown(f"""
+    **Table B.6 — Ka driving / Kr passive (WT: {h_wt:.2f} m BGL)**
 
-**Road construction deviation + model factor:**
-- UK NA Table NA.1 Cl.5.2.3(3): thickness deviation +55% (max) / −40% (min).
-- PD6694-1 Cl.10.2.2: γSd;ec = 1.15 applied to all superimposed permanent loads (road + subbase + fill) for unfavourable case; γSd;ec = 1.0 for favourable.
-- N_G,k max = W_conc + 1.15×(1.55×W_road + W_sub + W_fill) = **{N_G_k_max:.2f} kN/m** → used for B.4 bearing (V_u)
-- N_G,k min = W_conc + (0.60×W_road + W_sub + W_fill) = **{N_G_k_min:.2f} kN/m** → used for B.5 / OT / sliding (V_f)
+    *Eff. stresses:* σ'top={r['σ_eff_top']:.2f} kPa, σ'bot={r['σ_eff_bot']:.2f} kPa · Uplift Uk={r['U_k']:.2f} kN/m
 
-**Load case framework (PD6694-1 Annex B):**
-- **B.4 bearing** — Max vertical (γG_u × N_G,k + γQ × Q_v,k); Ka on active wall → governs bearing pressure.
-- **B.4/B.5 overturning/sliding** — Min vertical (γG_f × N_G,k, traffic excluded); Kmax driving → governs overturning and sliding.
-- **B.5 bearing** — Min vertical (γG_f × N_G,k, traffic excluded); same horizontal → governs when uplift reduces base pressure.
-- **B.6** — Effective stresses + water table uplift; Ka driving, Kr (Rankine passive) + base friction resisting.
+    *Bearing (max V − uplift)*
+    - Vu B6 = V_perm_max + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = {r['V_perm_max']:.2f} + {r['gQ']:.2f}×{_dc_Qvk:.2f} − {r['gG_f']:.2f}×{r['U_k']:.2f} = **{r['V_u_B6']:.2f} kN/m**
+    - q = Vu B6 / Bext = **{r['q_B6']:.2f} kPa** → **UR = {r['UR_B6_bear']:.3f}** {"✅" if r["UR_B6_bear"] <= 1.0 else "❌"}
 
-**Traffic load integration:**
-- Q_v,k = LM1 max vertical per metre strip (all lanes loaded simultaneously) — BS EN 1991-2.
-- γQ = 1.35 at ULS (STR/GEO, EQU); 1.00 at SLS — BS EN 1990 Table A2.4.
-- Traffic vertical is unfavourable for bearing (adds to V_u); excluded from OT/sliding resistance.
-- **Horizontal traffic (PD6694-1 Table 6, Figure 2) — active side only:**
-  - LM1: σh = 20 × Ka_tr over H_ext; Ka_tr per Table B.4: SLS 0.33 / EQU 0.37 / C1 0.33 / C2 0.41
-  - LM3: σh = 30 × Ka_tr over H_ext; same Ka_tr values (Table 6: SV196/SV100 = 30Kd)
-  - LM1 F line loads: 2 × 330 × Ka_tr × r_F / lane_width at crown; r_F = {_rF:.3f} {"(Hc≥2m, F=0)" if H_c >= 2.0 else f"(Note 5, Hc={H_c:.2f}m)"}
-  - LM3 F line loads: same Table 6 F=330Kd as LM1, PLUS SV braking (0.25×basic GVW÷LL) added on top.
-  - σ_top for horizontal earth pressure uses +55% road construction deviation (PD6694-1 Cl.10.2.2).
-  - B.4 sliding/OT resistance uses max vertical V_u (Gk + Qk); B.5 uses min vertical V_f (Gk only).
-  - Factored by γQ; added to driving force and moment in B.4/B.5 and B.6 OT/sliding checks.
+    *Resistance vertical (min V − uplift)*
+    - Vf B6 = {r['gG_f']:.2f}×{N_G_k_min:.2f} − {r['gG_u']:.2f}×{r['U_k']:.2f} = **{r['V_f_B6']:.2f} kN/m**
 
-**Other notes:**
-- Ka and Kmax from PD6694-1 Tables B.4/B.5 include γM and γSd;K = 1.2 (Classes 6N/6P backfill assumed).
-- Vertical stresses σ_v use characteristic γ (soil unit weight is not a partial-factored load in EC7).
-- Kr (passive) computed from design φ_d = arctan(tan φ'_k / γφ); no γSd;K applied to resistance side.
-- q_Rd applied uniformly across all limit states — user to verify suitability for each LS.
-""")
+    *Overturning*
+    - M_Ka (earth) = {r['F_Ka_B6']:.2f}×{r['arm_Ka_B6']:.3f} = **{r['F_Ka_B6']*r['arm_Ka_B6']:.2f} kNm/m**
+    - M_traffic = **{r['M_h_tr']:.2f} kNm/m**
+    - M_Ka total = {r['F_Ka_B6']*r['arm_Ka_B6']:.2f}+{r['M_h_tr']:.2f} = **{r['M_Ka_B6']:.2f} kNm/m**
+    - M_Kr = {r['F_Kr']:.2f}×{r['arm_Kr']:.3f} = **{r['F_Kr']*r['arm_Kr']:.2f} kNm/m**
+    - M_net = max(0, {r['M_Ka_B6']:.2f}−{r['F_Kr']*r['arm_Kr']:.2f}) = **{r['M_net_B6']:.2f} kNm/m**
+    - M_stb = {r['V_f_B6']:.2f}×{B_ext/2:.3f} = **{r['M_stb_B6']:.2f} kNm/m**
+    - **UR = {r['UR_B6_ov']:.3f}** {"✅" if r["UR_B6_ov"] <= 1.0 else "❌"}
+
+    *Sliding (friction + passive Kr)*
+    - F_Ka (earth) = **{r['F_Ka_B6']:.2f} kN/m** · F_traffic = **{r['F_h_tr']:.2f} kN/m**
+    - F_drv = {r['F_Ka_B6']:.2f}+{r['F_h_tr']:.2f} = **{r['F_drv_B6']:.2f} kN/m**
+    - φ_fill_d = **{r['φ_fill_d_deg']:.2f}°** → Kp_d = **{r['Kp']:.3f}**
+    - F_Kr = **{r['F_Kr']:.2f} kN/m**
+    - R_fric_B6 = tan({r['φ_fnd_d_deg']:.2f}°)×{r['V_f_B6']:.2f} + {r['c_fnd_d']:.2f}×{B_ext:.3f} = **{r['R_fric_B6']:.2f} kN/m**
+    - R_B6 = {r['F_Kr']:.2f}+{r['R_fric_B6']:.2f} = **{r['R_B6']:.2f} kN/m**
+    - **UR = {r['UR_B6_sl']:.3f}** {"✅" if r["UR_B6_sl"] <= 1.0 else "❌"}
+    """)
+
+    # ── Geometry / assumptions note ────────────────────────────────────────────────
+    with st.expander("Geometry & assumptions"):
+        st.markdown(f"""
+    | Parameter | Value |
+    |---|---|
+    | B_ext | {B:.2f} + 2×{t_w:.2f} = **{B_ext:.3f} m** |
+    | H_ext | {H:.2f} + 2×{t_s:.2f} = **{H_ext:.3f} m** |
+    | H_c | {t_road:.3f} + {t_sub:.3f} + {t_fill:.3f} = **{H_c:.3f} m** |
+    | H_inv | {H_c:.3f} + {H_ext:.3f} = **{H_inv:.3f} m** |
+    | Concrete area | **{A_conc:.4f} m²/m** |
+    | W_concrete | **{W_conc:.2f} kN/m** |
+    | W_road (nominal) | {γ_road:.1f} × {t_road:.3f} × {B_ext:.3f} = **{W_road:.2f} kN/m** |
+    | W_road max (+55%) | {γ_road:.1f} × {t_road:.3f} × 1.55 × {B_ext:.3f} = **{W_road_max:.2f} kN/m** |
+    | W_road min (−40%) | {γ_road:.1f} × {t_road:.3f} × 0.60 × {B_ext:.3f} = **{W_road_min:.2f} kN/m** |
+    | W_subbase (cover) | {γ_sub:.1f} × {t_sub:.3f} × {B_ext:.3f} = **{W_sub:.2f} kN/m** |
+    | W_fill (cover) | {γ_fill:.1f} × {t_fill:.3f} × {B_ext:.3f} = **{W_fill:.2f} kN/m** |
+    | W_soil total (nominal) | **{W_soil:.2f} kN/m** |
+    | N_G,k max (+55%, γSd;ec=1.15) | {W_conc:.2f} + 1.15×({W_road_max:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_max:.2f} kN/m** |
+    | N_G,k min (−40%, γSd;ec=1.0) | {W_conc:.2f} + ({W_road_min:.2f}+{W_sub:.2f}+{W_fill:.2f}) = **{N_G_k_min:.2f} kN/m** |
+    | Q_v,k (LM1 all lanes) | **{Q_vk_lm1:.2f} kN/m** |
+    | Q_v,k (LM3 {lm3.vehicle_name}) | **{Q_vk_lm3:.2f} kN/m** |
+    | σ_v at crown | {γ_road:.1f}×{t_road:.3f} + {γ_sub:.1f}×{t_sub:.3f} + {γ_fill:.1f}×{t_fill:.3f} = **{σ_top:.2f} kPa** |
+    | σ_v at invert | {σ_top:.2f} + {γ_fill:.1f}×{H_ext:.3f} = **{σ_bot:.2f} kPa** |
+
+    **Road construction deviation + model factor:**
+    - UK NA Table NA.1 Cl.5.2.3(3): thickness deviation +55% (max) / −40% (min).
+    - PD6694-1 Cl.10.2.2: γSd;ec = 1.15 applied to all superimposed permanent loads (road + subbase + fill) for unfavourable case; γSd;ec = 1.0 for favourable.
+    - N_G,k max = W_conc + 1.15×(1.55×W_road + W_sub + W_fill) = **{N_G_k_max:.2f} kN/m** → used for B.4 bearing (V_u)
+    - N_G,k min = W_conc + (0.60×W_road + W_sub + W_fill) = **{N_G_k_min:.2f} kN/m** → used for B.5 / OT / sliding (V_f)
+
+    **Load case framework (PD6694-1 Annex B):**
+    - **B.4 bearing** — Max vertical (γG_u × N_G,k + γQ × Q_v,k); Ka on active wall → governs bearing pressure.
+    - **B.4/B.5 overturning/sliding** — Min vertical (γG_f × N_G,k, traffic excluded); Kmax driving → governs overturning and sliding.
+    - **B.5 bearing** — Min vertical (γG_f × N_G,k, traffic excluded); same horizontal → governs when uplift reduces base pressure.
+    - **B.6** — Effective stresses + water table uplift; Ka driving, Kr (Rankine passive) + base friction resisting.
+
+    **Traffic load integration:**
+    - Q_v,k = LM1 max vertical per metre strip (all lanes loaded simultaneously) — BS EN 1991-2.
+    - γQ = 1.35 at ULS (STR/GEO, EQU); 1.00 at SLS — BS EN 1990 Table A2.4.
+    - Traffic vertical is unfavourable for bearing (adds to V_u); excluded from OT/sliding resistance.
+    - **Horizontal traffic (PD6694-1 Table 6, Figure 2) — active side only:**
+      - LM1: σh = 20 × Ka_tr over H_ext; Ka_tr per Table B.4: SLS 0.33 / EQU 0.37 / C1 0.33 / C2 0.41
+      - LM3: σh = 30 × Ka_tr over H_ext; same Ka_tr values (Table 6: SV196/SV100 = 30Kd)
+      - LM1 F line loads: 2 × 330 × Ka_tr × r_F / lane_width at crown; r_F = {_rF:.3f} {"(Hc≥2m, F=0)" if H_c >= 2.0 else f"(Note 5, Hc={H_c:.2f}m)"}
+      - LM3 F line loads: same Table 6 F=330Kd as LM1, PLUS SV braking (0.25×basic GVW÷LL) added on top.
+      - σ_top for horizontal earth pressure uses +55% road construction deviation (PD6694-1 Cl.10.2.2).
+      - B.4 sliding/OT resistance uses max vertical V_u (Gk + Qk); B.5 uses min vertical V_f (Gk only).
+      - Factored by γQ; added to driving force and moment in B.4/B.5 and B.6 OT/sliding checks.
+
+    **Other notes:**
+    - Ka and Kmax from PD6694-1 Tables B.4/B.5 include γM and γSd;K = 1.2 (Classes 6N/6P backfill assumed).
+    - Vertical stresses σ_v use characteristic γ (soil unit weight is not a partial-factored load in EC7).
+    - Kr (passive) computed from design φ_d = arctan(tan φ'_k / γφ); no γSd;K applied to resistance side.
+    - q_Rd applied uniformly across all limit states — user to verify suitability for each LS.
+    """)
+
+with tab2:
+    retaining_wall.render()

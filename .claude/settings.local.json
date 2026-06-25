@@ -8,7 +8,14 @@
       "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
       "PowerShell(python -c \"import pypdf; r=pypdf.PdfReader\\(r'C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\worked example.pdf'\\); pages=len\\(r.pages\\); print\\(f'Pages: {pages}'\\); [print\\(f'--- PAGE {i+1} ---\\\\n{r.pages[i].extract_text\\(\\)[:3000]}'\\) for i in range\\(min\\(5,pages\\)\\)]\" 2>&1)",
       "PowerShell(cd \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; $env:PYTHONIOENCODING=\"utf-8\"; python -c \"import ast; ast.parse\\(open\\('app.py', encoding='utf-8'\\).read\\(\\)\\); print\\('Syntax OK'\\)\")",
-      "PowerShell(cd \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; $env:PYTHONIOENCODING=\"utf-8\"; python verify_sliding.py)"
+      "PowerShell(cd \"C:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; $env:PYTHONIOENCODING=\"utf-8\"; python verify_sliding.py)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\" -Recurse | Select-Object FullName, @{Name=\"Type\";Expression={if \\($_.PSIsContainer\\) {\"DIR\"} else {\"FILE\"}}} | Format-Table -AutoSize)",
+      "PowerShell(cd \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; Start-Process -NoNewWindow -FilePath \"streamlit\" -ArgumentList \"run\", \"app.py\", \"--server.headless\", \"true\", \"--server.port\", \"8501\" -RedirectStandardError \"$env:TEMP\\\\streamlit_err.txt\" -RedirectStandardOutput \"$env:TEMP\\\\streamlit_out.txt\"; Start-Sleep -Seconds 8; Get-Content \"$env:TEMP\\\\streamlit_err.txt\" -Tail 30)",
+      "PowerShell(\\(Get-Command streamlit -ErrorAction SilentlyContinue\\).Source; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source)",
+      "PowerShell(pip show streamlit 2>&1)",
+      "PowerShell(python -m streamlit --version 2>&1)",
+      "PowerShell(Receive-Job -Id 1 -Keep)",
+      "PowerShell(Get-Job)"
     ]
   }
 }
