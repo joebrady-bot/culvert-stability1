@@ -702,8 +702,8 @@ def render():
             gamma_r  = st.number_input("γ_soil (kN/m³)",        14.0,  23.0,  18.0, 0.5,          key="rw_gr")
             q_k      = st.number_input("Surcharge q_k (kPa)",    0.0, 100.0,  10.0, 1.0,  "%.1f", key="rw_qk",
                                         help="Variable surcharge on retained side (e.g. LM1 equivalent)")
-            h_wt     = st.number_input("Water table depth (m)",   0.0,  30.0,  99.0, 0.5,  "%.1f", key="rw_wt",
-                                        help="Depth below top of retained fill. Set to 99 for fully dry.")
+            h_wt     = st.number_input("Water table depth (m)",   0.0, 200.0,  99.0, 0.5,  "%.1f", key="rw_wt",
+                                        help="Depth below top of retained fill. Set large (e.g. 99) for fully dry.")
             st.markdown("##### Foundation")
             phi_f_k  = st.number_input("φ'_fnd (°)",            15.0,  45.0,  28.0, 1.0,  "%.1f", key="rw_phif")
             q_Rd     = st.number_input("q_Rd (kPa)",            50.0,5000.0, 250.0,10.0,          key="rw_qRd",
