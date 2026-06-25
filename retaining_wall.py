@@ -45,7 +45,8 @@ PF = {
     "STR": dict(gG_unf=1.35, gG_fav=1.00, gQ=1.50, gc=1.50, gs=1.15, acc=0.85),
 }
 
-GAMMA_W = 10.0   # kN/m³  (water unit weight, EN 1997-1)
+GAMMA_W   = 10.0  # kN/m³  (water unit weight, EN 1997-1)
+GAMMA_SDK = 1.20  # model factor on earth pressure coefficients (PD6694-1 Cl. 9 / γSd;K)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -182,7 +183,7 @@ def _geo_check(combo: str, pf: dict,
 
     phi_d   = _phi_d(phi_k, gphi)
     phi_f_d = _phi_d(phi_f_k, gphi)
-    Ka      = _Ka(phi_d)
+    Ka      = _Ka(phi_d) * GAMMA_SDK   # γSd;K = 1.2 per PD6694-1
 
     # ── Component characteristic weights ──────────────────────────────────
     W_stem = gamma_conc * t_stem * H_stem
@@ -359,8 +360,8 @@ def _structural(phi_k, gamma_r, q_k, gamma_conc,
     L_heel = L_base - L_toe - t_stem
     H      = H_stem + t_base
 
-    # For STR: φ_d = φ_k (M1, gphi=1.0) → Ka at characteristic angle
-    Ka = _Ka(phi_k)
+    # For STR: φ_d = φ_k (M1, gphi=1.0) → Ka at characteristic angle + γSd;K = 1.2
+    Ka = _Ka(phi_k) * GAMMA_SDK
 
     # ── Stem at base — vertical cantilever ───────────────────────────────
     q_fac  = gQ * q_k
@@ -605,9 +606,9 @@ def _wall_diagram(H_stem, t_stem, L_base, L_toe, t_base, h_wt, q_k,
 def _pressure_diagram(phi_k, gamma_r, q_k, H_stem, t_base, h_wt,
                       geo_results, str_data):
     H = H_stem + t_base
-    Ka_char = _Ka(phi_k)
+    Ka_char = _Ka(phi_k) * GAMMA_SDK   # includes γSd;K = 1.2
 
-    # Build characteristic pressure profile (no partial factors)
+    # Build characteristic pressure profile (γSd;K included, no action partial factors)
     n = 200
     z_arr = [H * i / n for i in range(n + 1)]
     p_char = []
@@ -731,8 +732,8 @@ def render():
     col_info = st.columns(4)
     col_info[0].metric("Heel length", f"{L_heel:.2f} m")
     col_info[1].metric("Total height", f"{H_total:.2f} m")
-    col_info[2].metric("Ka (char.)", f"{_Ka(phi_k):.3f}")
-    col_info[3].metric("Ka C2 design", f"{_Ka(_phi_d(phi_k, 1.25)):.3f}")
+    col_info[2].metric("Ka×γSd;K (char.)", f"{_Ka(phi_k) * GAMMA_SDK:.3f}")
+    col_info[3].metric("Ka×γSd;K (C2)", f"{_Ka(_phi_d(phi_k, 1.25)) * GAMMA_SDK:.3f}")
 
     # ── Calculations ─────────────────────────────────────────────────────────
     geo_results = {
