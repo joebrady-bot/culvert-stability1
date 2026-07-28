@@ -131,22 +131,20 @@ def render(inputs):
         plt.close(section_fig)
 
     st.markdown("**Cover layer self-weights (per 1 m length)**")
-    layer_weights = []
-    W_layers_total = 0.0
+    layer_udls = []
     for i, layer in enumerate(cover_layers, start=1):
         t_i = layer["t"]
         gamma_i = layer["gamma"]
-        W_i = gamma_i * (t_i / 1000.0) * B_ext
-        W_layers_total += W_i
-        layer_weights.append(W_i)
+        UDL_i = gamma_i * (t_i / 1000.0)
+        layer_udls.append(UDL_i)
         st.write(
-            f"Layer {i}: W_{i} = gamma_{i} × (t_{i} / 1000) × B_ext "
-            f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) × {B_ext:.3f} = **{W_i:.2f} kN/m**"
+            f"Layer {i}: UDL_{i} = gamma_{i} × (t_{i} / 1000) "
+            f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) = **{UDL_i:.2f} kN/m²**"
         )
 
-    results["layer_weights"] = layer_weights
-    results["W_layers_total"] = W_layers_total
+    results["layer_udls"] = layer_udls
+    results["UDL_total"] = sum(layer_udls)
 
-    st.write(f"**Total self-weight (box + cover layers) = {W_box + W_layers_total:.2f} kN/m**")
+    st.write(f"**Total cover UDL = {results['UDL_total']:.2f} kN/m²**")
 
     return results
