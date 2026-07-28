@@ -150,4 +150,9 @@ def render(inputs):
     st.divider()
     st.subheader("Horizontal Surcharge Model for LM1, LM2 & LM3")
 
+    left2, right2 = st.columns([1, 1])
+    with right2:
+        st.image("assets/pd6694_table6_surcharge_model.png", use_container_width=True)
+        st.image("assets/pd6694_figure2_surcharge_model.png", use_container_width=True)
+
     return results
