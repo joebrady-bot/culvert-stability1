@@ -15,7 +15,15 @@
       "PowerShell(pip show streamlit 2>&1)",
       "PowerShell(python -m streamlit --version 2>&1)",
       "PowerShell(Receive-Job -Id 1 -Keep)",
-      "PowerShell(Get-Job)"
+      "PowerShell(Get-Job)",
+      "PowerShell(python -m py_compile app.py; echo \"exit: $LASTEXITCODE\")",
+      "PowerShell(Get-NetTCPConnection -LocalPort 8501 -ErrorAction SilentlyContinue)",
+      "PowerShell(Start-Process -FilePath python -ArgumentList \"-m\",\"streamlit\",\"run\",\"app.py\",\"--server.headless\",\"true\",\"--server.port\",\"8501\" -WorkingDirectory \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\" -RedirectStandardOutput \"$env:TEMP\\\\streamlit_out.log\" -RedirectStandardError \"$env:TEMP\\\\streamlit_err.log\" -PassThru | Select-Object -ExpandProperty Id)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8501\" -UseBasicParsing -TimeoutSec 5; \"Status: $\\($r.StatusCode\\)\" } catch { \"ERR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(Get-Command chromium-cli -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command playwright -ErrorAction SilentlyContinue)",
+      "PowerShell(python -c \"import playwright; print\\('playwright available'\\)\" 2>&1)",
+      "PowerShell(Get-Process -Id 14716 -ErrorAction SilentlyContinue)"
     ]
   }
 }

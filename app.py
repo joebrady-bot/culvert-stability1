@@ -439,6 +439,9 @@ if _tool == "📦  Box Culvert Stability":
         cw_x1    = LL / 2 + cw_width / 2
         cw_y_top = 0.22
         kerb_w   = max(0.05, cw_width * 0.015)
+        # Notional lanes only span n_lanes*lane_width; centre the residual
+        # (remaining carriageway) width evenly either side, not all on one edge.
+        lanes_x0 = cw_x0 + (cw_width - n_lanes * lane_width) / 2
 
         # Road surface
         ax_e.add_patch(patches.Rectangle(
@@ -446,13 +449,13 @@ if _tool == "📦  Box Culvert Stability":
 
         # Dashed lane dividers
         for i in range(1, n_lanes):
-            x_div = cw_x0 + i * lane_width
+            x_div = lanes_x0 + i * lane_width
             if cw_x0 < x_div < cw_x1:
                 ax_e.plot([x_div, x_div], [0, cw_y_top], color="white", lw=0.7, ls="--", zorder=6)
 
         # Lane labels
         for i in range(n_lanes):
-            x_mid = cw_x0 + (i + 0.5) * lane_width
+            x_mid = lanes_x0 + (i + 0.5) * lane_width
             if cw_x0 < x_mid < cw_x1:
                 ax_e.text(x_mid, cw_y_top / 2, f"L{i+1}",
                           ha="center", va="center", fontsize=5, color="white")
@@ -639,6 +642,8 @@ if _tool == "📦  Box Culvert Stability":
         _arr_space = 0.10 * len(lm1.lanes) + 0.18
         _y_bot_ll  = -(H_c + _arr_space + 0.22)
         _ll_cw_x0  = LL / 2 - cw_width / 2   # carriageway left edge in LL
+        # Centre the residual (remaining) carriageway width evenly either side of the lanes
+        _lanes_x0_ll = _ll_cw_x0 + (cw_width - n_lanes * lane_width) / 2
 
         fig_ll, ax_ll = plt.subplots(figsize=(6, 2.5))
         ax_ll.set_facecolor("white")
@@ -667,8 +672,8 @@ if _tool == "📦  Box Culvert Stability":
         _lclrs  = ["#5A8FD0", "#5CA06A", "#C86060", "#9A70C0"]
 
         for _i, _ln in enumerate(lm1.lanes):
-            _lctr  = _ll_cw_x0 + (_i + 0.5) * lane_width
-            _lleft = _ll_cw_x0 + _i * lane_width
+            _lctr  = _lanes_x0_ll + (_i + 0.5) * lane_width
+            _lleft = _lanes_x0_ll + _i * lane_width
             _lc    = _lclrs[_i % len(_lclrs)]
 
             # Lane strip above GL (colour tint so lanes are distinguishable)
@@ -709,7 +714,7 @@ if _tool == "📦  Box Culvert Stability":
         ax_ll.axvline(_ll_cw_x0 + cw_width, color="#999999", lw=0.5, ls=":", zorder=3)
 
         # Wheel-to-wheel spacing annotation (Lane 1 only, above wheels)
-        _ln1_ctr = _ll_cw_x0 + 0.5 * lane_width
+        _ln1_ctr = _lanes_x0_ll + 0.5 * lane_width
         ax_ll.annotate("",
                        xy  =(_ln1_ctr + lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
                        xytext=(_ln1_ctr - lm1_loading.WHEEL_SPACING / 2, _wh_ll + 0.04),
@@ -891,6 +896,8 @@ if _tool == "📦  Box Culvert Stability":
         _lm3_arr_sp   = 0.10 * _lm3_n_disp + 0.18
         _lm3_y_bot    = -(H_c + _lm3_arr_sp + 0.22)
         _lm3_cw_x0    = LL / 2 - cw_width / 2
+        # Centre the residual (remaining) carriageway width evenly either side of the lanes
+        _lanes_x0_lm3 = _lm3_cw_x0 + (cw_width - n_lanes * lane_width) / 2
         _lm3_disp_LL  = lm3.dispersion.disp_LL   # same formula as LM1
 
         fig_ll3, ax_ll3 = plt.subplots(figsize=(6, 2.5))
@@ -920,17 +927,17 @@ if _tool == "📦  Box Culvert Stability":
 
         # Lane 1 — SV vehicle (i = 0)
         _sv_axle_kn  = sv.axle_loads[0]
-        _ln1_ctr3    = _lm3_cw_x0 + 0.5 * lane_width
+        _ln1_ctr3    = _lanes_x0_lm3 + 0.5 * lane_width
         _lc1_3       = _lclrs3[0]
 
         ax_ll3.add_patch(patches.Rectangle(
-            (_lm3_cw_x0, 0), lane_width, 0.11,
+            (_lanes_x0_lm3, 0), lane_width, 0.11,
             fc=_lc1_3, ec="white", lw=0.5, alpha=0.75, zorder=4))
         ax_ll3.text(_ln1_ctr3, 0.055,
                     f"Lane 1 ({lm3.vehicle_name} — {_sv_axle_kn:.0f} kN/axle)",
                     ha="center", va="center", fontsize=5.5, color="white",
                     fontweight="bold", zorder=7)
-        ax_ll3.axvline(_lm3_cw_x0, color="#999999", lw=0.5, ls=":", zorder=3)
+        ax_ll3.axvline(_lanes_x0_lm3, color="#999999", lw=0.5, ls=":", zorder=3)
 
         _spread_ll3 = lm1_loading.DISP * H_c
         for _wx3 in [_ln1_ctr3 - lm1_loading.WHEEL_SPACING/2,
@@ -958,8 +965,8 @@ if _tool == "📦  Box Culvert Stability":
         # Secondary lanes (LM1 Lane 2 / 3 / 4) — loop index i starts at 1
         for _ln3 in lm3.secondary_lanes:
             _i3    = _ln3.lane - 1   # 0-based (lane 2 → 1, lane 3 → 2, …)
-            _lctr3 = _lm3_cw_x0 + (_i3 + 0.5) * lane_width
-            _lft3  = _lm3_cw_x0 + _i3 * lane_width
+            _lctr3 = _lanes_x0_lm3 + (_i3 + 0.5) * lane_width
+            _lft3  = _lanes_x0_lm3 + _i3 * lane_width
             _lc3   = _lclrs3[_i3 % len(_lclrs3)]
 
             ax_ll3.add_patch(patches.Rectangle(
