@@ -76,3 +76,5 @@ PD6694-1 Table 6 / Figure 2, for LM1, LM2 & LM3.
 | Cover Depth to Structure | `H_c` | m | `sum(t_i) / 1000` | Sum of all defined cover layer thicknesses (PD6694-1 NOTE 5) |
 | Reduction Factor | `reduction_factor` | — | `(1 − H_c/2)²` | Per PD6694-1 NOTE 5, for buried structures with less than 2 m of fill |
 | Line Load on 1 m Strip | `F_hll_1m_coeff` | kN (coefficient of `Kd`) | `2 × reduction_factor × 330 / w_L` | Smears the two edge-of-lane line loads across the lane width `w_L` onto the project's 1 m strip basis; result stays symbolic in `Kd` until `Ka`/`K0` exist |
+| Horizontal UDL, LM1 & LM2 | `F_hUDL_LM12` | kN/m² (coefficient of `Kd`) | `20 × Kd` | PD6694-1 Table 6, Normal highway traffic row; stays symbolic in `Kd` |
+| Horizontal UDL, LM3 | `F_hUDL_LM3` | kN/m² (coefficient of `Kd`) | `30 × Kd` | PD6694-1 Table 6, Special vehicle traffic row (SV196/SV100); stays symbolic in `Kd` |

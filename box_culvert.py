@@ -173,6 +173,10 @@ def render(inputs):
         results["H_c"] = H_c
         results["reduction_factor"] = reduction_factor
         results["F_hll_1m_coeff"] = coefficient
+
+        st.write("Ka or K0 are obtained from the appropriate load case Table in PD6694-1 Annex B.")
+        st.write("F_hUDL_LM12 = UDL for LM1 & LM2 = 20Kd kN/m²")
+        st.write("F_hUDL_LM3 = UDL for LM3 = 30Kd kN/m²")
     with right2:
         st.image("assets/pd6694_table6_surcharge_model.png", use_container_width=True)
         st.image("assets/pd6694_figure2_surcharge_model.png", use_container_width=True)
