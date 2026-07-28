@@ -50,3 +50,18 @@ User can input up to 3 layers, `i` = layer number.
 | Input | Options | Notes |
 |---|---|---|
 | SV Vehicle | Drop-down: `SV80`, `SV100`, `SV196` | |
+
+## Derived Geometry (calculated)
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| External Width | `B_ext` | m | `B + 2 t_w` | |
+| External Height | `H_ext` | m | `H + 2 t_s` | Assumes `t_s` applies to both top and bottom slab (symmetric) |
+| Concrete Cross-sectional Area | `A_conc` | m² | `B_ext H_ext − B H` | Per 1 m length strip |
+
+## Self-weights (calculated)
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Box Self-weight | `W_box` | kN/m | `A_conc × gamma_concrete` | Per 1 m strip along culvert length |
+| Cover Layer Self-weight | `W_i` | kN/m | `gamma_i × (t_i / 1000) × B_ext` | Per layer, spans full `B_ext`; per 1 m strip |

@@ -31,7 +31,8 @@
       "PowerShell(python -c \"import playwright; print\\('playwright ok'\\)\" 2>&1)",
       "PowerShell(pip show playwright 2>&1)",
       "PowerShell(python -m playwright install chromium --with-deps 2>&1)",
-      "PowerShell(Get-Process -Name python -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-Process -Name python -ErrorAction SilentlyContinue)",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot2.py\")"
     ]
   }
 }
