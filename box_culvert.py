@@ -147,4 +147,7 @@ def render(inputs):
         st.pyplot(section_fig, use_container_width=False)
         plt.close(section_fig)
 
+    st.divider()
+    st.subheader("Horizontal Surcharge Model for LM1, LM2 & LM3")
+
     return results
