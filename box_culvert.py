@@ -151,6 +151,28 @@ def render(inputs):
     st.subheader("Horizontal Surcharge Model for LM1, LM2 & LM3")
 
     left2, right2 = st.columns([1, 1])
+    with left2:
+        w_L = inputs["w_L"]
+
+        st.write("Horizontal line load F_hll = 330Kd, where Kd = Ka or K0.")
+
+        t_sum_syms = " + ".join(f"t_{i}" for i in range(1, len(cover_layers) + 1))
+        t_sum_vals = " + ".join(f"{layer['t']:.0f}" for layer in cover_layers)
+        H_c = sum(layer["t"] for layer in cover_layers) / 1000.0
+        st.write(f"H_c = ({t_sum_syms}) / 1000 = ({t_sum_vals}) / 1000 = **{H_c:.3f} m**")
+
+        reduction_factor = (1 - H_c / 2) ** 2
+        st.write(f"Reduction factor = (1 − H_c/2)² = (1 − {H_c:.3f}/2)² = **{reduction_factor:.3f}**")
+
+        coefficient = 2 * reduction_factor * 330 / w_L
+        st.write(
+            f"Two line loads are applied so for a {w_L:.2f} m lane width, the load on a 1 m wide strip "
+            f"= 2 × {reduction_factor:.3f} × 330Kd / {w_L:.2f} = **{coefficient:.2f}Kd kN**"
+        )
+
+        results["H_c"] = H_c
+        results["reduction_factor"] = reduction_factor
+        results["F_hll_1m_coeff"] = coefficient
     with right2:
         st.image("assets/pd6694_table6_surcharge_model.png", use_container_width=True)
         st.image("assets/pd6694_figure2_surcharge_model.png", use_container_width=True)

@@ -65,3 +65,14 @@ User can input up to 3 layers, `i` = layer number.
 |---|---|---|---|---|
 | Box Self-weight | `W_box` | kN/m | `A_conc × gamma_concrete` | Per 1 m strip along culvert length |
 | Cover Layer UDL | `UDL_i` | kN/m | `gamma_i × (t_i / 1000)` | Per layer, per 1 m length × 1 m width strip (not yet integrated over `B_ext`) |
+
+## Horizontal Surcharge Model (calculated)
+
+PD6694-1 Table 6 / Figure 2, for LM1, LM2 & LM3.
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Horizontal Line Load | `F_hll` | kN | `330 × Kd` | `Kd` (= `Ka` or `K0`) is purpose-built, not yet defined — kept as plain text/placeholder, not linked to a real variable |
+| Cover Depth to Structure | `H_c` | m | `sum(t_i) / 1000` | Sum of all defined cover layer thicknesses (PD6694-1 NOTE 5) |
+| Reduction Factor | `reduction_factor` | — | `(1 − H_c/2)²` | Per PD6694-1 NOTE 5, for buried structures with less than 2 m of fill |
+| Line Load on 1 m Strip | `F_hll_1m_coeff` | kN (coefficient of `Kd`) | `2 × reduction_factor × 330 / w_L` | Smears the two edge-of-lane line loads across the lane width `w_L` onto the project's 1 m strip basis; result stays symbolic in `Kd` until `Ka`/`K0` exist |
