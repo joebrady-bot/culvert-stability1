@@ -79,7 +79,7 @@ PD6694-1 Table 6 / Figure 2, for LM1, LM2 & LM3.
 | Horizontal UDL, LM1 & LM2 | `F_hUDL_LM12` | kN/m² (coefficient of `Kd`) | `20 × Kd` | PD6694-1 Table 6, Normal highway traffic row; stays symbolic in `Kd` |
 | Horizontal UDL, LM3 | `F_hUDL_LM3` | kN/m² (coefficient of `Kd`) | `30 × Kd` | PD6694-1 Table 6, Special vehicle traffic row (SV196/SV100); stays symbolic in `Kd` |
 
-## Vertical Load on Top of Culvert — LM1 (calculated)
+## Maximum Vertical Load on Top of Culvert — LM1 (calculated)
 
 BS EN 1991-2 Cl. 4.2/4.3 (LM1) + PD6694-1 Cl. 10.2.7 (dispersal through fill). Direction convention:
 direction of travel is parallel to `B`; lane widths (and this dispersal check) run in the `L_L` direction.
@@ -98,3 +98,16 @@ direction of travel is parallel to `B`; lane widths (and this dispersal check) r
 - "Edge of carriageway to headwall" clearance check (PD6694-1 Cl. 10.2.7a, curtailment by wing wall) is not yet implemented — no input currently captures this distance.
 - `alpha_q3` (lane 3+ UDL factor) assumed equal to `alpha_qr` — confirm if a carriageway wide enough to load 3 lanes is ever expected.
 - `w_L` (Lane Width input, currently defaults to 3.65 m) is *not* used in this section — the standard 3.0 m notional lane width is used instead, matching the worked example. Worth confirming whether `w_L` should instead default to/reuse this 3.0 m standard, since it's also used as the "effective lane width" in the Horizontal Surcharge Model section above.
+
+## Braking and Acceleration Forces — LM1 (calculated)
+
+PD6694-1 Cl. 10.2.8.2, applied to BS EN 1991-2 Cl. 4.4.1. Note `L` (loaded length, = `B_ext`, in the
+direction of travel) and `L_L` (overall structure length, PD6694-1's own reduction-factor symbol) are
+different quantities that both happen to equal 3.1 m in the D. Childs worked example — don't conflate them.
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Raw Braking Force | `Q_lk_raw` | kN | `0.6·alpha_Q1·(2·Q1k) + 0.1·alpha_q1·q1k·w1·L` | `L = B_ext` (loaded length in direction of travel); `alpha_Q1 = alpha_q1 = 1`; `w1 = 3.0 m` (notional lane width) |
+| Clamped Braking Force | `Q_lk_clamped` | kN | `clamp(Q_lk_raw, 180·alpha_Q1, 900)` | BS EN 1991-2 Cl. 4.4.1 limits |
+| Reduction Factor | `eta_braking` | — | `1.0` if `H_c<0.6m`; `(L_L−H_c)/(L_L−0.6)` if `0.6m≤H_c<L_L`; `0` if `H_c≥L_L` | PD6694-1 Cl. 10.2.8.2, buried-structure reduction; `L_L` = Overall Length input |
+| Design Braking Force | `Q_lk` | kN | `eta_braking × Q_lk_clamped` | |

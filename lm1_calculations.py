@@ -23,7 +23,7 @@ def render(inputs, box_culvert_results):
     """Render BS EN 1991-2 / PD6694-1 LM1 traffic loading calculations and return computed values."""
     results = {}
 
-    st.subheader("Vertical Load on Top of Culvert")
+    st.subheader("Maximum Vertical Load on Top of Culvert")
 
     w_C = inputs["w_C"]
     H_c = box_culvert_results["H_c"]   # m, reuse the cover depth already computed in Global Calculations
@@ -97,5 +97,55 @@ def render(inputs, box_culvert_results):
     results["disp_m"] = disp_m
     results["F_transverse_1m"] = F_transverse_1m
     results["patch_load"] = patch_load
+
+    st.divider()
+    st.subheader("Braking and Acceleration Forces")
+
+    L_L = inputs["L_L"]
+    B_ext = box_culvert_results["B_ext"]
+
+    alpha_Q1 = 1.0
+    alpha_q1 = 1.0
+    Q1k = LANE_Q_TS_CHAR[1]
+    q1k = LANE_Q_UDL_CHAR[1]
+    w1 = NOTIONAL_LANE_WIDTH
+    L = B_ext   # loaded length in the direction of travel (BS EN 1991-2 Cl. 4.4.1) = B_ext for this culvert
+
+    term1 = 0.6 * alpha_Q1 * (2 * Q1k)
+    term2 = 0.1 * alpha_q1 * q1k * w1 * L
+    Q_lk_raw = term1 + term2
+    st.write(
+        f"For LM1: Q_lk = 0.6·alpha_Q1·(2·Q1k) + 0.1·alpha_q1·q1k·w1·L "
+        f"= 0.6×{alpha_Q1:.0f}×(2×{Q1k:.0f}) + 0.1×{alpha_q1:.0f}×{q1k:.1f}×{w1:.1f}×{L:.2f} "
+        f"= {term1:.2f} + {term2:.2f} = **{Q_lk_raw:.2f} kN**"
+    )
+
+    Q_lk_clamped = max(180.0 * alpha_Q1, min(900.0, Q_lk_raw))
+    st.write(f"180·alpha_Q1 ≤ Q_lk ≤ 900 kN ⟹ Q_lk = **{Q_lk_clamped:.2f} kN**")
+
+    st.write(
+        f"Earth cover H_c = {H_c:.3f} m, overall structure length L_L = {L_L:.2f} m "
+        f"(PD6694-1 Cl. 10.2.8.2)."
+    )
+    if H_c < 0.6:
+        eta = 1.0
+        st.write("H_c < 0.6 m ⟹ full braking force applies (no reduction), **η = 1.00**.")
+    elif H_c < L_L:
+        eta = (L_L - H_c) / (L_L - 0.6)
+        st.write(
+            f"0.6 m ≤ H_c < L_L ⟹ Reduction Factor η = (L_L − H_c) / (L_L − 0.6) "
+            f"= ({L_L:.2f} − {H_c:.3f}) / ({L_L:.2f} − 0.6) = **{eta:.2f}**"
+        )
+    else:
+        eta = 0.0
+        st.write(f"H_c ≥ L_L ⟹ the effects of braking and acceleration may be ignored, **η = 0**.")
+
+    Q_lk = eta * Q_lk_clamped
+    st.write(f"Hence Q_lk = {eta:.2f} × {Q_lk_clamped:.2f} = **{Q_lk:.1f} kN**")
+
+    results["Q_lk_raw"] = Q_lk_raw
+    results["Q_lk_clamped"] = Q_lk_clamped
+    results["eta_braking"] = eta
+    results["Q_lk"] = Q_lk
 
     return results
