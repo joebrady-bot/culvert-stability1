@@ -10,7 +10,26 @@ def _draw_section(B, H, t_w, t_s, cover_layers):
     B_ext = B + 2 * t_w
     H_ext = H + 2 * t_s
 
-    fig, ax = plt.subplots(figsize=(4.2, 4.2))
+    # Figure size is derived from the actual data extent (at a fixed inches-per-metre scale) rather
+    # than a hardcoded value, so thick/uneven cover layers can't throw off the aspect ratio and make
+    # the fixed-size annotation text collide (see: layers of very unequal thickness squashing labels).
+    y_probe = H_ext
+    for layer in cover_layers:
+        y_probe += layer["t"] / 1000.0
+    data_width = (B_ext + 2.6) - (-1.2)
+    data_height = (y_probe + 0.3 + len(cover_layers) * 0.3) - (-0.8)
+
+    scale = 1.1  # inches per metre of data
+    fig_w, fig_h = data_width * scale, data_height * scale
+    longest = max(fig_w, fig_h)
+    if longest > 7.5:
+        f = 7.5 / longest
+        fig_w, fig_h = fig_w * f, fig_h * f
+    elif longest < 3.5:
+        f = 3.5 / longest
+        fig_w, fig_h = fig_w * f, fig_h * f
+
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h))
     fig.patch.set_facecolor("white")
 
     # Concrete box: outer profile minus internal void
@@ -107,7 +126,9 @@ def render(inputs):
             f"= **{W_box:.2f} kN/m**"
         )
     with right:
-        st.pyplot(_draw_section(B, H, t_w, t_s, cover_layers), use_container_width=False)
+        section_fig = _draw_section(B, H, t_w, t_s, cover_layers)
+        st.pyplot(section_fig, use_container_width=False)
+        plt.close(section_fig)
 
     st.markdown("**Cover layer self-weights (per 1 m length)**")
     layer_weights = []
