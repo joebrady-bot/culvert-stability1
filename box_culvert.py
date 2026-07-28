@@ -139,12 +139,12 @@ def render(inputs):
         layer_udls.append(UDL_i)
         st.write(
             f"Layer {i}: UDL_{i} = gamma_{i} × (t_{i} / 1000) "
-            f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) = **{UDL_i:.2f} kN/m²**"
+            f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) = **{UDL_i:.2f} kN/m**"
         )
 
     results["layer_udls"] = layer_udls
     results["UDL_total"] = sum(layer_udls)
 
-    st.write(f"**Total cover UDL = {results['UDL_total']:.2f} kN/m²**")
+    st.write(f"**Total cover UDL = {results['UDL_total']:.2f} kN/m**")
 
     return results

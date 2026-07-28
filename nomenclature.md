@@ -64,4 +64,4 @@ User can input up to 3 layers, `i` = layer number.
 | Quantity | Symbol | Units | Definition | Notes |
 |---|---|---|---|---|
 | Box Self-weight | `W_box` | kN/m | `A_conc × gamma_concrete` | Per 1 m strip along culvert length |
-| Cover Layer UDL | `UDL_i` | kN/m² | `gamma_i × (t_i / 1000)` | Per layer, uniformly distributed pressure (not yet integrated over `B_ext`) |
+| Cover Layer UDL | `UDL_i` | kN/m | `gamma_i × (t_i / 1000)` | Per layer, per 1 m length × 1 m width strip (not yet integrated over `B_ext`) |
