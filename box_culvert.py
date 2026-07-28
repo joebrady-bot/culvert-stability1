@@ -125,26 +125,26 @@ def render(inputs):
             f"W_box = A_conc × gamma_concrete = {A_conc:.3f} × {gamma_concrete:.2f} "
             f"= **{W_box:.2f} kN/m**"
         )
+
+        st.markdown("**Cover layer self-weights (per 1 m length)**")
+        layer_udls = []
+        for i, layer in enumerate(cover_layers, start=1):
+            t_i = layer["t"]
+            gamma_i = layer["gamma"]
+            UDL_i = gamma_i * (t_i / 1000.0)
+            layer_udls.append(UDL_i)
+            st.write(
+                f"Layer {i}: UDL_{i} = gamma_{i} × (t_{i} / 1000) "
+                f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) = **{UDL_i:.2f} kN/m**"
+            )
+
+        results["layer_udls"] = layer_udls
+        results["UDL_total"] = sum(layer_udls)
+
+        st.write(f"**Total cover UDL = {results['UDL_total']:.2f} kN/m**")
     with right:
         section_fig = _draw_section(B, H, t_w, t_s, cover_layers)
         st.pyplot(section_fig, use_container_width=False)
         plt.close(section_fig)
-
-    st.markdown("**Cover layer self-weights (per 1 m length)**")
-    layer_udls = []
-    for i, layer in enumerate(cover_layers, start=1):
-        t_i = layer["t"]
-        gamma_i = layer["gamma"]
-        UDL_i = gamma_i * (t_i / 1000.0)
-        layer_udls.append(UDL_i)
-        st.write(
-            f"Layer {i}: UDL_{i} = gamma_{i} × (t_{i} / 1000) "
-            f"= {gamma_i:.2f} × ({t_i:.1f} / 1000) = **{UDL_i:.2f} kN/m**"
-        )
-
-    results["layer_udls"] = layer_udls
-    results["UDL_total"] = sum(layer_udls)
-
-    st.write(f"**Total cover UDL = {results['UDL_total']:.2f} kN/m**")
 
     return results
