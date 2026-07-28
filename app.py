@@ -19,7 +19,7 @@ with tab_global_calcs:
     st.session_state["box_culvert"] = box_culvert.render(st.session_state["inputs"])
 
 with tab_lm1_calcs:
-    st.session_state["lm1"] = lm1_calculations.render(st.session_state["inputs"])
+    st.session_state["lm1"] = lm1_calculations.render(st.session_state["inputs"], st.session_state["box_culvert"])
 
 with tab_assumptions:
     assumptions.render()

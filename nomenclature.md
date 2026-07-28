@@ -78,3 +78,23 @@ PD6694-1 Table 6 / Figure 2, for LM1, LM2 & LM3.
 | Line Load on 1 m Strip | `F_hll_1m_coeff` | kN (coefficient of `Kd`) | `2 × reduction_factor × 330 / w_L` | Smears the two edge-of-lane line loads across the lane width `w_L` onto the project's 1 m strip basis; result stays symbolic in `Kd` until `Ka`/`K0` exist |
 | Horizontal UDL, LM1 & LM2 | `F_hUDL_LM12` | kN/m² (coefficient of `Kd`) | `20 × Kd` | PD6694-1 Table 6, Normal highway traffic row; stays symbolic in `Kd` |
 | Horizontal UDL, LM3 | `F_hUDL_LM3` | kN/m² (coefficient of `Kd`) | `30 × Kd` | PD6694-1 Table 6, Special vehicle traffic row (SV196/SV100); stays symbolic in `Kd` |
+
+## Vertical Load on Top of Culvert — LM1 (calculated)
+
+BS EN 1991-2 Cl. 4.2/4.3 (LM1) + PD6694-1 Cl. 10.2.7 (dispersal through fill). Direction convention:
+direction of travel is parallel to `B`; lane widths (and this dispersal check) run in the `L_L` direction.
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Number of Notional Lanes | `n1` | — | `Int(w_C / 3)` | BS EN 1991-2 4.2.3, standard carriageway band |
+| Width of Remaining Area | `remaining_width` | m | `w_C − n1 × 3.0` | |
+| UDL per Lane | `lane_udls[i]` | kN/m² | `alpha_qi × qik` | `alpha_q1=0.61, alpha_q2=2.2`; lane 3+ assumed = `alpha_qr=2.2` (not confirmed, only 2 lanes load currently) |
+| TS Axle Load per Lane | `lane_ts[i]` | kN | `Qik` (300, 200, 100 for lanes 1–3) | BS EN 1991-2 Table 4.2 characteristic values |
+| Dispersed Contact Patch | `disp_m` | m | `(400 + 2 × H_c[mm] × tan30°) / 1000` | Wheel contact patch 400×400 mm, dispersed through `H_c` at 30° (PD6694-1 Cl. 10.2.7) |
+| Transverse Load on 1 m Strip | `F_transverse_1m` | kN/m | `b·W1/L1 + a·W2/L2` | PD6694-1 Figure 11; `W1,W2` = wheel loads (`lane_ts[i]/2`) of the two most heavily loaded adjacent lanes; `a` = dispersal overlap length; `b=1.0 m` |
+| Longitudinal Patch Load | `patch_load` | kN/m | `F_transverse_1m / disp_m` | Load per axle after longitudinal dispersal |
+
+**Open items to resolve:**
+- "Edge of carriageway to headwall" clearance check (PD6694-1 Cl. 10.2.7a, curtailment by wing wall) is not yet implemented — no input currently captures this distance.
+- `alpha_q3` (lane 3+ UDL factor) assumed equal to `alpha_qr` — confirm if a carriageway wide enough to load 3 lanes is ever expected.
+- `w_L` (Lane Width input, currently defaults to 3.65 m) is *not* used in this section — the standard 3.0 m notional lane width is used instead, matching the worked example. Worth confirming whether `w_L` should instead default to/reuse this 3.0 m standard, since it's also used as the "effective lane width" in the Horizontal Surcharge Model section above.
