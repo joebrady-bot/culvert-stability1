@@ -62,7 +62,12 @@
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1.py\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_assumptions2.py\")",
       "PowerShell(Get-Process python -ErrorAction SilentlyContinue)",
-      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_braking.py\")"
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_braking.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_braking2.py\")",
+      "PowerShell(python -c \"import pandas; print\\('pandas', pandas.__version__\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_partial_factors.py\")",
+      "PowerShell(Invoke-WebRequest -Uri \"http://127.0.0.1:8501\" -UseBasicParsing -TimeoutSec 5)",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_partial_factors2.py\")"
     ]
   }
 }

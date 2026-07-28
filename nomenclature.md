@@ -101,13 +101,34 @@ direction of travel is parallel to `B`; lane widths (and this dispersal check) r
 
 ## Braking and Acceleration Forces — LM1 (calculated)
 
-PD6694-1 Cl. 10.2.8.2, applied to BS EN 1991-2 Cl. 4.4.1. Note `L` (loaded length, = `B_ext`, in the
-direction of travel) and `L_L` (overall structure length, PD6694-1's own reduction-factor symbol) are
-different quantities that both happen to equal 3.1 m in the D. Childs worked example — don't conflate them.
+PD6694-1 Cl. 10.2.8.2, applied to BS EN 1991-2 Cl. 4.4.1. PD6694-1 labels the reduction-factor comparison
+length "the overall length of the structure (LL)" — but that's the structure's extent *in the direction
+of travel*, which for this culvert's orientation (travel ∥ `B`) is `B_ext`, not the project's `L_L`
+(Overall Length) input. Both the `Q_lk_raw` formula's `L` and the reduction factor use `B_ext`.
 
 | Quantity | Symbol | Units | Definition | Notes |
 |---|---|---|---|---|
 | Raw Braking Force | `Q_lk_raw` | kN | `0.6·alpha_Q1·(2·Q1k) + 0.1·alpha_q1·q1k·w1·L` | `L = B_ext` (loaded length in direction of travel); `alpha_Q1 = alpha_q1 = 1`; `w1 = 3.0 m` (notional lane width) |
 | Clamped Braking Force | `Q_lk_clamped` | kN | `clamp(Q_lk_raw, 180·alpha_Q1, 900)` | BS EN 1991-2 Cl. 4.4.1 limits |
-| Reduction Factor | `eta_braking` | — | `1.0` if `H_c<0.6m`; `(L_L−H_c)/(L_L−0.6)` if `0.6m≤H_c<L_L`; `0` if `H_c≥L_L` | PD6694-1 Cl. 10.2.8.2, buried-structure reduction; `L_L` = Overall Length input |
+| Reduction Factor | `eta_braking` | — | `1.0` if `H_c<0.6m`; `(B_ext−H_c)/(B_ext−0.6)` if `0.6m≤H_c<B_ext`; `0` if `H_c≥B_ext` | PD6694-1 Cl. 10.2.8.2, buried-structure reduction |
 | Design Braking Force | `Q_lk` | kN | `eta_braking × Q_lk_clamped` | |
+
+## Partial Factors (reference, `partial_factors.py`)
+
+NA to BS EN 1990:2002+A1:2005. Shared across LM1 and LM3 calculations — look these up rather than
+hardcoding a factor value in a calc module. SLS: Cl. NA.2.3.9; EQU: Table NA.A2.4(A); STR/GEO Comb1:
+Table NA.A2.4(B); STR/GEO Comb2: Table NA.A2.4(C). Displayed in the Assumptions tab.
+
+| Quantity | Symbol | Dict Key (`UNFAVOURABLE` / `FAVOURABLE`) | SLS | EQU | STR/GEO C1 | STR/GEO C2 |
+|---|---|---|---|---|---|---|
+| Self weight of structure & backfill (unfav.) | `gamma_G;sup` | `"Self weight of structure & backfill, gamma_G;sup"` | 1.00 | 1.05 | 1.35 | 1.00 |
+| Superimposed permanent load (unfav.) | `gamma_G;sup` | `"Superimposed permanent load, gamma_G;sup"` | 1.00 | 1.05 | 1.20 | 1.00 |
+| Road traffic action on box (unfav.) | `gamma_Q;sup` | `"Road traffic action on box, gamma_Q;sup"` | 1.00 | 1.35 | 1.35 | 1.15 |
+| Thermal actions (unfav.) | `gamma_Q;sup` | `"Thermal actions, gamma_Q;sup"` | 1.00 | 1.55 | 1.55 | 1.30 |
+| Material factor to φ' (unfav.) | `gamma_M` | `"Material factor to phi', gamma_M"` | 1.00 | 1.10 | 1.00 | 1.25 |
+| Vertical/horizontal water pressures (unfav.) | `gamma_G;sup` | `"Vertical and horizontal water pressures, gamma_G;sup"` | 0.00 | 1.00 | 1.00 | 1.00 |
+| Self weight of structure & backfill (fav.) | `gamma_G;inf` | `"Self weight of structure & backfill, gamma_G;inf"` | 1.00 | 0.95 | 0.95 | 1.00 |
+| Superimposed permanent load (fav.) | `gamma_G;inf` | `"Superimposed permanent load, gamma_G;inf"` | 1.00 | 0.95 | 0.95 | 1.00 |
+
+Also: `ROAD_CONSTRUCTION_DEVIATION = {"unfavourable": 1.55, "favourable": 0.60}` — UK NA to BS EN 1991-1-1
+Table NA.1 Cl. 5.2.3(3), road construction thickness deviation (+55% / −40%).

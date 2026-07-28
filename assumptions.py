@@ -1,5 +1,7 @@
 import streamlit as st
 
+import partial_factors
+
 ASSUMPTIONS = [
     "Design is carried out on a 1.0 m strip basis.",
     "The structure has no longitudinal joints, so full load dispersal through the fill can be considered "
@@ -20,3 +22,6 @@ def render():
     st.subheader("Assumptions")
     for a in ASSUMPTIONS:
         st.markdown(f"- {a}")
+
+    st.divider()
+    partial_factors.render()

@@ -101,7 +101,6 @@ def render(inputs, box_culvert_results):
     st.divider()
     st.subheader("Braking and Acceleration Forces")
 
-    L_L = inputs["L_L"]
     B_ext = box_culvert_results["B_ext"]
 
     alpha_Q1 = 1.0
@@ -124,21 +123,21 @@ def render(inputs, box_culvert_results):
     st.write(f"180·alpha_Q1 ≤ Q_lk ≤ 900 kN ⟹ Q_lk = **{Q_lk_clamped:.2f} kN**")
 
     st.write(
-        f"Earth cover H_c = {H_c:.3f} m, overall structure length L_L = {L_L:.2f} m "
+        f"Earth cover H_c = {H_c:.3f} m, structure width in direction of travel B_ext = {B_ext:.2f} m "
         f"(PD6694-1 Cl. 10.2.8.2)."
     )
     if H_c < 0.6:
         eta = 1.0
         st.write("H_c < 0.6 m ⟹ full braking force applies (no reduction), **η = 1.00**.")
-    elif H_c < L_L:
-        eta = (L_L - H_c) / (L_L - 0.6)
+    elif H_c < B_ext:
+        eta = (B_ext - H_c) / (B_ext - 0.6)
         st.write(
-            f"0.6 m ≤ H_c < L_L ⟹ Reduction Factor η = (L_L − H_c) / (L_L − 0.6) "
-            f"= ({L_L:.2f} − {H_c:.3f}) / ({L_L:.2f} − 0.6) = **{eta:.2f}**"
+            f"0.6 m ≤ H_c < B_ext ⟹ Reduction Factor η = (B_ext − H_c) / (B_ext − 0.6) "
+            f"= ({B_ext:.2f} − {H_c:.3f}) / ({B_ext:.2f} − 0.6) = **{eta:.2f}**"
         )
     else:
         eta = 0.0
-        st.write(f"H_c ≥ L_L ⟹ the effects of braking and acceleration may be ignored, **η = 0**.")
+        st.write("H_c ≥ B_ext ⟹ the effects of braking and acceleration may be ignored, **η = 0**.")
 
     Q_lk = eta * Q_lk_clamped
     st.write(f"Hence Q_lk = {eta:.2f} × {Q_lk_clamped:.2f} = **{Q_lk:.1f} kN**")
