@@ -35,7 +35,9 @@
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot2.py\")",
       "PowerShell(python -c \"import matplotlib; print\\(matplotlib.__version__\\)\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot3.py\")",
-      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot4.py\")"
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot4.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\repro.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot5.py\")"
     ]
   }
 }
