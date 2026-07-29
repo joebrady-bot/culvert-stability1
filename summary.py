@@ -2,17 +2,25 @@ import pandas as pd
 import streamlit as st
 
 
+def _utilisation(demand, capacity):
+    if capacity <= 0:
+        return float("inf")
+    return max(0.0, demand) / capacity * 100
+
+
 def _worst_case(table_results):
     """Scan every combo/model in a stability table's results and return the governing
-    (smallest-margin) case for sliding and for overturning, across all four limit states."""
+    (highest-utilisation) case for sliding and for overturning, across all four limit states."""
     worst_sliding = worst_ot = None
     for combo, combo_result in table_results["sliding"].items():
         for model in ("LM1", "LM3"):
             r = combo_result[model]
-            if worst_sliding is None or r["margin"] < worst_sliding["margin"]:
-                worst_sliding = {"combo": combo, "model": model, "margin": r["margin"], "ok": r["ok"]}
-            if worst_ot is None or r["ot_margin"] < worst_ot["margin"]:
-                worst_ot = {"combo": combo, "model": model, "margin": r["ot_margin"], "ok": r["ot_ok"]}
+            ur_sliding = _utilisation(r["friction_required"], r["max_Rd"])
+            if worst_sliding is None or ur_sliding > worst_sliding["utilisation"]:
+                worst_sliding = {"combo": combo, "model": model, "utilisation": ur_sliding, "ok": r["ok"]}
+            ur_ot = _utilisation(r["M_driving"], r["M_stabilizing"])
+            if worst_ot is None or ur_ot > worst_ot["utilisation"]:
+                worst_ot = {"combo": combo, "model": model, "utilisation": ur_ot, "ok": r["ot_ok"]}
     return worst_sliding, worst_ot
 
 
@@ -20,7 +28,7 @@ def render(box_culvert_results, table_b4_results, table_b5_results, table_b6_res
     """Quick-glance summary of geometry and governing stability results — lets a user change an
     input above and immediately see whether anything fails, without opening each table's tab."""
     st.subheader("Summary")
-    st.caption("Governing (worst-case) result across all four limit states, per table.")
+    st.caption("Governing (highest-utilisation) result across all four limit states, per table.")
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("B_ext (m)", f"{box_culvert_results['B_ext']:.2f}")
@@ -38,13 +46,13 @@ def render(box_culvert_results, table_b4_results, table_b5_results, table_b6_res
         rows.append({
             "Check": f"{label} — Sliding",
             "Governing Case": f"{worst_sliding['combo']} / {worst_sliding['model']}",
-            "Margin": f"{worst_sliding['margin']:.1f} kN",
+            "Utilisation": f"{worst_sliding['utilisation']:.0f}%",
             "Status": "OK" if worst_sliding["ok"] else "Review required",
         })
         rows.append({
             "Check": f"{label} — Overturning",
             "Governing Case": f"{worst_ot['combo']} / {worst_ot['model']}",
-            "Margin": f"{worst_ot['margin']:.1f} kNm",
+            "Utilisation": f"{worst_ot['utilisation']:.0f}%",
             "Status": "OK" if worst_ot["ok"] else "Review required",
         })
 
