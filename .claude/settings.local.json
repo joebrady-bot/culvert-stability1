@@ -80,7 +80,13 @@
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_table_b4.py\")",
       "PowerShell(python -c \"from PIL import Image; im = Image.open\\(r'C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\table_b4_full.png'\\); print\\(im.size\\)\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_table_b4_scroll.py\")",
-      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_table_b4_sections.py\")"
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_table_b4_sections.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\explore_lm1_vs_lm3.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\explore_horizontal.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_table_b4_sections2.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1_governs.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1_governs2.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1_governs3.py\")"
     ]
   }
 }

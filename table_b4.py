@@ -29,28 +29,20 @@ def _fmt(gamma, is_sls):
     return "" if is_sls else f"{gamma:.2f} × "
 
 
-def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results):
+def _common_terms(combo, inputs, box_culvert_results):
+    """Terms shared by both traffic models — surcharge, backfill, road/fill/self-weight vertical loads."""
     is_sls = combo == "SLS"
-    st.markdown(f"#### Sliding at {combo}")
 
     H_ext = box_culvert_results["H_ext"]
     B_ext = box_culvert_results["B_ext"]
     W_box = box_culvert_results["W_box"]
     layer_udls = box_culvert_results["layer_udls"]
-    F_hll_1m_coeff = box_culvert_results["F_hll_1m_coeff"]
-
     gamma_backfill = inputs["gamma_backfill"]
-    phi_founding = inputs["phi_founding"]
-    L_L = inputs["L_L"]
 
-    Ka_traffic = TABLE_B4[combo]["Ka_traffic"]
     Ka_earth = TABLE_B4[combo]["Ka_earth"]
     Kmax = TABLE_B4[combo]["Kmax"]
-
     gamma_self = _gamma("Self weight of structure & backfill, gamma_G;sup", combo)
     gamma_super = _gamma("Superimposed permanent load, gamma_G;sup", combo)
-    gamma_Q_sup = _gamma("Road traffic action on box, gamma_Q;sup", combo)
-    gamma_M = _gamma("Material factor to phi', gamma_M", combo)
 
     if is_sls:
         st.write("γF = 1.0 for all elements.")
@@ -98,54 +90,10 @@ def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results)
         f"× {H_ext:.1f} / 2 = **{passive_backfill:.2f}kN**"
     )
 
-    g_Q = _fmt(gamma_Q_sup, is_sls)
-    active_line_load = Ka_traffic * gamma_Q_sup * F_hll_1m_coeff
-    st.write(
-        f"Active force from traffic surcharge line load = {Ka_traffic:.2f} × {g_Q}{F_hll_1m_coeff:.2f} "
-        f"= **{active_line_load:.2f}kN**"
-    )
-
-    if is_sls:
-        active_lm1_udl = Ka_traffic * gamma_Q_sup * F_HUDL_LM12_COEFF * H_ext
-        st.write(
-            f"Active force from LM1 traffic UDL surcharge = {Ka_traffic:.2f} × {F_HUDL_LM12_COEFF:.0f} "
-            f"× {H_ext:.1f} = **{active_lm1_udl:.2f}kN**"
-        )
-
-    active_lm3_udl = Ka_traffic * gamma_Q_sup * F_HUDL_LM3_COEFF * H_ext
-    st.write(
-        f"Active force from LM3 traffic UDL surcharge = {Ka_traffic:.2f} × {g_Q}{F_HUDL_LM3_COEFF:.0f} "
-        f"× {H_ext:.1f} = **{active_lm3_udl:.2f}kN**"
-    )
-
-    lm1_braking_per_m = lm1_results["Q_lk"] / L_L
-    lm3_braking_per_m = lm3_results["Q_brk_per_m"]
-    if is_sls:
-        st.write(f"Braking and acceleration force for LM1 traffic = **{lm1_braking_per_m:.2f}kN**")
-        st.write(f"Braking and acceleration force for LM3 traffic = **{lm3_braking_per_m:.2f}kN**")
-        braking_lm3 = lm3_braking_per_m
-    else:
-        braking_lm3 = gamma_Q_sup * lm3_braking_per_m
-        st.write(
-            f"Braking and acceleration force for LM3 traffic = {gamma_Q_sup:.2f} × {lm3_braking_per_m:.2f} "
-            f"= **{braking_lm3:.2f}kN**"
-        )
-
-    total_active = active_surcharge + active_backfill + active_line_load + active_lm3_udl + braking_lm3
-    st.write(
-        f"Total active force with LM3 traffic = {active_surcharge:.2f} + {active_backfill:.2f} "
-        f"+ {active_line_load:.2f} + {active_lm3_udl:.2f} + {braking_lm3:.2f} = **{total_active:.2f}kN**"
-    )
-
     total_passive = passive_surcharge + passive_backfill
     st.write(f"Total passive force = {passive_surcharge:.2f} + {passive_backfill:.2f} = **{total_passive:.2f}kN**")
 
-    if total_active > total_passive:
-        st.write("Active force > Passive force ∴ friction under the base is required to stop sliding.")
-    else:
-        st.write("Passive force ≥ Active force ∴ no friction under the base is required.")
-
-    st.write("Vertical load on foundation:")
+    st.write("Vertical load on foundation (common terms):")
     road_vertical_base = GAMMA_SD_EC * partial_factors.ROAD_CONSTRUCTION_DEVIATION["unfavourable"] * road_udl_char * B_ext
     fill_vertical_base = GAMMA_SD_EC * fill_udl_char * B_ext
 
@@ -168,47 +116,111 @@ def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results)
         st.write(f"Fill on roof = {gamma_super:.2f} × {fill_vertical_base:.2f} = **{fill_vertical:.2f}kN**")
         st.write(f"Self weight of concrete = {gamma_self:.2f} × {W_box:.1f} = **{self_weight_vertical:.2f}kN**")
 
-    if is_sls:
-        lm1_udl_vertical = lm1_results["lane_udls"].get(1, 0.0) * B_ext
-        st.write(
-            f"LM1 traffic UDL = {lm1_results['lane_udls'].get(1, 0.0):.2f} × {B_ext:.1f} "
-            f"= **{lm1_udl_vertical:.2f}kN**"
-        )
-        lm1_ts_vertical = lm1_results["patch_load"] * lm1_results["disp_m"] * 2
-        st.write(
-            f"LM1 traffic Tandem System = {lm1_results['patch_load']:.1f} × {lm1_results['disp_m']:.3f} × 2 "
-            f"= **{lm1_ts_vertical:.0f}kN**"
-        )
-        lm3_vertical = lm3_results["max_V_per_m"]
-        st.write(f"LM3 traffic (Maximum Vertical Load, LM3 Calculations) = **{lm3_vertical:.2f}kN**")
-        st.write("By inspection LM3 traffic critical (maximum horizontal with minimum vertical loading).")
+    return {
+        "total_passive": total_passive,
+        "active_surcharge": active_surcharge,
+        "active_backfill": active_backfill,
+        "common_vertical": road_vertical + fill_vertical + self_weight_vertical,
+    }
+
+
+def _model_check(model, combo, common, inputs, box_culvert_results, lm1_results, lm3_results):
+    """Full active/vertical/friction check for a single traffic model (LM1 or LM3) at a given combo."""
+    is_sls = combo == "SLS"
+
+    H_ext = box_culvert_results["H_ext"]
+    B_ext = box_culvert_results["B_ext"]
+    F_hll_1m_coeff = box_culvert_results["F_hll_1m_coeff"]
+    phi_founding = inputs["phi_founding"]
+    L_L = inputs["L_L"]
+
+    Ka_traffic = TABLE_B4[combo]["Ka_traffic"]
+    Kmax = TABLE_B4[combo]["Kmax"]
+    gamma_Q_sup = _gamma("Road traffic action on box, gamma_Q;sup", combo)
+    gamma_M = _gamma("Material factor to phi', gamma_M", combo)
+
+    st.markdown(f"**{model} Scenario**")
+
+    g_Q = _fmt(gamma_Q_sup, is_sls)
+    active_line_load = Ka_traffic * gamma_Q_sup * F_hll_1m_coeff
+    st.write(
+        f"Active force from traffic surcharge line load = {Ka_traffic:.2f} × {g_Q}{F_hll_1m_coeff:.2f} "
+        f"= **{active_line_load:.2f}kN**"
+    )
+
+    udl_coeff = F_HUDL_LM12_COEFF if model == "LM1" else F_HUDL_LM3_COEFF
+    active_udl = Ka_traffic * gamma_Q_sup * udl_coeff * H_ext
+    st.write(
+        f"Active force from {model} traffic UDL surcharge = {Ka_traffic:.2f} × {g_Q}{udl_coeff:.0f} "
+        f"× {H_ext:.1f} = **{active_udl:.2f}kN**"
+    )
+
+    if model == "LM1":
+        braking_char = lm1_results["Q_lk"] / L_L
+        vertical_char = lm1_results["lane_udls"].get(1, 0.0) * B_ext + lm1_results["patch_load"] * lm1_results["disp_m"] * 2
     else:
-        lm3_vertical = gamma_Q_sup * lm3_results["max_V_per_m"]
+        braking_char = lm3_results["Q_brk_per_m"]
+        vertical_char = lm3_results["max_V_per_m"]
+
+    if is_sls:
+        st.write(f"Braking and acceleration force for {model} traffic = **{braking_char:.2f}kN**")
+        braking = braking_char
+    else:
+        braking = gamma_Q_sup * braking_char
         st.write(
-            f"LM3 traffic = {gamma_Q_sup:.2f} × {lm3_results['max_V_per_m']:.1f} = **{lm3_vertical:.1f}kN**"
+            f"Braking and acceleration force for {model} traffic = {gamma_Q_sup:.2f} × {braking_char:.2f} "
+            f"= **{braking:.2f}kN**"
         )
 
-    V_d = road_vertical + fill_vertical + self_weight_vertical + lm3_vertical
+    total_active = common["active_surcharge"] + common["active_backfill"] + active_line_load + active_udl + braking
     st.write(
-        f"V'_d = {road_vertical:.2f} + {fill_vertical:.2f} + {self_weight_vertical:.2f} + {lm3_vertical:.2f} "
-        f"= **{V_d:.2f}kN**"
+        f"Total active force with {model} traffic = {common['active_surcharge']:.2f} + "
+        f"{common['active_backfill']:.2f} + {active_line_load:.2f} + {active_udl:.2f} + {braking:.2f} "
+        f"= **{total_active:.2f}kN**"
     )
+
+    total_passive = common["total_passive"]
+    if total_active > total_passive:
+        st.write("Active force > Passive force ∴ friction under the base is required to stop sliding.")
+    else:
+        st.write("Passive force ≥ Active force ∴ no friction under the base is required.")
+
+    if is_sls:
+        vertical = vertical_char
+        if model == "LM1":
+            st.write(
+                f"LM1 traffic UDL = {lm1_results['lane_udls'].get(1, 0.0):.2f} × {B_ext:.1f} "
+                f"= **{lm1_results['lane_udls'].get(1, 0.0) * B_ext:.2f}kN**"
+            )
+            st.write(
+                f"LM1 traffic Tandem System = {lm1_results['patch_load']:.1f} × {lm1_results['disp_m']:.3f} × 2 "
+                f"= **{lm1_results['patch_load'] * lm1_results['disp_m'] * 2:.2f}kN**"
+            )
+        else:
+            st.write(f"LM3 traffic (Maximum Vertical Load, LM3 Calculations) = **{vertical_char:.2f}kN**")
+    else:
+        vertical = gamma_Q_sup * vertical_char
+        st.write(f"{model} traffic = {gamma_Q_sup:.2f} × {vertical_char:.2f} = **{vertical:.2f}kN**")
+
+    V_d = common["common_vertical"] + vertical
+    st.write(f"V'_d = {common['common_vertical']:.2f} + {vertical:.2f} = **{V_d:.2f}kN**")
 
     delta_d_rad = math.atan(math.tan(math.radians(phi_founding)) / gamma_M)
     delta_d_deg = math.degrees(delta_d_rad)
     max_Rd = V_d * math.tan(delta_d_rad)
-    st.write(f"Maximum R_d = {V_d:.2f} × tan{delta_d_deg:.1f}° = **{max_Rd:.0f}kN**")
+    st.write(f"Maximum R_d = {V_d:.2f} × tan{delta_d_deg:.1f}° = **{max_Rd:.2f}kN**")
 
     friction_required = total_active - total_passive
-    if friction_required < max_Rd:
+    ok = friction_required < max_Rd
+    if ok:
         st.write(
             f"Friction required = {total_active:.2f} - {total_passive:.2f} = {friction_required:.2f} "
-            f"< {max_Rd:.0f} ∴ sliding can be resisted using Kmax = {Kmax:.2f} ∴ **OK**."
+            f"< {max_Rd:.2f} ∴ sliding can be resisted using Kmax = {Kmax:.2f} ∴ **OK**."
         )
     else:
         st.write(
             f"Friction required = {total_active:.2f} - {total_passive:.2f} = {friction_required:.2f} "
-            f"≥ {max_Rd:.0f} ∴ sliding **CANNOT** be resisted using Kmax = {Kmax:.2f} — review required."
+            f"≥ {max_Rd:.2f} ∴ sliding **CANNOT** be resisted using Kmax = {Kmax:.2f} — review required."
         )
 
     return {
@@ -218,8 +230,27 @@ def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results)
         "delta_d_deg": delta_d_deg,
         "max_Rd": max_Rd,
         "friction_required": friction_required,
-        "ok": friction_required < max_Rd,
+        "margin": max_Rd - friction_required,
+        "ok": ok,
     }
+
+
+def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results):
+    st.markdown(f"#### Sliding at {combo}")
+
+    common = _common_terms(combo, inputs, box_culvert_results)
+
+    lm1_result = _model_check("LM1", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
+    lm3_result = _model_check("LM3", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
+
+    governing = "LM1" if lm1_result["margin"] < lm3_result["margin"] else "LM3"
+    st.markdown(
+        f"**Governing case: {governing}** "
+        f"(margin = max R_d − friction required: LM1 = {lm1_result['margin']:.2f}kN, "
+        f"LM3 = {lm3_result['margin']:.2f}kN — smaller margin governs)."
+    )
+
+    return {"LM1": lm1_result, "LM3": lm3_result, "governing": governing}
 
 
 def render(inputs, box_culvert_results, lm1_results, lm3_results):
@@ -256,6 +287,11 @@ def render(inputs, box_culvert_results, lm1_results, lm3_results):
             gamma_M = _gamma("Material factor to phi', gamma_M", combo)
             delta_d = math.degrees(math.atan(math.tan(math.radians(phi_founding)) / gamma_M))
             st.write(f"{combo}: δ_d = tan⁻¹(tan{phi_founding:.0f} / {gamma_M:.2f}) = **{delta_d:.1f}°**")
+
+        st.write(
+            "Both LM1 and LM3 are checked fully at every limit state — the one with the smaller margin "
+            "(max R_d − friction required) governs. Neither is assumed critical in advance."
+        )
 
     st.divider()
 

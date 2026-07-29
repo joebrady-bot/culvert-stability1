@@ -194,11 +194,21 @@ originally held back (29.23kN, 50.10kN) — exact match.
   Partial Factors table.
 - **δ (structure-ground interface friction angle) = `phi_founding`** (existing input) — δ_d = tan⁻¹(tanδ/γM)
   per combo, using γM from `partial_factors`.
-- SLS is the "establish which live load model governs" combo — it alone computes LM1's UDL/TS vertical
-  contribution and LM1's braking force, purely for the "by inspection LM3 critical" comparison. EQU/Comb1/
-  Comb2 only carry LM3 forward, matching the worked example's structure.
+- **LM1 and LM3 are both checked fully at every combo** (not just SLS) — `_common_terms()` computes the
+  model-independent pieces (surcharge, backfill, road/fill/self-weight vertical) once; `_model_check()`
+  computes each model's active/vertical/friction breakdown and margin (`max_Rd − friction_required`); the
+  smaller margin governs. This replaced an earlier "assume LM3 governs, only check LM1 at SLS for
+  comparison" shortcut copied from the worked example (which only demonstrated the SV196 case).
+- Explored numerically whether LM1 can ever govern sliding: comparing *only* horizontal driving force,
+  LM1 overtakes lighter SV vehicles (SV80/SV100) at fairly ordinary geometries (short `L_L`, moderate
+  `B_ext`). But LM1's Tandem System also brings a large, `B_ext`-independent vertical contribution that
+  adds friction resistance alongside the extra horizontal demand — once the *full* margin is computed,
+  LM3 kept governing in every tested case, including deliberately extreme geometries (`B_ext≈20m`,
+  `L_L=3m`, SV80), though the margins converged as geometry got more extreme. No confirmed case yet where
+  LM1 governs *sliding* — but this hasn't been checked for overturning or bearing, where the horizontal/
+  vertical interplay (moment arms vs. force sums) differs and the balance could tip differently.
 - `lm1_results["Q_lk"] / L_L` gives LM1's braking force per metre (not yet stored in `lm1_calculations.py`
-  itself — computed fresh here since it's only needed for this SLS comparison).
+  itself — computed fresh here).
 
 | Quantity | Symbol | Units | Definition | Notes |
 |---|---|---|---|---|
