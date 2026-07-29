@@ -147,16 +147,4 @@ def render(inputs, box_culvert_results):
     results["eta_braking"] = eta
     results["Q_lk"] = Q_lk
 
-    st.divider()
-    st.subheader("Table B.4")
-    st.write(
-        "These are the earth pressures we will be using here for the four limit states we are "
-        "checking (PD6694-1 Annex B, Table B.4 / Figure B.4)."
-    )
-
-    left3, right3 = st.columns([1, 1])
-    with right3:
-        st.image("assets/pd6694_table_b4.png", use_container_width=True)
-        st.image("assets/pd6694_figure_b4.png", use_container_width=True)
-
     return results

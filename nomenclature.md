@@ -172,3 +172,46 @@ current default of 10 m — set `L_L` accordingly to reproduce the worked exampl
 | Fill Vertical Load | `fill_vertical` | kN | `UDL_total × B_ext` | Reuses `UDL_total` from Global Calculations (Self-weights) |
 | Maximum Friction | `max_friction` | kN | `(max_V_per_m + fill_vertical) × tan30°` | `max_V_per_m` = this module's own computed worst-case vertical load (not the worked example's 151.4 kN) — friction check is correspondingly less conservative to reconcile against than the book |
 | Governing Check | — | — | `Q_brk_per_m < max_friction` | If exceeded, PD6694-1 says load effects in the members need to be considered (not yet implemented) |
+
+## Table B.4 — Sliding Check (calculated, `table_b4.py`, new "Table B.4" tab)
+
+PD6694-1 Annex B, Table B.4 / Figure B.4 — sliding resistance across all four limit states (SLS, EQU,
+STR/GEO Comb1, STR/GEO Comb2). Overturning and bearing (mentioned in the intro text) are not yet built.
+Validated line-by-line against the D. Childs worked example for SLS/EQU/Comb1 (exact match on every term
+except the LM3 vertical load, which intentionally uses this app's own scanned value — see LM3 section
+above); Comb2 was built from the established pattern and confirmed against the two lines the user
+originally held back (29.23kN, 50.10kN) — exact match.
+
+**Key modelling decisions:**
+- `TABLE_B4` dict holds `Ka_traffic` ("Horizontal traffic surcharge Ka" column — resolves the `Kd`
+  placeholder from the Horizontal Surcharge Model), `Ka_earth` ("Earth pressure Ka" column — used for
+  surcharge/backfill lateral pressure), and `Kmax`, per combo.
+- **Road construction vs fill split**: `layer_udls[0]` (Layer 1) = road construction (subject to the
+  ±55%/−40% deviation factor); `sum(layer_udls[1:])` = fill (not subject to deviation). Same assumption
+  flagged in the Global Calculations section — confirm if Layer 1 won't always represent road construction.
+- **γSd;ec = 1.15** (`GAMMA_SD_EC`, PD6694-1 Cl. 10.2.2) is a fixed model factor applied to road/fill
+  vertical loads in *every* combo, in addition to the combo-specific `gamma_super` — distinct from the
+  Partial Factors table.
+- **δ (structure-ground interface friction angle) = `phi_founding`** (existing input) — δ_d = tan⁻¹(tanδ/γM)
+  per combo, using γM from `partial_factors`.
+- SLS is the "establish which live load model governs" combo — it alone computes LM1's UDL/TS vertical
+  contribution and LM1's braking force, purely for the "by inspection LM3 critical" comparison. EQU/Comb1/
+  Comb2 only carry LM3 forward, matching the worked example's structure.
+- `lm1_results["Q_lk"] / L_L` gives LM1's braking force per metre (not yet stored in `lm1_calculations.py`
+  itself — computed fresh here since it's only needed for this SLS comparison).
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Road Construction Surcharge | `surcharge_road` | kN/m | `1.55 × layer_udls[0]` | Characteristic, not yet combo-factored |
+| Fill Surcharge | `fill_udl_char` | kN/m | `sum(layer_udls[1:])` | |
+| Active/Passive Force, Surcharge | `active_surcharge` / `passive_surcharge` | kN | `Ka_earth (or Kmax) × gamma_super × (surcharge_road + fill_udl_char) × H_ext` | |
+| Active/Passive Force, Backfill | `active_backfill` / `passive_backfill` | kN | `Ka_earth (or Kmax) × gamma_self × (gamma_backfill × H_ext) × H_ext / 2` | |
+| Active Force, Traffic Line Load | `active_line_load` | kN | `Ka_traffic × gamma_Q_sup × F_hll_1m_coeff` | Resolves the `Kd` placeholder |
+| Active Force, LM3 UDL | `active_lm3_udl` | kN | `Ka_traffic × gamma_Q_sup × 30 × H_ext` | |
+| Braking Force, LM3 (factored) | `braking_lm3` | kN | `gamma_Q_sup × lm3_results["Q_brk_per_m"]` | SLS: `gamma_Q_sup=1.0`, shown unfactored |
+| Total Active / Passive | `total_active` / `total_passive` | kN | sum of the above (active includes braking; LM1 terms excluded except at SLS) | |
+| Vertical Load Components | `road_vertical`, `fill_vertical`, `self_weight_vertical`, `lm3_vertical` | kN | each = `gamma × GAMMA_SD_EC × characteristic value × B_ext` (or `× W_box` for self-weight) | |
+| Design Vertical Load | `V_d` | kN | sum of the four vertical components | |
+| Design Friction Angle | `delta_d_deg` | ° | `atan(tan(phi_founding) / gamma_M)` in degrees | |
+| Maximum Sliding Resistance | `max_Rd` | kN | `V_d × tan(delta_d)` | |
+| Friction Required | `friction_required` | kN | `total_active − total_passive` | OK if `< max_Rd` |
