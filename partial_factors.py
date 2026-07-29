@@ -14,6 +14,9 @@ UNFAVOURABLE = {
     "Road traffic action on box, gamma_Q;sup": {
         "SLS": 1.00, "EQU": 1.35, "STR/GEO Comb1": 1.35, "STR/GEO Comb2": 1.15,
     },
+    "Variable/traffic surcharge action, gamma_Q;sup": {
+        "SLS": 1.00, "EQU": 1.35, "STR/GEO Comb1": 1.35, "STR/GEO Comb2": 1.15,
+    },
     "Thermal actions, gamma_Q;sup": {
         "SLS": 1.00, "EQU": 1.55, "STR/GEO Comb1": 1.55, "STR/GEO Comb2": 1.30,
     },
