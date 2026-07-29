@@ -135,6 +135,8 @@ def common_terms(combo, inputs, box_culvert_results, favourable=False):
 
     return {
         "total_passive": total_passive,
+        "passive_surcharge": passive_surcharge,
+        "passive_backfill": passive_backfill,
         "active_surcharge": active_surcharge,
         "active_backfill": active_backfill,
         "common_vertical": road_vertical + fill_vertical + self_weight_vertical,
@@ -249,6 +251,45 @@ def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, 
             f"≥ {max_Rd:.2f} ∴ sliding **CANNOT** be resisted using Kmax = {Kmax:.2f} — review required."
         )
 
+    # Overturning about the toe (base edge on the passive side) — same forces and Kmax/Kr as sliding,
+    # taken as a moment: rectangular pressures (surcharge, UDL) act at H_ext/2, the triangular backfill
+    # pressure acts at H_ext/3, and line loads (traffic line load, braking) act at the roof, H_ext.
+    st.write("Consider moments about the toe to check overturning:")
+    M_active = (
+        common["active_surcharge"] * (H_ext / 2)
+        + common["active_backfill"] * (H_ext / 3)
+        + active_line_load * H_ext
+        + active_udl * (H_ext / 2)
+        + braking * H_ext
+    )
+    M_passive = common["passive_surcharge"] * (H_ext / 2) + common["passive_backfill"] * (H_ext / 3)
+    st.write(
+        f"M_active = {common['active_surcharge']:.2f}×{H_ext / 2:.2f} + {common['active_backfill']:.2f}×"
+        f"{H_ext / 3:.2f} + {active_line_load:.2f}×{H_ext:.2f} + {active_udl:.2f}×{H_ext / 2:.2f} + "
+        f"{braking:.2f}×{H_ext:.2f} = **{M_active:.2f}kNm**"
+    )
+    st.write(
+        f"M_passive = {common['passive_surcharge']:.2f}×{H_ext / 2:.2f} + {common['passive_backfill']:.2f}×"
+        f"{H_ext / 3:.2f} = **{M_passive:.2f}kNm**"
+    )
+
+    M_driving = max(0.0, M_active - M_passive)
+    M_stabilizing = V_d * (B_ext / 2)
+    st.write(f"M_driving = {M_active:.2f} − {M_passive:.2f} = **{M_driving:.2f}kNm**")
+    st.write(f"M_stabilizing = V'_d × B_ext/2 = {V_d:.2f} × {B_ext / 2:.2f} = **{M_stabilizing:.2f}kNm**")
+
+    ok_ot = M_driving < M_stabilizing
+    if ok_ot:
+        st.write(
+            f"M_driving = {M_driving:.2f} < M_stabilizing = {M_stabilizing:.2f} "
+            f"∴ overturning can be resisted using Kmax = {Kmax:.2f} ∴ **OK**."
+        )
+    else:
+        st.write(
+            f"M_driving = {M_driving:.2f} ≥ M_stabilizing = {M_stabilizing:.2f} "
+            f"∴ overturning **CANNOT** be resisted using Kmax = {Kmax:.2f} — review required."
+        )
+
     return {
         "total_active": total_active,
         "total_passive": total_passive,
@@ -258,11 +299,15 @@ def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, 
         "friction_required": friction_required,
         "margin": max_Rd - friction_required,
         "ok": ok,
+        "M_driving": M_driving,
+        "M_stabilizing": M_stabilizing,
+        "ot_margin": M_stabilizing - M_driving,
+        "ot_ok": ok_ot,
     }
 
 
 def sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results, favourable=False, buoyancy=0.0):
-    st.markdown(f"#### Sliding at {combo}")
+    st.markdown(f"#### Sliding & Overturning at {combo}")
 
     common = common_terms(combo, inputs, box_culvert_results, favourable=favourable)
 
@@ -275,12 +320,19 @@ def sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results, 
 
     governing = "LM1" if lm1_result["margin"] < lm3_result["margin"] else "LM3"
     st.markdown(
-        f"**Governing case: {governing}** "
+        f"**Governing case (sliding): {governing}** "
         f"(margin = max R_d − friction required: LM1 = {lm1_result['margin']:.2f}kN, "
         f"LM3 = {lm3_result['margin']:.2f}kN — smaller margin governs)."
     )
 
-    return {"LM1": lm1_result, "LM3": lm3_result, "governing": governing}
+    governing_ot = "LM1" if lm1_result["ot_margin"] < lm3_result["ot_margin"] else "LM3"
+    st.markdown(
+        f"**Governing case (overturning): {governing_ot}** "
+        f"(margin = M_stabilizing − M_driving: LM1 = {lm1_result['ot_margin']:.2f}kNm, "
+        f"LM3 = {lm3_result['ot_margin']:.2f}kNm — smaller margin governs)."
+    )
+
+    return {"LM1": lm1_result, "LM3": lm3_result, "governing": governing, "governing_overturning": governing_ot}
 
 
 def render(inputs, box_culvert_results, lm1_results, lm3_results):
@@ -318,9 +370,18 @@ def render(inputs, box_culvert_results, lm1_results, lm3_results):
             delta_d = math.degrees(math.atan(math.tan(math.radians(phi_founding)) / gamma_M))
             st.write(f"{combo}: δ_d = tan⁻¹(tan{phi_founding:.0f} / {gamma_M:.2f}) = **{delta_d:.1f}°**")
 
+        st.write("Consider moments about the toe (base edge on the passive side) to check overturning:")
+        st.write(
+            "M_driving = active surcharge (arm H_ext/2) + active backfill (arm H_ext/3) + traffic line load "
+            "and braking (arm H_ext, at roof level) + traffic UDL surcharge (arm H_ext/2), less the "
+            "restoring moment from the same Kmax passive pressure used for sliding."
+        )
+        st.write("M_stabilizing = V'_d × B_ext/2, using the same V'_d as the sliding check.")
+
         st.write(
             "Both LM1 and LM3 are checked fully at every limit state — the one with the smaller margin "
-            "(max R_d − friction required) governs. Neither is assumed critical in advance."
+            "(max R_d − friction required, or M_stabilizing − M_driving for overturning) governs. Neither "
+            "is assumed critical in advance."
         )
 
     st.divider()

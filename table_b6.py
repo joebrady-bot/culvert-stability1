@@ -70,8 +70,17 @@ def render(inputs, box_culvert_results, lm1_results, lm3_results):
         )
 
         st.write(
+            "Consider moments about the toe (base edge on the passive side) to check overturning: "
+            "M_driving = active surcharge (arm H_ext/2) + active backfill (arm H_ext/3) + traffic line load "
+            "and braking (arm H_ext, at roof level) + traffic UDL surcharge (arm H_ext/2), less the "
+            "restoring moment from the same Kmax/Kr passive pressure used for sliding. M_stabilizing = "
+            "V'_d × B_ext/2, using the same buoyancy-reduced V'_d as the sliding check."
+        )
+
+        st.write(
             "Both LM1 and LM3 are checked fully at every limit state — the one with the smaller margin "
-            "(max R_d − friction required) governs. Neither is assumed critical in advance."
+            "(max R_d − friction required, or M_stabilizing − M_driving for overturning) governs. Neither "
+            "is assumed critical in advance."
         )
 
     st.divider()
