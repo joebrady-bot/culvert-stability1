@@ -20,6 +20,17 @@ ASSUMPTIONS = [
     "Sagging is taken as positive throughout, matching the convention used in standard beam "
     "formula references. The bending moment diagram is plotted with sagging (positive) drawn "
     "downward, also matching that convention.",
+    "RC Design tab: rectangular sections only — flanged (T/L) beams are not covered. The section "
+    "is designed once for the governing sagging moment, hogging moment and shear from the Results "
+    "tab (M_max, M_min, V_max) — it does not check moment/shear at every position along the beam, "
+    "or curtail reinforcement, so it is only valid where a uniform section is provided throughout.",
+    "RC Design follows the flexure (Figure 2) and vertical shear, strut-inclination (Figure 5) "
+    "procedures in 'How to Design Concrete Structures using Eurocode 2: 4. Beams' (Moss & "
+    "Brooker, The Concrete Centre), using UK NA values (αcc = 0.85, γc = 1.5, γs = 1.15). "
+    "Deflection and crack width are not checked.",
+    "The minimum shear reinforcement ratio (ρw,min = 0.08√fck/fyk, EC2 Cl. 9.2.2) is included even "
+    "though it isn't part of Figure 5's own flowchart, since it's a mandatory EC2 requirement "
+    "wherever shear links are provided.",
 ]
 
 
