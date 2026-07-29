@@ -2,7 +2,7 @@ import streamlit as st
 
 header_logo, header_title = st.columns([1, 6], vertical_alignment="center")
 with header_logo:
-    st.image("assets/logo.png", width=100)
+    st.image("assets/logo.png", width=220)
 with header_title:
     st.title("Calculation Sheets")
     st.caption("Choose a calculation sheet to open.")

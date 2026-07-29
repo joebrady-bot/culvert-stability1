@@ -3,8 +3,10 @@ import streamlit as st
 import ww_assumptions
 import ww_geometry
 import ww_inputs
+import ww_pdf_report
 import ww_stability
 import ww_structural
+import ww_summary
 
 st.page_link("home.py", label="Back to Home", icon="⬅️")
 st.title("Wing Wall Design")
@@ -29,6 +31,16 @@ with tab_structural:
     st.session_state["ww_structural"] = ww_structural.render(
         st.session_state["ww_inputs"], st.session_state["ww_geometry"]
     )
+
+with tab_inputs:
+    st.divider()
+    ww_summary.render(
+        st.session_state["ww_geometry"],
+        st.session_state["ww_stability"],
+        st.session_state["ww_structural"],
+    )
+    st.divider()
+    ww_pdf_report.render_button(st.session_state["ww_inputs"])
 
 with tab_assumptions:
     ww_assumptions.render()
