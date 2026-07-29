@@ -4,6 +4,7 @@ import assumptions
 import box_culvert
 import lm1_calculations
 import lm3_calculations
+import summary
 import table_b4
 import table_b5
 import table_b6
@@ -56,6 +57,15 @@ with tab_table_b6:
         st.session_state["box_culvert"],
         st.session_state["lm1"],
         st.session_state["lm3"],
+    )
+
+with tab_inputs:
+    st.divider()
+    summary.render(
+        st.session_state["box_culvert"],
+        st.session_state["table_b4"],
+        st.session_state["table_b5"],
+        st.session_state["table_b6"],
     )
 
 with tab_assumptions:
