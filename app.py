@@ -4,6 +4,7 @@ import assumptions
 import box_culvert
 import lm1_calculations
 import lm3_calculations
+import pdf_report
 import summary
 import table_b4
 import table_b5
@@ -67,6 +68,8 @@ with tab_inputs:
         st.session_state["table_b5"],
         st.session_state["table_b6"],
     )
+    st.divider()
+    pdf_report.render_button(st.session_state["inputs"])
 
 with tab_assumptions:
     assumptions.render()
