@@ -88,7 +88,23 @@
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1_governs2.py\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\shot_lm1_governs3.py\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_sv_switch.py\")",
-      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_sv_switch2.py\")"
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_sv_switch2.py\")",
+      "PowerShell(python --version)",
+      "PowerShell(python -c \"import fitz; print\\(fitz.__doc__\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\search_pdfs.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\dump_pages.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\dump_base_pages.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\pdf_render_NA_fig1.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\pdf_crop_sv196.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\pdf_render_braking_page.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_new_sv.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_sv196_only.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\final_check.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\find_table_b5.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\render_table_b5.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\find_b5_coords.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\crop_b5.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_b5.py\")"
     ]
   }
 }

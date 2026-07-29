@@ -29,8 +29,14 @@ def _fmt(gamma, is_sls):
     return "" if is_sls else f"{gamma:.2f} × "
 
 
-def _common_terms(combo, inputs, box_culvert_results):
-    """Terms shared by both traffic models — surcharge, backfill, road/fill/self-weight vertical loads."""
+def common_terms(combo, inputs, box_culvert_results, favourable=False):
+    """Terms shared by both traffic models — surcharge, backfill, road/fill/self-weight vertical loads.
+
+    `favourable=True` switches every permanent-load quantity to its favourable/minimum counterpart
+    (used by Table B.5 — "minimum vertical load"): gamma_G;inf instead of gamma_G;sup, the -40% road
+    construction deviation instead of +55%, and no GAMMA_SD_EC model factor (that factor only applies
+    to the unfavourable/maximum case per PD6694-1 Cl. 10.2.2 and Figure B.4 — Figure B.5 omits it).
+    """
     is_sls = combo == "SLS"
 
     H_ext = box_culvert_results["H_ext"]
@@ -41,8 +47,18 @@ def _common_terms(combo, inputs, box_culvert_results):
 
     Ka_earth = TABLE_B4[combo]["Ka_earth"]
     Kmax = TABLE_B4[combo]["Kmax"]
-    gamma_self = _gamma("Self weight of structure & backfill, gamma_G;sup", combo)
-    gamma_super = _gamma("Superimposed permanent load, gamma_G;sup", combo)
+    if favourable:
+        gamma_self = partial_factors.FAVOURABLE["Self weight of structure & backfill, gamma_G;inf"][combo]
+        gamma_super = partial_factors.FAVOURABLE["Superimposed permanent load, gamma_G;inf"][combo]
+        road_dev = partial_factors.ROAD_CONSTRUCTION_DEVIATION["favourable"]
+        gamma_sd_ec = 1.0
+        extreme_word = "Minimum"
+    else:
+        gamma_self = _gamma("Self weight of structure & backfill, gamma_G;sup", combo)
+        gamma_super = _gamma("Superimposed permanent load, gamma_G;sup", combo)
+        road_dev = partial_factors.ROAD_CONSTRUCTION_DEVIATION["unfavourable"]
+        gamma_sd_ec = GAMMA_SD_EC
+        extreme_word = "Maximum"
 
     if is_sls:
         st.write("γF = 1.0 for all elements.")
@@ -50,14 +66,13 @@ def _common_terms(combo, inputs, box_culvert_results):
     # Road construction (Layer 1) vs fill (remaining layers) — see nomenclature.md for this assumption
     road_udl_char = layer_udls[0] if layer_udls else 0.0
     fill_udl_char = sum(layer_udls[1:]) if len(layer_udls) > 1 else 0.0
-    surcharge_road = partial_factors.ROAD_CONSTRUCTION_DEVIATION["unfavourable"] * road_udl_char
+    surcharge_road = road_dev * road_udl_char
     if is_sls:
         st.write(
-            f"Maximum surcharge from road construction = "
-            f"{partial_factors.ROAD_CONSTRUCTION_DEVIATION['unfavourable']:.2f} × {road_udl_char:.2f} "
-            f"= **{surcharge_road:.2f}kN/m**"
+            f"{extreme_word} surcharge from road construction = "
+            f"{road_dev:.2f} × {road_udl_char:.2f} = **{surcharge_road:.2f}kN/m**"
         )
-        st.write(f"Maximum surcharge from fill above roof level = **{fill_udl_char:.2f}kN/m**")
+        st.write(f"{extreme_word} surcharge from fill above roof level = **{fill_udl_char:.2f}kN/m**")
 
     g_super = _fmt(gamma_super, is_sls)
     active_surcharge = Ka_earth * gamma_super * (surcharge_road + fill_udl_char) * H_ext
@@ -94,19 +109,21 @@ def _common_terms(combo, inputs, box_culvert_results):
     st.write(f"Total passive force = {passive_surcharge:.2f} + {passive_backfill:.2f} = **{total_passive:.2f}kN**")
 
     st.write("Vertical load on foundation (common terms):")
-    road_vertical_base = GAMMA_SD_EC * partial_factors.ROAD_CONSTRUCTION_DEVIATION["unfavourable"] * road_udl_char * B_ext
-    fill_vertical_base = GAMMA_SD_EC * fill_udl_char * B_ext
+    sd_ec_label = f"{gamma_sd_ec:.2f} × " if gamma_sd_ec != 1.0 else ""
+    road_vertical_base = gamma_sd_ec * road_dev * road_udl_char * B_ext
+    fill_vertical_base = gamma_sd_ec * fill_udl_char * B_ext
 
     if is_sls:
         road_vertical = road_vertical_base
         fill_vertical = fill_vertical_base
         self_weight_vertical = W_box
         st.write(
-            f"Road construction = {GAMMA_SD_EC:.2f} × "
-            f"{partial_factors.ROAD_CONSTRUCTION_DEVIATION['unfavourable']:.2f} × {road_udl_char:.2f} "
+            f"Road construction = {sd_ec_label}{road_dev:.2f} × {road_udl_char:.2f} "
             f"× {B_ext:.1f} = **{road_vertical:.2f}kN**"
         )
-        st.write(f"Fill on roof = {GAMMA_SD_EC:.2f} × {fill_udl_char:.2f} × {B_ext:.1f} = **{fill_vertical:.2f}kN**")
+        st.write(
+            f"Fill on roof = {sd_ec_label}{fill_udl_char:.2f} × {B_ext:.1f} = **{fill_vertical:.2f}kN**"
+        )
         st.write(f"Self weight of concrete = **{self_weight_vertical:.1f}kN**")
     else:
         road_vertical = gamma_super * road_vertical_base
@@ -124,7 +141,7 @@ def _common_terms(combo, inputs, box_culvert_results):
     }
 
 
-def _model_check(model, combo, common, inputs, box_culvert_results, lm1_results, lm3_results):
+def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, lm3_results):
     """Full active/vertical/friction check for a single traffic model (LM1 or LM3) at a given combo."""
     is_sls = combo == "SLS"
 
@@ -235,13 +252,13 @@ def _model_check(model, combo, common, inputs, box_culvert_results, lm1_results,
     }
 
 
-def _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results):
+def sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results, favourable=False):
     st.markdown(f"#### Sliding at {combo}")
 
-    common = _common_terms(combo, inputs, box_culvert_results)
+    common = common_terms(combo, inputs, box_culvert_results, favourable=favourable)
 
-    lm1_result = _model_check("LM1", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
-    lm3_result = _model_check("LM3", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
+    lm1_result = model_check("LM1", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
+    lm3_result = model_check("LM3", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
 
     governing = "LM1" if lm1_result["margin"] < lm3_result["margin"] else "LM3"
     st.markdown(
@@ -297,7 +314,7 @@ def render(inputs, box_culvert_results, lm1_results, lm3_results):
 
     combo_results = {}
     for combo in COMBOS:
-        combo_results[combo] = _sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results)
+        combo_results[combo] = sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results)
         st.markdown("---")
 
     results["sliding"] = combo_results

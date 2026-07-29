@@ -2,32 +2,58 @@ import math
 
 import streamlit as st
 
-# UK NA to BS EN 1991-2 Table NA.5 SV vehicle definitions. Axle loads are DAF-factored.
-# SV196 confirmed against the D. Childs worked example (basic axle loads 100/180x2/165x9 kN,
-# DAF 1.20/1.10/1.12 respectively). SV80/SV100 carried over from the old v1 build — not yet
-# re-verified against a worked example, treat with caution.
-SV_VEHICLES = {
-    "SV80": {
-        "axle_loads": [100.0] * 8,
-        "basic_axle_loads": [100.0] * 8,   # no DAF applied — not yet verified against a worked example
-        "axle_pos": [0.0, 1.5, 6.5, 8.0, 13.0, 14.5, 19.5, 21.0],
-    },
-    "SV100": {
-        "axle_loads": [100.0] * 10,
-        "basic_axle_loads": [100.0] * 10,  # no DAF applied — not yet verified against a worked example
-        "axle_pos": [0.0, 1.5, 6.5, 8.0, 13.0, 14.5, 19.5, 21.0, 26.0, 27.5],
-    },
-    "SV196": {
-        "axle_loads": [120.0, 198.0, 198.0] + [184.8] * 9,
-        "basic_axle_loads": [100.0, 180.0, 180.0] + [165.0] * 9,   # unfactored, for braking (Q_lk,s = delta x W)
-        "axle_pos": [0.0, 3.5, 5.0, 8.0, 9.2, 10.4, 11.6, 12.8, 14.0, 15.2, 16.4, 17.6],
-    },
-}
+# UK NA to BS EN 1991-2:2003+A1:2020, NA.2.16 (Figure NA.1) and NA.2.18.1 (Table NA.2, braking).
+# Verified directly against the NA and base EN PDFs in the project folder — see nomenclature.md.
+#
+# Geometry: each vehicle is built from axle groups spaced 1.2 m apart within a group. The gap between
+# certain groups is not fixed — NA.1 Figure NA.1 Key note 2 says "critical of 1,2 m or 5,0 m or 9,0 m" —
+# so all three candidate gaps must be checked and the worst taken.
+GROUP_GAP_CANDIDATES = [1.2, 5.0, 9.0]
+
+# DAF (Table NA.2), keyed by basic axle load (kN)
+DAF_BY_LOAD = {100.0: 1.20, 130.0: 1.16, 165.0: 1.12, 180.0: 1.10, 225.0: 1.07}
+
+# Braking deceleration factor delta (NA.2.18.1): Qlk,S = delta x w (w = basic, unfactored axle load)
+SV_BRAKING_COEFF = {"SV80": 0.5, "SV100": 0.40, "SV196": 0.25}
+
+
+def _sv80_100_axles(basic_load, gap):
+    """SV80/SV100: two groups of 3 axles at `basic_load` each, 1.2 m spacing within a group."""
+    g1 = [0.0, 1.2, 2.4]
+    g2 = [g1[-1] + gap, g1[-1] + gap + 1.2, g1[-1] + gap + 2.4]
+    pos = g1 + g2
+    basic = [basic_load] * 6
+    return pos, basic
+
+
+def _sv196_axles(gap):
+    """SV196: group of 5 @165kN, [critical gap], group of 4 @165kN, fixed 4.0m, then 180/180/100kN."""
+    g1 = [0.0, 1.2, 2.4, 3.6, 4.8]
+    start2 = g1[-1] + gap
+    g2 = [start2, start2 + 1.2, start2 + 2.4, start2 + 3.6]
+    start3 = g2[-1] + 4.0
+    g3 = [start3, start3 + 1.6, start3 + 1.6 + 4.4]
+    pos = g1 + g2 + g3
+    basic = [165.0] * 5 + [165.0] * 4 + [180.0, 180.0, 100.0]
+    return pos, basic
+
+
+def _build_vehicle(vehicle_name, gap):
+    if vehicle_name == "SV80":
+        pos, basic = _sv80_100_axles(130.0, gap)
+    elif vehicle_name == "SV100":
+        pos, basic = _sv80_100_axles(165.0, gap)
+    elif vehicle_name == "SV196":
+        pos, basic = _sv196_axles(gap)
+    else:
+        raise ValueError(f"Unknown vehicle {vehicle_name}")
+    daf_loads = [b * DAF_BY_LOAD[b] for b in basic]
+    return pos, basic, daf_loads
+
 
 SV_CONTACT_L = 0.35        # m, wheel contact patch in B_ext (travel) direction
 SV_CONTACT_T = 0.35        # m, wheel contact patch in L_L (transverse) direction
-SV_WHEEL_SPACING = 2.65    # m, wheel centre-to-centre in L_L direction
-SV_BRAKING_COEFF = 0.25    # delta, BS EN 1991-2 Cl. 4.4.4: braking force per axle = delta x basic axle load
+SV_WHEEL_SPACING = 2.65    # m, wheel centre-to-centre in L_L direction (= 3.0 m outside track − 0.35 m patch)
 TAN_30 = math.tan(math.radians(30))
 
 
@@ -95,6 +121,17 @@ def _worst_position(axle_pos, axle_loads, B_ext, disp_LL, disp_B, step=0.01):
     return max_load, worst_offset
 
 
+def _worst_over_gaps(vehicle_name, B_ext, disp_LL, disp_B):
+    """Try each candidate inter-group gap (1.2/5.0/9.0 m per NA.1 Key note 2) and keep the worst."""
+    best = None
+    for gap in GROUP_GAP_CANDIDATES:
+        axle_pos, basic_loads, daf_loads = _build_vehicle(vehicle_name, gap)
+        max_load, worst_offset = _worst_position(axle_pos, daf_loads, B_ext, disp_LL, disp_B)
+        if best is None or max_load > best[0]:
+            best = (max_load, worst_offset, gap, axle_pos, basic_loads, daf_loads)
+    return best
+
+
 def render(inputs, box_culvert_results):
     """Render LM3 (Special Vehicle) vertical load calculations and return computed values."""
     results = {}
@@ -102,7 +139,6 @@ def render(inputs, box_culvert_results):
     st.subheader("Maximum Vertical Load on Top of Culvert — LM3")
 
     vehicle_name = inputs["sv_vehicle"]
-    vehicle = SV_VEHICLES[vehicle_name]
     H_c = box_culvert_results["H_c"]
     B_ext = box_culvert_results["B_ext"]
 
@@ -135,21 +171,24 @@ def render(inputs, box_culvert_results):
 
     st.markdown("**Worst-Case Position**")
     st.write(
+        f"NA.1 Key note 2: the gap between axle groups is the critical of "
+        f"{', '.join(f'{g:.1f}' for g in GROUP_GAP_CANDIDATES)} m — each is tried and the worst kept."
+    )
+    st.write(
         f"Scanning the vehicle's position across B_ext = {B_ext:.2f} m to find the offset that "
         f"maximises the total load landing on the culvert."
     )
-    max_load, worst_offset = _worst_position(
-        vehicle["axle_pos"], vehicle["axle_loads"], B_ext, disp_LL, disp_B
+    max_load, worst_offset, gap, axle_pos, basic_loads, daf_loads = _worst_over_gaps(
+        vehicle_name, B_ext, disp_LL, disp_B
     )
-    _, contributions = _load_at_offset(
-        vehicle["axle_pos"], vehicle["axle_loads"], worst_offset, B_ext, disp_LL, disp_B
-    )
+    _, contributions = _load_at_offset(axle_pos, daf_loads, worst_offset, B_ext, disp_LL, disp_B)
 
+    st.write(f"Governing inter-group gap = **{gap:.1f} m**.")
     st.write(f"Worst-case front-axle offset = {worst_offset:.3f} m from the culvert's leading edge.")
     st.write(f"{len(contributions)} axle(s) contribute at this position:")
     for ax_pos, ax_load, overlap, frac, contrib in contributions:
         st.write(
-            f"- Axle at {ax_pos:.1f} m: load = {ax_load:.1f} kN, overlap = {overlap:.3f} m "
+            f"- Axle at {ax_pos:.1f} m: load = {ax_load:.1f} kN (DAF-factored), overlap = {overlap:.3f} m "
             f"({frac * 100:.0f}% of dispersed width) ⟹ {ax_load:.1f} × {frac:.3f} / {disp_LL:.3f} "
             f"= **{contrib:.2f} kN/m**"
         )
@@ -158,6 +197,7 @@ def render(inputs, box_culvert_results):
 
     results["max_V_per_m"] = max_load
     results["worst_offset"] = worst_offset
+    results["governing_gap"] = gap
     results["disp_LL"] = disp_LL
     results["disp_B"] = disp_B
 
@@ -166,19 +206,22 @@ def render(inputs, box_culvert_results):
 
     L_L = inputs["L_L"]
     UDL_total = box_culvert_results["UDL_total"]
+    delta = SV_BRAKING_COEFF[vehicle_name]
 
-    st.write(f"For LM3: Q_lk,s = δ·ω, where δ = {SV_BRAKING_COEFF:.2f} and ω = basic (unfactored) axle load.")
+    st.write(
+        f"For LM3: Q_lk,s = δ·ω, where δ = {delta:.2f} for {vehicle_name} "
+        f"(NA.2.18.1: 0.5 for SV80, 0.40 for SV100, 0.25 for SV196) and ω = basic (unfactored) axle load."
+    )
 
-    basic_loads = vehicle["basic_axle_loads"]
     groups = _group_axles(basic_loads)
     terms = []
     total_braking = 0.0
     for start, end, val in groups:
         count = end - start + 1
-        Q_lks = SV_BRAKING_COEFF * val
+        Q_lks = delta * val
         total_braking += count * Q_lks
         label = f"axle {start}" if count == 1 else (f"axles {start} & {end}" if count == 2 else f"axles {start} to {end}")
-        st.write(f"Q_lk,s ({label}) = {SV_BRAKING_COEFF:.2f} × {val:.0f}kN = **{Q_lks:.2f}kN**")
+        st.write(f"Q_lk,s ({label}) = {delta:.2f} × {val:.0f}kN = **{Q_lks:.2f}kN**")
         terms.append(f"{Q_lks:.2f}" if count == 1 else f"{count} × {Q_lks:.2f}")
 
     st.caption(
