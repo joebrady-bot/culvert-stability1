@@ -141,8 +141,12 @@ def common_terms(combo, inputs, box_culvert_results, favourable=False):
     }
 
 
-def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, lm3_results):
-    """Full active/vertical/friction check for a single traffic model (LM1 or LM3) at a given combo."""
+def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, lm3_results, buoyancy=0.0):
+    """Full active/vertical/friction check for a single traffic model (LM1 or LM3) at a given combo.
+
+    `buoyancy` (design/factored value, kN) is a Table B.6 addition — a water-table uplift force that
+    reduces V'_d before the friction resistance is computed. Zero for Tables B.4/B.5 (no water table).
+    """
     is_sls = combo == "SLS"
 
     H_ext = box_culvert_results["H_ext"]
@@ -220,7 +224,12 @@ def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, 
         st.write(f"{model} traffic = {gamma_Q_sup:.2f} × {vertical_char:.2f} = **{vertical:.2f}kN**")
 
     V_d = common["common_vertical"] + vertical
-    st.write(f"V'_d = {common['common_vertical']:.2f} + {vertical:.2f} = **{V_d:.2f}kN**")
+    if buoyancy:
+        st.write(f"V'_d (before buoyancy) = {common['common_vertical']:.2f} + {vertical:.2f} = **{V_d:.2f}kN**")
+        V_d = V_d - buoyancy
+        st.write(f"V'_d = {V_d + buoyancy:.2f} − {buoyancy:.2f} (buoyancy) = **{V_d:.2f}kN**")
+    else:
+        st.write(f"V'_d = {common['common_vertical']:.2f} + {vertical:.2f} = **{V_d:.2f}kN**")
 
     delta_d_rad = math.atan(math.tan(math.radians(phi_founding)) / gamma_M)
     delta_d_deg = math.degrees(delta_d_rad)
@@ -252,13 +261,17 @@ def model_check(model, combo, common, inputs, box_culvert_results, lm1_results, 
     }
 
 
-def sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results, favourable=False):
+def sliding_check(combo, inputs, box_culvert_results, lm1_results, lm3_results, favourable=False, buoyancy=0.0):
     st.markdown(f"#### Sliding at {combo}")
 
     common = common_terms(combo, inputs, box_culvert_results, favourable=favourable)
 
-    lm1_result = model_check("LM1", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
-    lm3_result = model_check("LM3", combo, common, inputs, box_culvert_results, lm1_results, lm3_results)
+    lm1_result = model_check(
+        "LM1", combo, common, inputs, box_culvert_results, lm1_results, lm3_results, buoyancy=buoyancy
+    )
+    lm3_result = model_check(
+        "LM3", combo, common, inputs, box_culvert_results, lm1_results, lm3_results, buoyancy=buoyancy
+    )
 
     governing = "LM1" if lm1_result["margin"] < lm3_result["margin"] else "LM3"
     st.markdown(

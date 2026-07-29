@@ -6,13 +6,20 @@ import lm1_calculations
 import lm3_calculations
 import table_b4
 import table_b5
+import table_b6
 import user_inputs
 
 st.set_page_config(page_title="Culvert Stability", layout="wide")
 st.title("Culvert Stability")
 
-tab_inputs, tab_global_calcs, tab_lm1_calcs, tab_lm3_calcs, tab_table_b4, tab_table_b5, tab_assumptions = st.tabs(
-    ["Inputs", "Global Calculations", "LM1 Calculations", "LM3 Calculations", "Table B.4", "Table B.5", "Assumptions"]
+(
+    tab_inputs, tab_global_calcs, tab_lm1_calcs, tab_lm3_calcs,
+    tab_table_b4, tab_table_b5, tab_table_b6, tab_assumptions,
+) = st.tabs(
+    [
+        "Inputs", "Global Calculations", "LM1 Calculations", "LM3 Calculations",
+        "Table B.4", "Table B.5", "Table B.6", "Assumptions",
+    ]
 )
 
 with tab_inputs:
@@ -37,6 +44,14 @@ with tab_table_b4:
 
 with tab_table_b5:
     st.session_state["table_b5"] = table_b5.render(
+        st.session_state["inputs"],
+        st.session_state["box_culvert"],
+        st.session_state["lm1"],
+        st.session_state["lm3"],
+    )
+
+with tab_table_b6:
+    st.session_state["table_b6"] = table_b6.render(
         st.session_state["inputs"],
         st.session_state["box_culvert"],
         st.session_state["lm1"],

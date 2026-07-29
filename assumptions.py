@@ -15,6 +15,11 @@ ASSUMPTIONS = [
     "The Transverse Dispersal formula assumes only two adjacent wheels' dispersion zones overlap in the "
     "critical 1 m strip. If H_c is deep enough for three or more wheels to overlap, PD6694-1 NOTE 2 to "
     "Figure 11 requires using the most heavily loaded segment/strip instead — not currently handled.",
+    "Table B.6's buoyancy force is taken as γw × B_ext × min(h_wt, H_ext) — Archimedes' principle over the "
+    "box's submerged external cross-section (h_wt = water table height above the culvert invert). Figure "
+    "B.6 shows Buoyancy as a single discrete upward force alongside Friction, not folded into the earth "
+    "pressure diagrams, so backfill unit weight and earth pressure coefficients are not adjusted for the "
+    "water table — only V'_d (and hence friction resistance) is reduced.",
 ]
 
 

@@ -104,7 +104,11 @@
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\render_table_b5.py\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\find_b5_coords.py\")",
       "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\crop_b5.py\")",
-      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_b5.py\")"
+      "PowerShell(python \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\test_b5.py\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\pd6694_figure_b6.png\" \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\assets\\\\pd6694_figure_b6.png\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\pd6694_table_b6.png\" \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\assets\\\\pd6694_table_b6.png\")",
+      "PowerShell(Start-Sleep -Seconds 4; try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:8501\" -UseBasicParsing -TimeoutSec 10; $r.StatusCode } catch { $_.Exception.Message })",
+      "PowerShell(\"stopped\")"
     ]
   }
 }
