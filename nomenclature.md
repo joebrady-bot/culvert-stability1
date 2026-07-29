@@ -132,3 +132,25 @@ Table NA.A2.4(B); STR/GEO Comb2: Table NA.A2.4(C). Displayed in the Assumptions 
 
 Also: `ROAD_CONSTRUCTION_DEVIATION = {"unfavourable": 1.55, "favourable": 0.60}` — UK NA to BS EN 1991-1-1
 Table NA.1 Cl. 5.2.3(3), road construction thickness deviation (+55% / −40%).
+
+## Maximum Vertical Load on Top of Culvert — LM3 (calculated, `lm3_calculations.py`)
+
+UK NA to BS EN 1991-2 Table NA.5 SV vehicle definitions + PD6694-1 Cl. 10.2.7 dispersal. Same direction
+convention as LM1 (travel ∥ `B`). Worst-case vehicle position is found by an exhaustive numeric scan
+across `B_ext` (not a fixed hand-derived formula) — confirmed against the D. Childs SV196 worked example:
+the scan finds a *higher* load (163.8 kN/m, 4 axles) than the worked example's hand calc (151.4 kN, 3
+axles), because PD6694-1 NOTE 2 to Figure 11 allows the hand method to simplify to a tractable subset of
+overlapping axles, while the scan is exhaustive. Decision: keep the full scan result — see the
+"Scan vs worked ex." decision in conversation history if this needs revisiting.
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Dispersed Width per Wheel | `disp_LL_single` | m | `SV_CONTACT_T + 2×tan30°×H_c` | Contact patch 350×350 mm |
+| Dispersed Width, L_L direction | `disp_LL` | m | `2×disp_LL_single` if wheel spacing (2.65 m) ≥ `disp_LL_single`, else `SV_WHEEL_SPACING + disp_LL_single` | Whether the two wheels of an axle merge |
+| Dispersed Width per Axle, B_ext direction | `disp_B` | m | `SV_CONTACT_L + 2×tan30°×H_c` | |
+| Worst-Case Offset | `worst_offset` | m | found by scanning front-axle position across `B_ext` in 0.01 m steps | Front axle position relative to culvert's leading edge |
+| Maximum Vertical Load | `max_V_per_m` | kN/m | `sum(axle_load × overlap/disp_B / disp_LL)` over all contributing axles at `worst_offset` | |
+
+SV vehicle axle loads (`SV_VEHICLES` dict) are DAF-factored. SV196 confirmed against the worked example
+(basic axle loads 100/180×2/165×9 kN; DAF 1.20/1.10/1.12 → 120/198×2/184.8×9 kN). SV80/SV100 carried over
+from the old v1 build, marked as not yet re-verified against a worked example.
