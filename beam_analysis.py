@@ -3,6 +3,7 @@ import streamlit as st
 import beam_assumptions
 import beam_diagram
 import beam_inputs
+import beam_pdf_report
 
 st.page_link("home.py", label="Back to Home", icon="⬅️")
 st.title("Beam Analysis — Bending & Shear")
@@ -15,6 +16,8 @@ with tab_inputs:
 
 with tab_results:
     st.session_state["beam_results"] = beam_diagram.render(st.session_state["beam_inputs"])
+    st.divider()
+    beam_pdf_report.render_button(st.session_state["beam_inputs"])
 
 with tab_assumptions:
     beam_assumptions.render()
