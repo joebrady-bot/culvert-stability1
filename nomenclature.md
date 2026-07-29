@@ -154,3 +154,21 @@ overlapping axles, while the scan is exhaustive. Decision: keep the full scan re
 SV vehicle axle loads (`SV_VEHICLES` dict) are DAF-factored. SV196 confirmed against the worked example
 (basic axle loads 100/180×2/165×9 kN; DAF 1.20/1.10/1.12 → 120/198×2/184.8×9 kN). SV80/SV100 carried over
 from the old v1 build, marked as not yet re-verified against a worked example.
+
+## Braking and Acceleration Forces — LM3 (calculated)
+
+PD6694-1 Cl. 10.2.8.2, BS EN 1991-2 Cl. 4.4.4. Note this uses `basic_axle_loads` (unfactored), not the
+DAF-factored `axle_loads` used for the vertical load check above. The distribution length is `L_L`
+(Overall Length input) — PD6694-1 Cl. 10.2.8.2's "distributed... over a length of Lj", confirmed against
+the worked example where `Lj = L_L = 20.6 m` for that scenario (a different structure length than our
+current default of 10 m — set `L_L` accordingly to reproduce the worked example's 24 kN/m result).
+
+| Quantity | Symbol | Units | Definition | Notes |
+|---|---|---|---|---|
+| Braking Coefficient | `SV_BRAKING_COEFF` (δ) | — | `0.25` | BS EN 1991-2 Cl. 4.4.4, fixed for all SV vehicles |
+| Per-Axle-Group Braking | `Q_lk,s` | kN | `delta × basic_axle_load` | Grouped by consecutive axles sharing the same basic load (e.g. "axles 2 & 3") |
+| Total Braking Force | `total_braking` | kN | `sum(count × delta × basic_axle_load)` over all axle groups | = `delta × GVW` (unfactored), just computed per-group for transparency |
+| Design Braking Force | `Q_brk_per_m` | kN/m | `total_braking / L_L` | Distributed over the barrel length via in-plane rigidity |
+| Fill Vertical Load | `fill_vertical` | kN | `UDL_total × B_ext` | Reuses `UDL_total` from Global Calculations (Self-weights) |
+| Maximum Friction | `max_friction` | kN | `(max_V_per_m + fill_vertical) × tan30°` | `max_V_per_m` = this module's own computed worst-case vertical load (not the worked example's 151.4 kN) — friction check is correspondingly less conservative to reconcile against than the book |
+| Governing Check | — | — | `Q_brk_per_m < max_friction` | If exceeded, PD6694-1 says load effects in the members need to be considered (not yet implemented) |
