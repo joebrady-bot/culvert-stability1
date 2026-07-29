@@ -112,7 +112,8 @@
       "PowerShell(cd \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\"; Start-Process -FilePath \"python\" -ArgumentList \"-m\",\"streamlit\",\"run\",\"app.py\",\"--server.headless\",\"true\" -WindowStyle Hidden; Start-Sleep -Seconds 4; try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:8501\" -UseBasicParsing -TimeoutSec 10; $r.StatusCode } catch { $_.Exception.Message })",
       "PowerShell($f = \"C:\\\\Users\\\\JoeBr\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-JoeBr-Desktop-culvert-stability\\\\0ac62052-e188-4619-9195-5700d4443345\\\\scratchpad\\\\downloaded_report.pdf\"; \\(Get-Item $f\\).Length; Get-Content $f -Encoding Byte -TotalCount 5 | ForEach-Object { [char]$_ })",
       "PowerShell(python -c \"import streamlit; print\\(streamlit.__version__\\)\")",
-      "PowerShell(Copy-Item \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\Logo.png\" \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\assets\\\\logo.png\")"
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\Logo.png\" \"c:\\\\Users\\\\JoeBr\\\\Desktop\\\\culvert-stability\\\\assets\\\\logo.png\")",
+      "PowerShell(python -c \"import numpy; print\\(numpy.__version__\\)\")"
     ]
   }
 }

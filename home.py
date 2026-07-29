@@ -28,6 +28,16 @@ TILES = [
             "and toe of a cantilever wing wall, per UK NA."
         ),
     },
+    {
+        "page": "beam_analysis.py",
+        "icon": "📏",
+        "title": "Beam Analysis",
+        "description": (
+            "First-principles shear force and bending moment diagrams for beams on any number "
+            "of simple supports, under any combination of point loads and UDLs — single spans "
+            "solved by statics, continuous beams by the three-moment theorem."
+        ),
+    },
 ]
 
 cols = st.columns(3)
