@@ -23,6 +23,8 @@ with tab_results:
 with tab_rc_design:
     st.session_state["rc_inputs"] = rc_beam_design.render_inputs(st.session_state.get("beam_results"))
     st.session_state["rc_results"] = rc_beam_design.render(st.session_state["rc_inputs"])
+
+with tab_results:
     st.divider()
     beam_pdf_report.render_button(st.session_state["beam_inputs"], st.session_state["rc_inputs"])
 
