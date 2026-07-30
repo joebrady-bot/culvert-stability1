@@ -34,6 +34,18 @@ def render():
         help="Simple uniform highway surcharge behind the wall (UK convention, BD 30/87 Cl. 3.4 = 10 kN/m²).",
     )
 
+    st.subheader("Additional Point Load")
+    st.caption("An extra horizontal line load (e.g. impact, mooring, fixed equipment), acting at a given height.")
+    c1, c2 = st.columns(2)
+    with c1:
+        inputs["P_h"] = st.number_input("Horizontal Load, P_h (kN/m)", min_value=0.0, value=0.0, step=1.0)
+    with c2:
+        inputs["h_P"] = st.number_input(
+            "Height above base, h_P (m)", min_value=0.0, value=0.0, step=0.1,
+            help="Measured from the underside of the base slab. If it falls above the top of the base "
+            "slab, it also contributes to the stem's bending design.",
+        )
+
     st.subheader("Soil Properties")
     c1, c2 = st.columns(2)
     with c1:
@@ -43,6 +55,11 @@ def render():
         )
         inputs["gamma_backfill"] = st.number_input(
             "Unit Weight, gamma_backfill (kN/m3)", min_value=0.0, value=19.0, step=0.5
+        )
+        inputs["beta"] = st.number_input(
+            "Backfill Slope, beta (deg)", min_value=0.0, max_value=40.0, value=0.0, step=1.0,
+            help="Angle of the retained ground surface above horizontal, sloping up and away from the "
+            "wall. Must be less than phi_backfill (Rankine sloped-backfill theory) — 0 = horizontal.",
         )
     with c2:
         st.markdown("**Founding**")

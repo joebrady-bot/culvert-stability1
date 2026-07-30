@@ -107,20 +107,33 @@ def render(inputs, geometry_results):
     gamma_backfill = inputs["gamma_backfill"]
     q_surcharge = inputs["q_surcharge"]
     h_wt = inputs["h_wt"]
+    beta = inputs.get("beta", 0.0)
+    P_h, h_P = inputs.get("P_h", 0.0), inputs.get("h_P", 0.0)
 
     combo = STRUCTURAL_COMBO
     gamma_M = stab._gamma("Material factor to phi', gamma_M", combo)
     phi_backfill_d = geo.design_angle(inputs["phi_backfill"], gamma_M)
-    Ka = geo.rankine_ka(phi_backfill_d)
+    Ka = geo.rankine_ka(phi_backfill_d, beta)
     gamma_q = stab._gamma("Variable/traffic surcharge action, gamma_Q;sup", combo)
     gamma_soil = stab._gamma("Self weight of structure & backfill, gamma_G;sup", combo)
 
     # ── Stem — vertical cantilever from the top of the base slab ──────────────────────
     st.markdown("#### Stem (at base)")
     depth_wt_stem = max(H_stem - max(h_wt - t_base, 0.0), 0.0)
-    F_stem, M_stem = geo.active_force_moment(
-        Ka, gamma_soil * gamma_backfill, gamma_q * q_surcharge, H_stem, depth_wt_stem
+    F_stem, _, M_stem = geo.active_force_moment(
+        Ka, gamma_soil * gamma_backfill, gamma_q * q_surcharge, H_stem, depth_wt_stem, beta
     )
+    # The point load only loads the stem if it acts above the top of the base slab; its arm is
+    # measured from there, since the stem cantilevers from the top of the base, not the base itself.
+    if P_h > 0 and h_P > t_base:
+        P_h_design = gamma_q * P_h
+        arm_on_stem = h_P - t_base
+        F_stem += P_h_design
+        M_stem += P_h_design * arm_on_stem
+        st.write(
+            f"Point load on stem: P_h,d = {P_h_design:.2f}kN/m at {arm_on_stem:.2f}m above the stem base "
+            f"→ adds {P_h_design:.2f}kN/m shear, {P_h_design * arm_on_stem:.2f}kNm/m moment."
+        )
     st.write(f"M_Ed (stem base) = **{M_stem:.2f}kNm/m**, V_Ed = **{F_stem:.2f}kN/m**")
 
     sec_stem = _section_capacity(
@@ -131,13 +144,17 @@ def render(inputs, geometry_results):
 
     # ── Factored bearing pressure distribution at the structural combo ────────────────
     t_res = stab.combo_terms(combo, inputs, geometry_results, favourable=False)
-    V_str = t_res["W_stem"] + t_res["W_base"] + t_res["W_soil"] + t_res["W_q_heel"] - t_res["U"]
+    M_active_str = t_res["M_active_earth"] + t_res["P_h_design"] * t_res["h_P"]
+    V_str = (
+        t_res["W_stem"] + t_res["W_base"] + t_res["W_soil"] + t_res["W_q_heel"]
+        + t_res["F_active_v"] - t_res["U"]
+    )
     M_stb_str = (
         t_res["W_stem"] * t_res["x_stem"] + t_res["W_base"] * t_res["x_base"]
         + t_res["W_soil"] * t_res["x_soil"] + t_res["W_q_heel"] * t_res["x_q_heel"]
-        - t_res["U"] * t_res["x_U"]
+        + t_res["F_active_v"] * t_res["x_active_v"] - t_res["U"] * t_res["x_U"]
     )
-    x_R_str = (M_stb_str - t_res["M_active"]) / V_str if V_str > 0 else L_base / 2.0
+    x_R_str = (M_stb_str - M_active_str) / V_str if V_str > 0 else L_base / 2.0
     q_toe, q_heel = _bearing_dist(V_str, x_R_str, L_base)
     st.write(f"Factored bearing pressure at {combo}: q_toe = **{q_toe:.2f}kPa**, q_heel = **{q_heel:.2f}kPa**")
 

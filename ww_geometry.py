@@ -7,9 +7,19 @@ from matplotlib import patches
 GAMMA_W = 9.81  # kN/m3 — unit weight of water
 
 
-def rankine_ka(phi_deg):
-    """Rankine active pressure coefficient — horizontal ground, vertical back of wall."""
-    return math.tan(math.radians(45.0 - phi_deg / 2.0)) ** 2
+def rankine_ka(phi_deg, beta_deg=0.0):
+    """Rankine active pressure coefficient for a sloping backfill (beta_deg above horizontal,
+    rising up and away from the wall) and a vertical wall back. Reduces to tan²(45-phi/2) at
+    beta=0. Requires beta <= phi for a stable slope; beta is silently clamped to phi if exceeded
+    (callers should compare beta_deg to phi_deg themselves and warn — see ww_stability.py)."""
+    if beta_deg <= 0:
+        return math.tan(math.radians(45.0 - phi_deg / 2.0)) ** 2
+
+    phi = math.radians(phi_deg)
+    beta = math.radians(min(beta_deg, phi_deg))
+    cos_b, cos_phi = math.cos(beta), math.cos(phi)
+    root = math.sqrt(max(cos_b ** 2 - cos_phi ** 2, 0.0))
+    return cos_b * (cos_b - root) / (cos_b + root)
 
 
 def design_angle(phi_k_deg, gamma_phi):
@@ -28,17 +38,27 @@ def gamma_eff_backfill(gamma_backfill, H_stem, h_wt_above_stem_base):
     return (gamma_backfill * h_dry + (gamma_backfill - GAMMA_W) * h_wet) / H_stem
 
 
-def active_force_moment(Ka, gamma_soil_fac, q_fac, H, depth_wt):
-    """Active horizontal force (kN/m) and moment about the base (kNm/m) of a vertical back plane
-    of height H, for a water table `depth_wt` below the top of the retained fill. Below the water
-    table, effective (submerged) soil stress is used plus separate hydrostatic pressure — above it,
-    total stress. `gamma_soil_fac` and `q_fac` are the already-factored (design) soil unit weight and
-    surcharge.
+def active_force_moment(Ka, gamma_soil_fac, q_fac, H, depth_wt, beta_deg=0.0):
+    """Active force/moment of a vertical back plane of height H, for a water table `depth_wt`
+    below the top of the retained fill. Below the water table, effective (submerged) soil stress
+    is used plus separate hydrostatic pressure — above it, total stress. `gamma_soil_fac` and
+    `q_fac` are the already-factored (design) soil unit weight and surcharge.
+
+    Returns (F_h, F_v, M_h) — horizontal force, vertical force and moment of the horizontal
+    component about the base (kN/m, kN/m, kNm/m). For a sloping backfill (beta_deg above
+    horizontal), the soil/surcharge-derived thrust acts inclined at beta_deg to the horizontal
+    (Rankine sloped-backfill theory) — F_v is its downward vertical component. Hydrostatic water
+    pressure is isotropic and unaffected by the slope, so it stays purely horizontal regardless.
     """
+    cos_b = math.cos(math.radians(beta_deg))
+    sin_b = math.sin(math.radians(beta_deg))
+
     if depth_wt >= H:
         F_q = Ka * q_fac * H
         F_s = Ka * gamma_soil_fac * H ** 2 / 2.0
-        return F_q + F_s, F_q * H / 2.0 + F_s * H / 3.0
+        F_soil = F_q + F_s
+        M_soil = F_q * H / 2.0 + F_s * H / 3.0
+        return F_soil * cos_b, F_soil * sin_b, M_soil * cos_b
 
     h_dry = depth_wt
     h_wet = H - depth_wt
@@ -51,19 +71,29 @@ def active_force_moment(Ka, gamma_soil_fac, q_fac, H, depth_wt):
 
     F3 = Ka * (q_fac + gamma_soil_fac * h_dry) * h_wet
     F4 = Ka * gamma_sub * h_wet ** 2 / 2.0
-    F5 = GAMMA_W * h_wet ** 2 / 2.0
+    F5 = GAMMA_W * h_wet ** 2 / 2.0  # hydrostatic — not inclined by the slope
     M3 = F3 * h_wet / 2.0
     M4 = F4 * h_wet / 3.0
     M5 = F5 * h_wet / 3.0
 
-    return F1 + F2 + F3 + F4 + F5, M1 + M2 + M3 + M4 + M5
+    F_soil = F1 + F2 + F3 + F4
+    M_soil = M1 + M2 + M3 + M4
+
+    F_h = F_soil * cos_b + F5
+    F_v = F_soil * sin_b
+    M_h = M_soil * cos_b + M5
+
+    return F_h, F_v, M_h
 
 
 def _draw_section(inputs, L_base, H_total):
     H_stem, t_stem, t_base = inputs["H_stem"], inputs["t_stem"], inputs["t_base"]
     L_toe, L_heel = inputs["L_toe"], inputs["L_heel"]
     h_wt, D_emb = inputs["h_wt"], inputs["D_emb"]
+    beta_deg = inputs.get("beta", 0.0)
+    P_h, h_P = inputs.get("P_h", 0.0), inputs.get("h_P", 0.0)
 
+    slope_rise = L_heel * math.tan(math.radians(beta_deg))
     pad = max(L_base * 0.35, 0.6)
     fig, ax = plt.subplots(figsize=(5.5, 4.5))
     ax.set_facecolor("white")
@@ -80,9 +110,13 @@ def _draw_section(inputs, L_base, H_total):
     ax.add_patch(patches.Rectangle((0, 0), L_base, t_base, fc="#BBBBBB", ec="#333333", lw=1.5, zorder=3))
     # Stem
     ax.add_patch(patches.Rectangle((L_toe, t_base), t_stem, H_stem, fc="#BBBBBB", ec="#333333", lw=1.5, zorder=3))
-    # Retained fill (hatched)
-    ax.add_patch(patches.Rectangle((L_toe + t_stem, t_base), L_heel, H_stem,
-                                    fc="#D9C8A5", ec="#999999", lw=0.5, hatch="///", zorder=1))
+    # Retained fill (hatched) — sloped top when beta > 0, rising up and away from the wall
+    fill_x0 = L_toe + t_stem
+    ax.add_patch(patches.Polygon(
+        [(fill_x0, t_base), (fill_x0, t_base + H_stem),
+         (L_base, t_base + H_stem + slope_rise), (L_base, t_base)],
+        closed=True, fc="#D9C8A5", ec="#999999", lw=0.5, hatch="///", zorder=1,
+    ))
     # Ground level in front of toe (D_emb above the base underside)
     ax.plot([-pad, L_toe], [D_emb, D_emb], color="#3E1E00", lw=1.5, zorder=2)
     ax.text(-pad + 0.05, D_emb + 0.05, "GL (front)", fontsize=7, color="#3E1E00")
@@ -92,6 +126,16 @@ def _draw_section(inputs, L_base, H_total):
         ax.axhline(h_wt, color="#1A6EBD", lw=1.2, ls="--", zorder=4)
         ax.text(L_base + pad * 0.5, h_wt + 0.05, "▼ WT", color="#1A6EBD", fontsize=7.5, fontweight="bold")
 
+    # Additional horizontal point load, at height h_P above the base
+    if P_h > 0:
+        y_p = min(h_P, H_total + slope_rise)
+        ax.annotate(
+            "", xy=(fill_x0, y_p), xytext=(fill_x0 + 0.6, y_p),
+            arrowprops=dict(arrowstyle="->", color="#C0392B", lw=2), zorder=6,
+        )
+        ax.text(fill_x0 + 0.65, y_p, f"P_h = {P_h:.0f}kN/m", fontsize=7, color="#C0392B",
+                va="center", zorder=6)
+
     # Dimensions
     ax.annotate("", xy=(L_base, -0.35), xytext=(0, -0.35), arrowprops=dict(arrowstyle="<->", color="#333"))
     ax.text(L_base / 2, -0.5, f"L_base = {L_base:.2f} m", ha="center", fontsize=8)
@@ -100,13 +144,17 @@ def _draw_section(inputs, L_base, H_total):
     ax.text(-pad * 0.7, t_base + H_stem / 2, f"H_stem = {H_stem:.2f} m", ha="center", va="center",
             rotation=90, fontsize=8)
 
+    if beta_deg > 0:
+        ax.text(L_base - 0.05, t_base + H_stem + slope_rise + 0.1, f"β = {beta_deg:.0f}°",
+                fontsize=7.5, color="#6b4c1e", ha="right")
+
     ax.text(L_toe / 2, t_base / 2, "toe", ha="center", va="center", fontsize=7.5)
     ax.text(L_toe + t_stem + L_heel / 2, t_base / 2, "heel", ha="center", va="center", fontsize=7.5)
     ax.text(L_toe + t_stem / 2, t_base + H_stem / 2, "stem", ha="center", va="center",
             rotation=90, fontsize=7.5)
 
     ax.set_xlim(-pad, L_base + pad)
-    ax.set_ylim(-0.6, H_total + 0.8)
+    ax.set_ylim(-0.6, H_total + slope_rise + 0.8)
     ax.set_aspect("equal")
     ax.axis("off")
     fig.tight_layout()
@@ -145,11 +193,27 @@ def render(inputs):
         st.write(f"W_soil (characteristic, heel) = gamma_backfill × L_heel × H_stem = {gamma_backfill:.1f} × "
                  f"{L_heel:.2f} × {H_stem:.2f} = **{W_soil_k:.2f}kN/m**")
 
-        Ka_char = rankine_ka(inputs["phi_backfill"])
-        st.write(
-            f"Ka (Rankine, characteristic) = tan²(45 − {inputs['phi_backfill']:.0f}/2) = **{Ka_char:.3f}**"
-        )
+        beta = inputs.get("beta", 0.0)
+        phi_backfill = inputs["phi_backfill"]
+        if beta >= phi_backfill:
+            st.write(
+                f"⚠️ Backfill slope β = {beta:.0f}° is not less than phi_backfill = {phi_backfill:.0f}° — "
+                "the slope exceeds the soil's natural angle of repose, so Rankine theory is not valid "
+                "here. Ka is being clamped to its β=φ limit; reduce the slope or increase φ."
+            )
+        Ka_char = rankine_ka(phi_backfill, beta)
+        if beta > 0:
+            st.write(
+                f"Ka (Rankine, sloped backfill, characteristic) = cosβ·(cosβ−√(cos²β−cos²φ)) / "
+                f"(cosβ+√(cos²β−cos²φ)), β = {beta:.0f}°, φ = {phi_backfill:.0f}° = **{Ka_char:.3f}**"
+            )
+        else:
+            st.write(f"Ka (Rankine, characteristic) = tan²(45 − {phi_backfill:.0f}/2) = **{Ka_char:.3f}**")
         results["Ka_char"] = Ka_char
+
+        P_h, h_P = inputs.get("P_h", 0.0), inputs.get("h_P", 0.0)
+        if P_h > 0:
+            st.write(f"Additional point load: P_h = **{P_h:.2f}kN/m** at h_P = **{h_P:.2f}m** above the base.")
 
     with right:
         fig = _draw_section(inputs, L_base, H_total)

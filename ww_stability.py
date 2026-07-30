@@ -24,6 +24,11 @@ def combo_terms(combo, inputs, geometry_results, favourable):
     since active pressure and buoyancy never help stability. Per EC0, a variable action (the
     surcharge) contributes zero when its effect would be favourable — so W_q_heel is dropped
     entirely in the favourable case rather than just down-factored.
+
+    The additional horizontal point load and the vertical component of a sloped backfill's active
+    thrust are both applied identically regardless of `favourable`, for the same reason F_active
+    is: they're not the wall's own self-weight, so there's no "minimum self-weight" scenario for
+    them to switch on.
     """
     H_stem, t_stem, t_base = inputs["H_stem"], inputs["t_stem"], inputs["t_base"]
     L_toe, L_heel = inputs["L_toe"], inputs["L_heel"]
@@ -32,19 +37,22 @@ def combo_terms(combo, inputs, geometry_results, favourable):
     gamma_backfill = inputs["gamma_backfill"]
     q_surcharge = inputs["q_surcharge"]
     h_wt = inputs["h_wt"]
+    beta = inputs.get("beta", 0.0)
+    P_h, h_P = inputs.get("P_h", 0.0), inputs.get("h_P", 0.0)
 
     gamma_M = _gamma("Material factor to phi', gamma_M", combo)
     phi_backfill_d = geo.design_angle(inputs["phi_backfill"], gamma_M)
-    Ka = geo.rankine_ka(phi_backfill_d)
+    Ka = geo.rankine_ka(phi_backfill_d, beta)
 
     gamma_q = _gamma("Variable/traffic surcharge action, gamma_Q;sup", combo)
     gamma_water = _gamma("Vertical and horizontal water pressures, gamma_G;sup", combo)
     gamma_soil_drv = _gamma("Self weight of structure & backfill, gamma_G;sup", combo)
 
     depth_wt = max(H_total - h_wt, 0.0)
-    F_active, M_active = geo.active_force_moment(
-        Ka, gamma_soil_drv * gamma_backfill, gamma_q * q_surcharge, H_total, depth_wt
+    F_active_earth, F_active_v, M_active_earth = geo.active_force_moment(
+        Ka, gamma_soil_drv * gamma_backfill, gamma_q * q_surcharge, H_total, depth_wt, beta
     )
+    P_h_design = gamma_q * P_h
 
     if favourable:
         gamma_self = partial_factors.FAVOURABLE["Self weight of structure & backfill, gamma_G;inf"][combo]
@@ -68,7 +76,9 @@ def combo_terms(combo, inputs, geometry_results, favourable):
 
     return {
         "Ka": Ka, "phi_backfill_d": phi_backfill_d, "gamma_M": gamma_M,
-        "F_active": F_active, "M_active": M_active,
+        "F_active_earth": F_active_earth, "M_active_earth": M_active_earth,
+        "F_active_v": F_active_v, "x_active_v": L_base,
+        "P_h_design": P_h_design, "h_P": h_P,
         "W_stem": W_stem, "x_stem": x_stem,
         "W_base": W_base, "x_base": x_base,
         "W_soil": W_soil, "x_soil": x_soil,
@@ -132,14 +142,32 @@ def stability_check(combo, inputs, geometry_results):
     phi_founding_d = geo.design_angle(phi_founding, gamma_M)
     c_founding_d = inputs["c_founding"] / gamma_M
 
-    st.write(f"Ka (design) = tan²(45 − {t_res['phi_backfill_d']:.1f}/2) = **{t_res['Ka']:.3f}**")
-    st.write(f"F_active = **{t_res['F_active']:.2f}kN/m**, M_active (about base) = **{t_res['M_active']:.2f}kNm/m**")
+    st.write(f"Ka (design) = **{t_res['Ka']:.3f}** (φ_d = {t_res['phi_backfill_d']:.1f}°)")
+    F_active = t_res["F_active_earth"] + t_res["P_h_design"]
+    M_active = t_res["M_active_earth"] + t_res["P_h_design"] * t_res["h_P"]
+    st.write(
+        f"F_active = F_earth + P_h = {t_res['F_active_earth']:.2f} + {t_res['P_h_design']:.2f} = "
+        f"**{F_active:.2f}kN/m**"
+    )
+    st.write(
+        f"M_active (about base) = M_earth + P_h×h_P = {t_res['M_active_earth']:.2f} + "
+        f"{t_res['P_h_design']:.2f}×{t_res['h_P']:.2f} = **{M_active:.2f}kNm/m**"
+    )
+    if t_res["F_active_v"] > 0:
+        st.write(
+            f"Sloped backfill also gives a vertical thrust component, F_active,v = "
+            f"**{t_res['F_active_v']:.2f}kN/m**, acting at the back of the heel (x = L_base)."
+        )
 
     st.markdown("**Sliding**")
-    V_resist = t_res["W_stem"] + t_res["W_base"] + t_res["W_soil"] + t_res["W_q_heel"] - t_res["U"]
+    V_resist = (
+        t_res["W_stem"] + t_res["W_base"] + t_res["W_soil"] + t_res["W_q_heel"]
+        + t_res["F_active_v"] - t_res["U"]
+    )
     st.write(
         f"V_resist = {t_res['W_stem']:.2f} + {t_res['W_base']:.2f} + {t_res['W_soil']:.2f} + "
-        f"{t_res['W_q_heel']:.2f} − {t_res['U']:.2f} (uplift) = **{V_resist:.2f}kN/m**"
+        f"{t_res['W_q_heel']:.2f} + {t_res['F_active_v']:.2f} (F_active,v) − {t_res['U']:.2f} (uplift) "
+        f"= **{V_resist:.2f}kN/m**"
     )
     st.write(f"δ_d = phi_founding,d = tan⁻¹(tan{phi_founding:.0f} / {gamma_M:.2f}) = **{phi_founding_d:.1f}°**")
     R_sliding = V_resist * math.tan(math.radians(phi_founding_d)) + c_founding_d * L_base
@@ -147,10 +175,10 @@ def stability_check(combo, inputs, geometry_results):
         f"R_sliding = V_resist × tanδ_d + c'_d × L_base = {V_resist:.2f} × tan{phi_founding_d:.1f}° + "
         f"{c_founding_d:.2f} × {L_base:.2f} = **{R_sliding:.2f}kN/m**"
     )
-    ur_sliding = t_res["F_active"] / R_sliding if R_sliding > 0 else float("inf")
+    ur_sliding = F_active / R_sliding if R_sliding > 0 else float("inf")
     ok_sliding = ur_sliding <= 1.0
     st.write(
-        f"UR_sliding = F_active / R_sliding = {t_res['F_active']:.2f} / {R_sliding:.2f} = "
+        f"UR_sliding = F_active / R_sliding = {F_active:.2f} / {R_sliding:.2f} = "
         f"**{ur_sliding:.2f}** {'∴ **OK**.' if ok_sliding else '∴ **NOT OK** — review required.'}"
         f" (passive resistance in front of the toe neglected)"
     )
@@ -159,26 +187,31 @@ def stability_check(combo, inputs, geometry_results):
     M_stabilizing = (
         t_res["W_stem"] * t_res["x_stem"] + t_res["W_base"] * t_res["x_base"]
         + t_res["W_soil"] * t_res["x_soil"] + t_res["W_q_heel"] * t_res["x_q_heel"]
-        - t_res["U"] * t_res["x_U"]
+        + t_res["F_active_v"] * t_res["x_active_v"] - t_res["U"] * t_res["x_U"]
     )
     st.write(f"M_stabilizing = **{M_stabilizing:.2f}kNm/m**")
-    ur_ot = t_res["M_active"] / M_stabilizing if M_stabilizing > 0 else float("inf")
+    ur_ot = M_active / M_stabilizing if M_stabilizing > 0 else float("inf")
     ok_ot = ur_ot <= 1.0
     st.write(
-        f"UR_overturning = M_active / M_stabilizing = {t_res['M_active']:.2f} / {M_stabilizing:.2f} = "
+        f"UR_overturning = M_active / M_stabilizing = {M_active:.2f} / {M_stabilizing:.2f} = "
         f"**{ur_ot:.2f}** {'∴ **OK**.' if ok_ot else '∴ **NOT OK** — review required.'}"
     )
 
     # ── Bearing: unfavourable (maximum) self-weight scenario ──────────────────────────
     st.markdown("**Bearing**")
     b_res = combo_terms(combo, inputs, geometry_results, favourable=False)
-    V_bearing = b_res["W_stem"] + b_res["W_base"] + b_res["W_soil"] + b_res["W_q_heel"] - b_res["U"]
+    F_active_b = b_res["F_active_earth"] + b_res["P_h_design"]
+    M_active_b = b_res["M_active_earth"] + b_res["P_h_design"] * b_res["h_P"]
+    V_bearing = (
+        b_res["W_stem"] + b_res["W_base"] + b_res["W_soil"] + b_res["W_q_heel"]
+        + b_res["F_active_v"] - b_res["U"]
+    )
     M_stb_bearing = (
         b_res["W_stem"] * b_res["x_stem"] + b_res["W_base"] * b_res["x_base"]
         + b_res["W_soil"] * b_res["x_soil"] + b_res["W_q_heel"] * b_res["x_q_heel"]
-        - b_res["U"] * b_res["x_U"]
+        + b_res["F_active_v"] * b_res["x_active_v"] - b_res["U"] * b_res["x_U"]
     )
-    x_R = (M_stb_bearing - b_res["M_active"]) / V_bearing if V_bearing > 0 else L_base / 2.0
+    x_R = (M_stb_bearing - M_active_b) / V_bearing if V_bearing > 0 else L_base / 2.0
     e = abs(x_R - L_base / 2.0)
     ecc_ok = e <= L_base / 6.0
     B_eff = max(L_base - 2.0 * e, 0.05)
@@ -192,14 +225,14 @@ def stability_check(combo, inputs, geometry_results):
     st.write(f"B_eff = L_base − 2e = **{B_eff:.2f}m**")
     st.write(f"q_Ed = V_bearing / B_eff = {V_bearing:.2f} / {B_eff:.2f} = **{q_Ed:.2f}kPa**")
 
-    bc = _bearing_capacity(combo, inputs, L_base, B_eff, V_bearing, b_res["F_active"], t_res["phi_backfill_d"])
+    bc = _bearing_capacity(combo, inputs, L_base, B_eff, V_bearing, F_active_b, t_res["phi_backfill_d"])
     st.write(
         f"phi_founding,d = **{bc['phi_founding_d']:.1f}°** → Nq = {bc['Nq']:.2f}, Nc = {bc['Nc']:.2f}, "
         f"Nγ = {bc['Ngamma']:.2f}"
     )
     st.write(
         f"Inclination factors (strip, m=2): iq = {bc['iq']:.3f}, iγ = {bc['igamma']:.3f} "
-        f"(from F_active/V_bearing = {b_res['F_active']:.2f} / {V_bearing:.2f})"
+        f"(from F_active/V_bearing = {F_active_b:.2f} / {V_bearing:.2f})"
     )
     st.write(
         f"R_bearing = c'_d·Nc·ic + q'·Nq·iq + 0.5·γ'·B_eff·Nγ·iγ = **{bc['R_bearing']:.2f}kPa**"
@@ -238,6 +271,19 @@ def render(inputs, geometry_results):
         "nothing when its effect would be favourable). Bearing uses the wall's maximum (unfavourable) "
         "self-weight, since higher self-weight increases bearing demand."
     )
+    beta = inputs.get("beta", 0.0)
+    if beta > 0:
+        st.write(
+            "A sloped backfill (Rankine) makes the active thrust act inclined at β to the horizontal — "
+            "its vertical component is treated as an additional downward load at the back of the heel "
+            "(x = L_base), identically in every check (it isn't the wall's own self-weight, so there's "
+            "no favourable/unfavourable scenario for it to switch between)."
+        )
+    if inputs.get("P_h", 0.0) > 0:
+        st.write(
+            "The additional horizontal point load is treated as a variable action (same partial factors "
+            "as the surcharge) and included in every check — it has no vertical component."
+        )
 
     combo_results = {}
     for combo in COMBOS:
