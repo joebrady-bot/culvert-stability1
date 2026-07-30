@@ -2,8 +2,10 @@
 
 Follows the procedure in "How to Design Concrete Structures using Eurocode 2: 4. Beams"
 (Moss & Brooker, The Concrete Centre) — Figure 2 (flexure) and Figure 5 (vertical shear,
-strut inclination method). This is a DESIGN tool (solves for required As / Asw), the
-reverse of the capacity checks used in the wing wall sheet (which checked a given As).
+strut inclination method, BS EN 1992-1-1 Cl. 6.2.3) — gated by the Cl. 6.2.2 check for
+whether shear reinforcement is required at all (VRd,c, concrete alone, UK NA values). This
+is a DESIGN tool (solves for required As / Asw), the reverse of the capacity checks used in
+the wing wall sheet (which checked a given As).
 
 `render_inputs()` collects the section/material widgets (call once from the live page —
 not safe to replay under pdf_export.capture()). `render()` is pure calculation + st.write
@@ -77,9 +79,38 @@ def _flexure_design(label, M_Ed, b, d, h, fck, fyk, delta, d2):
     return {"As_req": As_final, "As2_req": As2_req, "compression_steel": compression_steel, "ok": ok}
 
 
-def _shear_design(V_Ed, bw, d, fck, fyk):
-    """Figure 5 procedure (strut inclination method). V_Ed in kN, bw/d in mm, fck/fyk in MPa."""
+def _shear_design(V_Ed, bw, d, fck, fyk, As_prov):
+    """Cl. 6.2.2 (VRd,c — concrete alone) gates whether shear reinforcement is required at all;
+    if V_Ed exceeds it, Figure 5's strut inclination method (Cl. 6.2.3) sizes the links. V_Ed in
+    kN, bw/d/As_prov in mm(²), fck/fyk in MPa. No axial load (NEd = 0, so k1·σcp = 0) assumed."""
     st.markdown("**Vertical shear**")
+
+    st.write("*Cl. 6.2.2 — concrete resistance without shear reinforcement (UK NA values):*")
+    CRd_c = 0.18 / GAMMA_C
+    k = min(1.0 + math.sqrt(200.0 / d), 2.0)
+    rho_l = min(As_prov / (bw * d), 0.02)
+    v_min = 0.035 * k ** 1.5 * math.sqrt(fck)
+    st.write(
+        f"k = 1+√(200/d) = **{k:.3f}** (≤2.0); ρl = min(As/(b_w·d), 0.02) = min({As_prov:.0f}/"
+        f"({bw:.0f}×{d:.1f}), 0.02) = **{rho_l:.4f}** (As = the smaller of the bottom/top steel adopted)"
+    )
+    st.write(f"C_Rd,c = 0.18/γc = **{CRd_c:.3f}**; v_min = 0.035·k^1.5·√f_ck = **{v_min:.3f} MPa**")
+
+    VRd_c = max(CRd_c * k * (100.0 * rho_l * fck) ** (1.0 / 3.0), v_min) * bw * d / 1.0e3
+    st.write(
+        f"V_Rd,c = max[C_Rd,c·k·(100ρl·f_ck)^⅓, v_min]·b_w·d = **{VRd_c:.2f} kN** (Expr. 6.2.a/6.2.b, no axial load)"
+    )
+
+    if V_Ed <= VRd_c:
+        st.write(
+            f"V_Ed = {V_Ed:.2f}kN ≤ V_Rd,c = {VRd_c:.2f}kN ∴ **no shear reinforcement required by calculation** "
+            "— provide minimum links per Cl. 9.2.2 below."
+        )
+    else:
+        st.write(
+            f"V_Ed = {V_Ed:.2f}kN > V_Rd,c = {VRd_c:.2f}kN ∴ shear reinforcement is required — "
+            "design per the strut inclination method (Cl. 6.2.3):"
+        )
 
     z = 0.9 * d
     v_Ed = (V_Ed * 1.0e3) / (bw * z)
@@ -120,7 +151,10 @@ def _shear_design(V_Ed, bw, d, fck, fyk):
     s_max = 0.75 * d
     st.write(f"Adopt Asw/s = **{Asw_s_final * 1000:.0f} mm²/m**. Maximum spacing s_l,max = 0.75d = **{s_max:.0f} mm**")
 
-    return {"Asw_s": Asw_s_final, "s_max": s_max, "theta_deg": theta_deg, "redesign": redesign}
+    return {
+        "Asw_s": Asw_s_final, "s_max": s_max, "theta_deg": theta_deg, "redesign": redesign,
+        "VRd_c": VRd_c, "shear_reinf_required": V_Ed > VRd_c,
+    }
 
 
 def _link_spacing(Asw_s, n_legs, link_dia, s_max):
@@ -195,7 +229,11 @@ def render(rc_inputs):
     st.divider()
     top = _flexure_design("Top reinforcement (hogging)", rc_inputs["M_hog"], b, d, h, fck, fyk, delta, d2)
     st.divider()
-    shear = _shear_design(rc_inputs["V_Ed"], b, d, fck, fyk)
+    # Conservative (smaller) of the two adopted flexural areas — shear/flexure curtailment along
+    # the beam isn't tracked position-by-position in this tool, so the lower As is used at the
+    # shear-critical section rather than assuming the larger one is present everywhere.
+    As_prov_for_shear = min(bottom["As_req"], top["As_req"])
+    shear = _shear_design(rc_inputs["V_Ed"], b, d, fck, fyk, As_prov_for_shear)
 
     st.divider()
     st.markdown("#### Suggested Reinforcement")
@@ -203,10 +241,14 @@ def render(rc_inputs):
     n_bars_top = math.ceil(top["As_req"] / (math.pi / 4.0 * bar_dia ** 2))
     s_link = _link_spacing(shear["Asw_s"], n_legs, link_dia, shear["s_max"])
 
+    links_label = f"H{link_dia:.0f}, {n_legs:.0f} legs @ {s_link:.0f}mm c/c"
+    if not shear["shear_reinf_required"]:
+        links_label += " (min. reinf.)"
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Bottom bars", f"{n_bars_bottom} x H{bar_dia:.0f}")
     c2.metric("Top bars", f"{n_bars_top} x H{bar_dia:.0f}")
-    c3.metric("Links", f"H{link_dia:.0f}, {n_legs:.0f} legs @ {s_link:.0f}mm c/c")
+    c3.metric("Links", links_label)
 
     if shear["redesign"]:
         st.write("**Shear: section too small — increase b_w or d.**")
